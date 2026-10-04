@@ -322,7 +322,15 @@ function isNewMsg(m) {
 function paintMsgs(flashIds) {
   const box = $('#msgs');
   const sessMsgs = MSGS.filter(isNewMsg);
-  const show = $('#tabSession').getAttribute('aria-selected') === 'true' ? sessMsgs : MSGS;
+  const hasSession = !!SESSION;
+  // §21：有活跃会话时默认「本次使用后」；没开始会话则回退「所有短信」，
+  // 否则用户刚打开页面会看到空列表，误以为该号码没有短信。
+  if (!hasSession) {
+    $('#tabSession').setAttribute('aria-selected', 'false');
+    $('#tabAll').setAttribute('aria-selected', 'true');
+  }
+  const showAll = $('#tabAll').getAttribute('aria-selected') === 'true';
+  const show = showAll ? MSGS : sessMsgs;
 
   $('#ctSession').textContent = sessMsgs.length;
   $('#ctAll').textContent = MSGS.length;
@@ -335,8 +343,16 @@ function paintMsgs(flashIds) {
   }
   if (!show.length) {
     box.innerHTML = '';
-    $('#msgState').innerHTML = `<div class="state"><div class="ic">⏳</div><h3>本次使用后还没有新短信</h3>
-      <p>历史短信可在「所有短信」查看。有些服务需要 1–2 分钟才会发送验证码。</p></div>`;
+    $('#msgState').innerHTML = showAll
+      ? `<div class="state"><div class="ic">📭</div><h3>暂时还没有公开短信</h3>
+         <p>公共号码收信不保证，可稍后刷新或换一个号码试试。</p></div>`
+      : `<div class="state"><div class="ic">⏳</div><h3>${hasSession ? '本次使用后还没有新短信' : '还没有开始接码会话'}</h3>
+         <p>${hasSession
+            ? '历史短信可在「所有短信」查看。有些服务需要 1–2 分钟才会发送验证码。'
+            : '点上方「复制号码」开始接码，之后收到的短信会单独归到这里，方便快速找到。'}</p>
+         ${hasSession ? '' : '<button class="btn btn-primary" id="startHere">⧉ 复制号码并开始</button>'}</div>`;
+    const sh = $('#startHere');
+    if (sh) sh.onclick = doCopyNumber;
     return;
   }
   $('#msgState').innerHTML = '';
