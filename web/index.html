@@ -214,6 +214,12 @@ section{margin-bottom:48px}
 .src-head{display:flex;align-items:center;gap:10px;margin-bottom:11px}
 .src-head .ic{width:32px;height:32px;flex:none}
 .src-head .ic img{width:100%;height:100%;display:block;border-radius:8px}
+/* 无官方识别图形的新增源：回退为首字母徽标 */
+.src-head .ic .ini{
+  width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  background:rgba(91,140,255,.12);color:var(--primary);
+  font-size:12px;font-weight:700;letter-spacing:.3px;
+}
 .src-head b{font-size:15px;font-weight:600}
 .src-head .st{margin-left:auto;font-size:12.5px;display:flex;align-items:center;gap:6px}
 .st.ok{color:var(--success)}
@@ -695,11 +701,15 @@ function render(){
 
 function renderSources(){
   const box=$('#srcs'); if(!box) return;
-  /* 官方素材：各数据源识别图形，缺失时回退数据库图标 */
+  /* 官方素材：各数据源识别图形，缺失时回退到源名首字母徽标（新增源无官方图形） */
   const SRC_ICON = {
     'receive-sms-online': '/assets/sources/receive-sms-online.svg',
     'quackr': '/assets/sources/quackr.svg',
     'wetalk': '/assets/sources/wetalk.svg',
+  };
+  const initial = name => {
+    const t = String(name||'?').trim();
+    return t.slice(0,2).toUpperCase();
   };
   box.innerHTML = (DATA.sources||[]).map(s=>{
     /* 设计图 C02：同步状态只描述采集链路，不代表号码一定可收短信 */
@@ -707,8 +717,10 @@ function renderSources(){
     const sync = s.ok
       ? '上次成功同步 ' + (relTime(DATA.generatedAt)||'—')
       : esc(s.error||'采集失败，已保留上次快照');
-    const icon = SRC_ICON[s.sourceId] || '/assets/icons/database.svg';
-    return '<div class="src"><div class="src-head"><span class="ic"><img src="'+icon+'" alt="" width="32" height="32"></span>'+
+    const icon = SRC_ICON[s.sourceId]
+      ? '<img src="'+SRC_ICON[s.sourceId]+'" alt="" width="32" height="32">'
+      : '<span class="ini">'+esc(initial(s.sourceName))+'</span>';
+    return '<div class="src"><div class="src-head"><span class="ic">'+icon+'</span>'+
       '<b>'+esc(s.sourceName)+'</b>'+st+'</div>'+
       '<div class="row"><span>'+s.count+' 个号码</span><span class="t">'+sync+'</span></div></div>';
   }).join('') || '<div class="src"><div class="row"><span>暂无来源记录</span></div></div>';

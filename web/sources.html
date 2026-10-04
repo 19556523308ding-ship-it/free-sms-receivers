@@ -173,15 +173,29 @@ function absTime(iso){
   const d=new Date(iso); if(isNaN(d)) return '';
   return d.toLocaleString('zh-CN',{hour12:false})+' ('+Intl.DateTimeFormat().resolvedOptions().timeZone+')';
 }
+// 说明文案区分「原始源」与「2026-10-05 新增源」，后者经服务器端实测确认可稳定解析。
+// 审计报告见 docs/SOURCE-AUDIT-2026-10.md
 const DESC = {
-  'receive-sms-online':'公开列出多国临时号码及累计短信数，是三个来源中唯一同时提供号码、状态与短信条数的平台。查看短信内容需在其官网注册。',
-  'quackr':'公开列出多国号码并以图标标注在线状态，但不提供短信条数，故本站一律记为「状态未知」。',
-  'wetalk':'以文章形式整理各号码的接收页面，页面不提供状态与短信条数，故记为「状态未知」。'
+  'receive-sms-online':'公开列出多国临时号码及累计短信数，是当前唯一同时提供号码、状态与短信条数的源。查看短信内容需在其官网注册。',
+  'quackr':'公开列出多国号码并以图标标注在线状态，但不提供短信条数，故本站一律记为「状态未知」。Angular 客户端渲染，无公开数据接口。',
+  'wetalk':'以文章形式整理各号码的接收页面，页面不提供状态与短信条数。短信正文需通过阿里云人机验证后方可加载，本站不采集。',
+  'freephonenum':'公开列出 600+ 号码，URL 路径中带国家段（如 /be/），国家归属可靠。短信正文页有人机验证，本站仅收录号码元数据。',
+  'receiveasmsonline':'国家页静态直出号码（单国可达 180+），无登录墙、无验证码、无 X-Frame-Options 限制。经真浏览器实测可读到公开短信正文（含发件方与时间戳），是当前唯一具备站内查看条件的源。',
+  'temporaryphonenumber':'公开列出号码并标注「Latest: x minutes ago」，可反映最近活跃时间。源站对密集请求敏感。',
+  'smsdock':'公开列出号码目录，无登录即可浏览，暂无短信计数。',
+  'smsonlineco':'公开列出英国、美国等号码，短信正文页有人机验证，本站仅收录号码元数据。',
+  'asms':'原 AnonymSMS，公开列出多国共享号码，短信正文需登录后才能查看。'
 };
 const FIELDS = {
   'receive-sms-online':'号码 · 国家 · 短信条数 · 状态（Ready）',
   'quackr':'号码 · 国家 · 在线图标（无短信条数）',
-  'wetalk':'号码 · 国家（无状态与计数）'
+  'wetalk':'号码 · 国家（无状态与计数）',
+  'freephonenum':'号码 · 国家（来自 URL 路径）',
+  'receiveasmsonline':'号码 · 国家（正文可经渲染读取，本版未采集）',
+  'temporaryphonenumber':'号码 · 国家 · 最近活跃时间',
+  'smsdock':'号码 · 国家',
+  'smsonlineco':'号码 · 国家',
+  'asms':'号码 · 国家'
 };
 (async()=>{
   try{
