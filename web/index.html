@@ -215,11 +215,16 @@ section{margin-bottom:48px}
 .inline-read:hover{background:rgba(91,140,255,.16);border-color:rgba(91,140,255,.5)}
 .inline-read[disabled]{opacity:.55;cursor:progress}
 
-/* ============ 短信查看抽屉 ============ */
-.sheet-mask{position:fixed;inset:0;background:rgba(3,6,12,.66);backdrop-filter:blur(3px);
+/* ============ 短信查看抽屉 ============
+   注意：.reader 不能直接写 display:flex —— 那会覆盖 [hidden] 属性的
+   display:none（作者样式优先级高于 UA 样式），导致面板关不掉、甚至
+   页面一加载就常驻显示。同理遮罩另起 .reader-mask，避免与下方移动端
+   筛选面板的 .sheet-mask（那个用 .on 控制 display）互相覆盖。 */
+[hidden]{display:none !important}
+.reader-mask{position:fixed;inset:0;background:rgba(3,6,12,.66);backdrop-filter:blur(3px);
   z-index:70;animation:fadeIn .18s ease}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.reader{
+.reader:not([hidden]){
   position:fixed;z-index:71;background:var(--surface);border:1px solid var(--border);
   display:flex;flex-direction:column;
   right:0;top:0;bottom:0;width:min(520px,100vw);
@@ -231,18 +236,23 @@ section{margin-bottom:48px}
   padding:18px 20px 14px;border-bottom:1px solid var(--border)}
 .reader-head h2{margin:0;font-size:17px;font-weight:600;color:var(--text)}
 .reader-sub{margin-top:5px;font-size:13px;color:var(--text-muted);font-variant-numeric:tabular-nums}
-.reader-x{width:36px;height:36px;flex:none;border-radius:8px;border:1px solid var(--border);
-  background:var(--bg-soft);color:var(--text-muted);font-size:14px;cursor:pointer}
+.reader-x{width:44px;height:44px;flex:none;border-radius:8px;border:1px solid var(--border);
+  background:var(--bg-soft);color:var(--text-muted);font-size:14px;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center}
 .reader-x:hover{color:var(--text);border-color:var(--border-hi)}
+.reader-x:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
 .reader-body{flex:1;overflow-y:auto;padding:16px 20px;-webkit-overflow-scrolling:touch}
 .reader-tip{font-size:12.5px;color:var(--text-muted);background:var(--bg-soft);
   border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:14px;line-height:1.6}
 .reader-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:13px 20px;border-top:1px solid var(--border);min-height:56px}
 .reader-note{font-size:12.5px;color:var(--text-muted)}
-.reader-src{font-size:13.5px;color:var(--primary);text-decoration:none;white-space:nowrap;
-  padding:10px 4px;min-height:44px;display:inline-flex;align-items:center}
-.reader-src:hover{color:#8FB0FF}
+.reader-refresh{font-size:13.5px;color:var(--primary);background:transparent;
+  border:1px solid var(--border);border-radius:9px;padding:10px 14px;min-height:44px;
+  cursor:pointer;white-space:nowrap;font-family:inherit;transition:border-color .15s,color .15s}
+.reader-refresh:hover{color:#8FB0FF;border-color:var(--primary)}
+.reader-refresh[disabled]{opacity:.55;cursor:progress}
+.reader-refresh:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
 
 /* 短信条目 */
 .msg{border:1px solid var(--border);border-radius:12px;padding:13px 14px;margin-bottom:11px;
@@ -274,7 +284,7 @@ section{margin-bottom:48px}
 
 @media (max-width:767px){
   /* 移动端改为底部抽屉，更符合单手操作 */
-  .reader{right:0;left:0;top:auto;bottom:0;width:100%;max-height:86vh;
+  .reader:not([hidden]){right:0;left:0;top:auto;bottom:0;width:100%;max-height:86vh;
     border-radius:16px 16px 0 0;border-bottom:0;
     box-shadow:0 -20px 50px rgba(0,0,0,.5);animation:slideUp .24s cubic-bezier(.22,.61,.36,1)}
   @keyframes slideUp{from{transform:translateY(28px);opacity:.4}to{transform:none;opacity:1}}
@@ -885,20 +895,27 @@ if(matchMedia('(max-width:767px)').matches){
    直接执行会因 #reader 尚不存在而拿不到元素。故等 DOM 就绪后再初始化。 */
 function initReader(){
   const mask = $('#readerMask'), panel = $('#reader'), body = $('#readerBody'),
-        sub = $('#readerSub'), note = $('#readerNote'), src = $('#readerSrc');
+        sub = $('#readerSub'), note = $('#readerNote'), refreshBtn = $('#readerRefresh');
   if(!panel) return;
 
-  let timer = null, cooldownTimer = null, current = null, lastFetchAt = 0;
+  let timer = null, cooldownTimer = null, watchTimer = null,
+      current = null, lastFetchAt = 0, inflight = false;
   const POLL_MS = 20000;          // 轮询间隔（与后端 15s 限频配合）
   const MIN_TRIGGER_GAP = 16000;  // 用户手动刷新最小间隔
+  const SLOW_MS = 25000;          // 单次读取超过此时长即视为异常，提示用户
 
-  const stopAll = ()=>{ clearInterval(timer); timer=null; clearTimeout(cooldownTimer); cooldownTimer=null; };
+  const stopAll = ()=>{
+    clearInterval(timer); timer=null;
+    clearTimeout(cooldownTimer); cooldownTimer=null;
+    clearTimeout(watchTimer); watchTimer=null;
+  };
 
   function closeReader(){
     stopAll();
     panel.hidden = true; mask.hidden = true;
     document.body.style.overflow = '';
-    current = null;
+    current = null; inflight = false;
+    if(refreshBtn) refreshBtn.disabled = false;
   }
 
   function setNote(t){ note.textContent = t; }
@@ -943,14 +960,24 @@ function initReader(){
     });
   }
 
-  async function fetchOnce(btn){
-    if(!current) return;
-    if(btn) btn.disabled = true;
+  async function fetchOnce(){
+    // 防重入：轮询 + 手动点击可能撞在一起，之前会打出并发请求并互相覆盖 DOM
+    if(!current || inflight) return;
+    inflight = true;
+    if(refreshBtn) refreshBtn.disabled = true;
     body.setAttribute('aria-busy','true');
     const t0 = performance.now();
+
+    // 慢请求兜底：源站偶发卡住时给出明确交代，而不是让用户盯着一句「读取中…」
+    clearTimeout(watchTimer);
+    watchTimer = setTimeout(()=>{
+      if(inflight && current) setNote('源站响应较慢，仍在等待…');
+    }, SLOW_MS);
+
     try{
       const r = await fetch('/api/sms?slug='+encodeURIComponent(current.slug)+
-                            '&phone='+encodeURIComponent(current.phone), {cache:'no-store'});
+                            '&phone='+encodeURIComponent(current.phone),
+                            {cache:'no-store', signal: AbortSignal.timeout(45000)});
       const d = await r.json().catch(()=>({error:'返回格式异常'}));
 
       if(r.status === 429){
@@ -959,13 +986,13 @@ function initReader(){
         setBody('<div class="reader-empty"><b>请稍候</b>为避免给源站造成压力，'+
           '同一号码 '+Math.round(15000/1000)+' 秒内只查询一次。</div>');
         clearTimeout(cooldownTimer);
-        cooldownTimer = setTimeout(()=>fetchOnce(btn), wait*1000);
+        cooldownTimer = setTimeout(fetchOnce, wait*1000);
         return;
       }
       if(!r.ok){
         setNote('读取失败');
         setBody('<div class="reader-err">读取失败：'+esc(d.error||('HTTP '+r.status))+
-          '<br>可点下方「打开原站」直接查看，或稍后重试。</div>');
+          '<br>面板会自动重试，也可点下方「刷新短信」立即再试。</div>');
         return;
       }
 
@@ -973,29 +1000,33 @@ function initReader(){
       const secs = ((performance.now()-t0)/1000).toFixed(1);
       setBody(renderMessages(d));
       bindCopy();
-      setNote(d.count ? (d.count+' 条 · '+secs+'s'+(d.cached?' · 缓存':'')) : ('暂无短信 · '+secs+'s'));
+      setNote(d.count ? (d.count+' 条 · '+secs+'s'+(d.cached?' · 缓存':'')+' · 每 20s 自动刷新')
+                      : ('暂无短信 · '+secs+'s · 每 20s 自动刷新'));
     }catch(e){
-      setNote('网络错误');
-      setBody('<div class="reader-err">网络错误：'+esc(e.message)+
-        '<br>请检查网络后重试，或点下方「打开原站」。</div>');
+      // 主动超时取消也会走到这里，给出可区分的文案
+      const timedOut = e.name === 'TimeoutError';
+      setNote(timedOut ? '读取超时' : '网络错误');
+      setBody('<div class="reader-err">'+(timedOut?'读取超时':'网络错误')+'：'+esc(timedOut?'':(e.message||e.name))+
+        '<br>面板每 20 秒自动重试，也可点下方「刷新短信」立即再试。</div>');
     }finally{
+      clearTimeout(watchTimer); watchTimer = null;
       body.removeAttribute('aria-busy');
-      if(btn) btn.disabled = false;
+      if(refreshBtn) refreshBtn.disabled = false;
+      inflight = false;
     }
   }
 
   function openReader(slug, phone, phoneLabel, countryLabel){
+    stopAll();
     current = { slug, phone };
-    lastFetchAt = 0;
+    lastFetchAt = 0; inflight = false;
     panel.hidden = false; mask.hidden = false;
     document.body.style.overflow = 'hidden';
     sub.textContent = (phoneLabel||phone) + ' · ' + (countryLabel||'');
-    src.href = 'https://receiveasmsonline.com/' + slug + '/' + phone + '/';
     setBody('<div class="reader-load"><span class="spin"></span>正在读取公开页面…</div>');
     setNote('读取中…');
     fetchOnce();
-    // 首次 6s 后开始轮询，避开后端限频窗口
-    stopAll();
+    // 首次间隔避开后端限频窗口，之后每 20s 自动轮询
     cooldownTimer = setTimeout(()=>{
       timer = setInterval(()=>{
         if(Date.now() - lastFetchAt >= MIN_TRIGGER_GAP) fetchOnce();
@@ -1005,6 +1036,7 @@ function initReader(){
 
   $('#readerClose').onclick = closeReader;
   mask.onclick = closeReader;
+  if(refreshBtn) refreshBtn.onclick = ()=>fetchOnce();
   document.addEventListener('keydown', e=>{
     if(e.key==='Escape' && !panel.hidden) closeReader();
   });
@@ -1014,6 +1046,7 @@ function initReader(){
     const b = e.target.closest('.inline-read');
     if(!b) return;
     e.preventDefault();
+    e.stopPropagation();
     const card = b.closest('.card');
     const phoneEl = card ? card.querySelector('.card-phone') : null;
     const countryEl = card ? card.querySelector('.card-country') : null;
@@ -1028,7 +1061,7 @@ else initReader();
 load();
 })();
 </script>
-<div class="sheet-mask" id="readerMask" hidden></div>
+<div class="reader-mask" id="readerMask" hidden></div>
 <section class="reader" id="reader" hidden aria-modal="true" role="dialog" aria-labelledby="readerTitle">
   <div class="reader-head">
     <div>
@@ -1041,8 +1074,8 @@ load();
     <div class="reader-tip">内容来自第三方公开页面，本站仅做渲染展示。验证码请以原站为准。</div>
   </div>
   <div class="reader-foot">
-    <span class="reader-note" id="readerNote">读取中…</span>
-    <a class="reader-src" id="readerSrc" href="#" target="_blank" rel="noopener noreferrer">打开原站 ↗</a>
+    <span class="reader-note" id="readerNote">—</span>
+    <button class="reader-refresh" id="readerRefresh" type="button">刷新短信</button>
   </div>
 </section>
 
