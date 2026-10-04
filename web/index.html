@@ -207,6 +207,83 @@ section{margin-bottom:48px}
   color:var(--primary);font-size:13.5px;font-weight:500;white-space:nowrap;
 }
 .go:hover{color:#8FB0FF}
+/* 站内查看：与「查看原站」并列，但用主色描边区分「站内」与「站外」 */
+.inline-read{
+  border:1px solid rgba(91,140,255,.32);background:rgba(91,140,255,.08);
+  padding:9px 11px;cursor:pointer;font-family:inherit;
+}
+.inline-read:hover{background:rgba(91,140,255,.16);border-color:rgba(91,140,255,.5)}
+.inline-read[disabled]{opacity:.55;cursor:progress}
+
+/* ============ 短信查看抽屉 ============ */
+.sheet-mask{position:fixed;inset:0;background:rgba(3,6,12,.66);backdrop-filter:blur(3px);
+  z-index:70;animation:fadeIn .18s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.reader{
+  position:fixed;z-index:71;background:var(--surface);border:1px solid var(--border);
+  display:flex;flex-direction:column;
+  right:0;top:0;bottom:0;width:min(520px,100vw);
+  box-shadow:-24px 0 60px rgba(0,0,0,.5);
+  animation:slideIn .22s cubic-bezier(.22,.61,.36,1);
+}
+@keyframes slideIn{from{transform:translateX(24px);opacity:.4}to{transform:none;opacity:1}}
+.reader-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  padding:18px 20px 14px;border-bottom:1px solid var(--border)}
+.reader-head h2{margin:0;font-size:17px;font-weight:600;color:var(--text)}
+.reader-sub{margin-top:5px;font-size:13px;color:var(--text-muted);font-variant-numeric:tabular-nums}
+.reader-x{width:36px;height:36px;flex:none;border-radius:8px;border:1px solid var(--border);
+  background:var(--bg-soft);color:var(--text-muted);font-size:14px;cursor:pointer}
+.reader-x:hover{color:var(--text);border-color:var(--border-hi)}
+.reader-body{flex:1;overflow-y:auto;padding:16px 20px;-webkit-overflow-scrolling:touch}
+.reader-tip{font-size:12.5px;color:var(--text-muted);background:var(--bg-soft);
+  border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:14px;line-height:1.6}
+.reader-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:13px 20px;border-top:1px solid var(--border);min-height:56px}
+.reader-note{font-size:12.5px;color:var(--text-muted)}
+.reader-src{font-size:13.5px;color:var(--primary);text-decoration:none;white-space:nowrap;
+  padding:10px 4px;min-height:44px;display:inline-flex;align-items:center}
+.reader-src:hover{color:#8FB0FF}
+
+/* 短信条目 */
+.msg{border:1px solid var(--border);border-radius:12px;padding:13px 14px;margin-bottom:11px;
+  background:var(--bg-soft)}
+.msg-top{display:flex;align-items:center;gap:9px;margin-bottom:8px;flex-wrap:wrap}
+.msg-from{font-size:12px;font-weight:600;color:var(--accent);background:rgba(52,214,182,.11);
+  border:1px solid rgba(52,214,182,.24);border-radius:6px;padding:2px 7px;max-width:180px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.msg-time{font-size:11.5px;color:var(--text-muted);margin-left:auto;font-variant-numeric:tabular-nums}
+.msg-body{font-size:14px;line-height:1.65;color:var(--text);word-break:break-word}
+.msg-otp{margin-top:10px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.otp-val{font-size:19px;font-weight:700;letter-spacing:2.5px;color:var(--primary);
+  background:rgba(91,140,255,.1);border:1px dashed rgba(91,140,255,.42);
+  border-radius:8px;padding:6px 12px;font-variant-numeric:tabular-nums}
+.otp-cp{font-size:12.5px;color:var(--primary);background:none;border:1px solid rgba(91,140,255,.3);
+  border-radius:7px;padding:8px 11px;cursor:pointer;min-height:36px;font-family:inherit}
+.otp-cp:hover{background:rgba(91,140,255,.14)}
+.otp-tag{font-size:11.5px;color:var(--text-muted)}
+
+.reader-empty{text-align:center;padding:36px 16px;color:var(--text-muted);font-size:13.5px;line-height:1.8}
+.reader-empty b{display:block;color:var(--text);font-size:15px;margin-bottom:6px;font-weight:600}
+.reader-err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.28);
+  border-radius:10px;padding:12px 14px;font-size:13px;color:#FCA5A5;line-height:1.7}
+.reader-load{display:flex;align-items:center;justify-content:center;gap:10px;padding:34px 0;
+  color:var(--text-muted);font-size:13.5px}
+.spin{width:16px;height:16px;border:2px solid rgba(91,140,255,.22);
+  border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media (max-width:767px){
+  /* 移动端改为底部抽屉，更符合单手操作 */
+  .reader{right:0;left:0;top:auto;bottom:0;width:100%;max-height:86vh;
+    border-radius:16px 16px 0 0;border-bottom:0;
+    box-shadow:0 -20px 50px rgba(0,0,0,.5);animation:slideUp .24s cubic-bezier(.22,.61,.36,1)}
+  @keyframes slideUp{from{transform:translateY(28px);opacity:.4}to{transform:none;opacity:1}}
+  .reader-head{padding:15px 16px 12px}
+  .reader-body{padding:13px 16px}
+  .reader-foot{padding:11px 16px}
+  .otp-val{font-size:17px;letter-spacing:2px}
+  .inline-read{padding:12px 11px}
+}
 
 /* ============ 数据源状态 ============ */
 .srcs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
@@ -466,6 +543,22 @@ const DATA_URL = 'data/numbers.json';
 let DATA = null, CACHE = null;
 const F = { country:'', source:'', status:'', sort:'recent' };
 
+/* ---------- 站内短信查看（能力白名单） ----------
+   只有 2026-10-05 实测确认「页面公开可见、无验证码、无 X-Frame-Options 限制」
+   的源才允许站内展示正文。其余源一律跳原站，不做技术承诺，也不给用户错误预期。 */
+const READABLE = new Set(['receiveasmsonline']);
+/* ISO 两字母 -> receiveasmsonline 的国家路径 slug（与后端白名单一致） */
+const SLUG_BY_ISO = {
+  US:'united-states', GB:'united-kingdom', DE:'germany', FR:'france', CN:'china',
+  CA:'canada', RU:'russia', NL:'netherlands', IN:'india', IL:'israel',
+  KZ:'kazakhstan', MX:'mexico', ID:'indonesia', PT:'portugal', TH:'thailand',
+  PH:'philippines', HR:'croatia', SE:'sweden', HK:'hong-kong', FI:'finland',
+  UA:'ukraine', IE:'ireland', NG:'nigeria', BR:'brazil', BE:'belgium',
+  ES:'spain', RO:'romania', CZ:'czech-republic', IT:'italy', JP:'japan',
+  AT:'austria', TW:'taiwan', SG:'singapore', KR:'south-korea', PL:'poland',
+  MU:'mauritius', MA:'morocco', GE:'georgia',
+};
+
 const esc = s => String(s??'').replace(/[&<>"']/g, c =>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const shorten = s => s && s.length>26 ? s.slice(0,26)+'…' : s;
@@ -684,6 +777,10 @@ function render(){
       '<div class="card-src">'+esc(n.sourceName)+'</div>'+
       '<div class="card-meta">'+meta+'</div>'+
       '<div class="card-foot"><time datetime="'+esc(n.collectedAt)+'" title="'+esc(absTime(n.collectedAt))+'">'+(rel?rel+'收录':'—')+'</time>'+
+        (READABLE.has(n.sourceId) && SLUG_BY_ISO[n.countryCode]
+          /* 仅实测可读正文的源给「站内查看」，其余源一律跳原站，不做技术承诺 */
+          ? '<button class="go inline-read" data-slug="'+esc(SLUG_BY_ISO[n.countryCode])+'" data-phone="'+esc((n.phone||'').replace(/\D/g,''))+'" type="button">站内查看短信</button>'
+          : '')+
         '<a class="go" href="'+esc(n.sourceUrl)+'" target="_blank" rel="noopener noreferrer">查看原站短信 ↗</a></div>'+
     '</article>';
   }).join('');
@@ -783,8 +880,171 @@ if(matchMedia('(max-width:767px)').matches){
   });
 }
 
+/* ================= 短信查看抽屉 =================
+   注意：本脚本位于 <head> 内的 <script> 中，而面板 DOM 在 </body> 前，
+   直接执行会因 #reader 尚不存在而拿不到元素。故等 DOM 就绪后再初始化。 */
+function initReader(){
+  const mask = $('#readerMask'), panel = $('#reader'), body = $('#readerBody'),
+        sub = $('#readerSub'), note = $('#readerNote'), src = $('#readerSrc');
+  if(!panel) return;
+
+  let timer = null, cooldownTimer = null, current = null, lastFetchAt = 0;
+  const POLL_MS = 20000;          // 轮询间隔（与后端 15s 限频配合）
+  const MIN_TRIGGER_GAP = 16000;  // 用户手动刷新最小间隔
+
+  const stopAll = ()=>{ clearInterval(timer); timer=null; clearTimeout(cooldownTimer); cooldownTimer=null; };
+
+  function closeReader(){
+    stopAll();
+    panel.hidden = true; mask.hidden = true;
+    document.body.style.overflow = '';
+    current = null;
+  }
+
+  function setNote(t){ note.textContent = t; }
+
+  function esc(s){ return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  /* 合规提示常驻：任何状态下（加载中/空态/报错/成功）都要能看到出处说明，
+     所以统一走 setBody() 写入，自动带上 tip，避免被innerHTML 覆盖后消失。 */
+  const TIP = '<div class="reader-tip">内容来自第三方公开页面，本站仅做渲染展示；'+
+    '号码为公共共享号，验证码有效性以原站与接收方为准。</div>';
+  function setBody(html){ body.innerHTML = TIP + html; }
+
+  function renderMessages(d){
+    if(!d.messages || !d.messages.length){
+      return '<div class="reader-empty"><b>暂无短信</b>'+
+        '该号码当前没有公开短信。<br>公共号码收信不保证，可稍后刷新或换个号码试试。</div>';
+    }
+    return d.messages.map(m=>{
+      const otp = m.otp
+        ? '<div class="msg-otp"><span class="otp-val">'+esc(m.otp)+'</span>'+
+          '<button class="otp-cp" type="button" data-otp="'+esc(m.otp)+'">复制验证码</button>'+
+          '<span class="otp-tag">疑似验证码（自动识别，请自行核对）</span></div>'
+        : '';
+      return '<article class="msg">'+
+        '<div class="msg-top">'+
+          (m.sender?'<span class="msg-from">'+esc(m.sender)+'</span>':'')+
+          (m.when?'<span class="msg-time">'+esc(m.when)+'</span>':'')+
+        '</div>'+
+        '<div class="msg-body">'+esc(m.body)+'</div>'+ otp +
+      '</article>';
+    }).join('');
+  }
+
+  function bindCopy(){
+    body.querySelectorAll('.otp-cp').forEach(b=>{
+      b.onclick = async ()=>{
+        const v = b.dataset.otp, old = b.textContent;
+        try{ await navigator.clipboard.writeText(v); b.textContent='已复制 ✓'; }
+        catch(e){ b.textContent='复制失败'; }
+        setTimeout(()=>{ b.textContent=old; }, 1500);
+      };
+    });
+  }
+
+  async function fetchOnce(btn){
+    if(!current) return;
+    if(btn) btn.disabled = true;
+    body.setAttribute('aria-busy','true');
+    const t0 = performance.now();
+    try{
+      const r = await fetch('/api/sms?slug='+encodeURIComponent(current.slug)+
+                            '&phone='+encodeURIComponent(current.phone), {cache:'no-store'});
+      const d = await r.json().catch(()=>({error:'返回格式异常'}));
+
+      if(r.status === 429){
+        const wait = (d.retryAfter||Math.ceil((POLL_MS-1500)/1000));
+        setNote('请求过于频繁，'+wait+' 秒后自动重试');
+        setBody('<div class="reader-empty"><b>请稍候</b>为避免给源站造成压力，'+
+          '同一号码 '+Math.round(15000/1000)+' 秒内只查询一次。</div>');
+        clearTimeout(cooldownTimer);
+        cooldownTimer = setTimeout(()=>fetchOnce(btn), wait*1000);
+        return;
+      }
+      if(!r.ok){
+        setNote('读取失败');
+        setBody('<div class="reader-err">读取失败：'+esc(d.error||('HTTP '+r.status))+
+          '<br>可点下方「打开原站」直接查看，或稍后重试。</div>');
+        return;
+      }
+
+      lastFetchAt = Date.now();
+      const secs = ((performance.now()-t0)/1000).toFixed(1);
+      setBody(renderMessages(d));
+      bindCopy();
+      setNote(d.count ? (d.count+' 条 · '+secs+'s'+(d.cached?' · 缓存':'')) : ('暂无短信 · '+secs+'s'));
+    }catch(e){
+      setNote('网络错误');
+      setBody('<div class="reader-err">网络错误：'+esc(e.message)+
+        '<br>请检查网络后重试，或点下方「打开原站」。</div>');
+    }finally{
+      body.removeAttribute('aria-busy');
+      if(btn) btn.disabled = false;
+    }
+  }
+
+  function openReader(slug, phone, phoneLabel, countryLabel){
+    current = { slug, phone };
+    lastFetchAt = 0;
+    panel.hidden = false; mask.hidden = false;
+    document.body.style.overflow = 'hidden';
+    sub.textContent = (phoneLabel||phone) + ' · ' + (countryLabel||'');
+    src.href = 'https://receiveasmsonline.com/' + slug + '/' + phone + '/';
+    setBody('<div class="reader-load"><span class="spin"></span>正在读取公开页面…</div>');
+    setNote('读取中…');
+    fetchOnce();
+    // 首次 6s 后开始轮询，避开后端限频窗口
+    stopAll();
+    cooldownTimer = setTimeout(()=>{
+      timer = setInterval(()=>{
+        if(Date.now() - lastFetchAt >= MIN_TRIGGER_GAP) fetchOnce();
+      }, POLL_MS);
+    }, MIN_TRIGGER_GAP);
+  }
+
+  $('#readerClose').onclick = closeReader;
+  mask.onclick = closeReader;
+  document.addEventListener('keydown', e=>{
+    if(e.key==='Escape' && !panel.hidden) closeReader();
+  });
+
+  // 卡片按钮（事件委托，兼容筛选/搜索后的重渲染）
+  document.addEventListener('click', e=>{
+    const b = e.target.closest('.inline-read');
+    if(!b) return;
+    e.preventDefault();
+    const card = b.closest('.card');
+    const phoneEl = card ? card.querySelector('.card-phone') : null;
+    const countryEl = card ? card.querySelector('.card-country') : null;
+    openReader(b.dataset.slug, b.dataset.phone,
+      phoneEl ? phoneEl.textContent.replace(/\s+/g,' ').trim() : b.dataset.phone,
+      countryEl ? countryEl.textContent.trim() : '');
+  });
+}
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initReader);
+else initReader();
+
 load();
 })();
 </script>
+<div class="sheet-mask" id="readerMask" hidden></div>
+<section class="reader" id="reader" hidden aria-modal="true" role="dialog" aria-labelledby="readerTitle">
+  <div class="reader-head">
+    <div>
+      <h2 id="readerTitle">短信内容</h2>
+      <div class="reader-sub" id="readerSub">—</div>
+    </div>
+    <button class="reader-x" id="readerClose" type="button" aria-label="关闭">✕</button>
+  </div>
+  <div class="reader-body" id="readerBody">
+    <div class="reader-tip">内容来自第三方公开页面，本站仅做渲染展示。验证码请以原站为准。</div>
+  </div>
+  <div class="reader-foot">
+    <span class="reader-note" id="readerNote">读取中…</span>
+    <a class="reader-src" id="readerSrc" href="#" target="_blank" rel="noopener noreferrer">打开原站 ↗</a>
+  </div>
+</section>
+
 </body>
 </html>
