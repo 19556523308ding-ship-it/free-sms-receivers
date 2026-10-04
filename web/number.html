@@ -135,9 +135,9 @@
       <div id="nhStatus"></div>
     </div>
     <div class="nhead-acts">
-      <button class="btn btn-primary" id="cpNum" type="button">⧉ 复制号码</button>
+      <button class="btn btn-primary" id="cpNum" type="button"><span data-ic="copy"></span>复制号码</button>
       <button class="btn" id="switchNum" type="button">换一个同国家号码</button>
-      <button class="btn" id="allNum" type="button">全部号码 →</button>
+      <button class="btn" id="allNum" type="button">全部号码 <span data-ic="arrow-right"></span></button>
     </div>
     <div class="nmeta" id="nmeta"></div>
   </section>
@@ -176,18 +176,19 @@
 <nav class="bnav" id="bnav" aria-label="底部导航"></nav>
 
 <div class="sticky-bar" id="sticky">
-  <button class="btn btn-primary" id="stCopy" type="button">⧉ 复制号码</button>
+  <button class="btn btn-primary" id="stCopy" type="button"><span data-ic="copy"></span>复制号码</button>
   <button class="btn" id="stRefresh" type="button">刷新短信</button>
 </div>
 
 <script type="module">
 import {
   loadData, countriesOf, mainPool, rank, esc, flagImg, fmtPhone, statusHtml,
-  STATUS_LABEL, relTime, copy, toast, renderChrome, renderFooter
+  STATUS_LABEL, relTime, copy, toast, renderChrome, renderFooter, fillIcons
 } from './assets/app.js';
 
 renderChrome('numbers');
 renderFooter();
+fillIcons();
 
 const $ = s => document.querySelector(s);
 const sp = new URLSearchParams(location.search);
@@ -337,20 +338,20 @@ function paintMsgs(flashIds) {
 
   if (!MSGS.length) {
     box.innerHTML = '';
-    $('#msgState').innerHTML = `<div class="state"><div class="ic">📭</div><h3>暂时还没有公开短信</h3>
+    $('#msgState').innerHTML = `<div class="state"><img class="state-art" src="assets/empty/empty-inbox.svg" alt="" width="150" height="120"><h3>暂时还没有公开短信</h3>
       <p>公共号码收信不保证，可稍后刷新或换一个号码试试。</p></div>`;
     return;
   }
   if (!show.length) {
     box.innerHTML = '';
     $('#msgState').innerHTML = showAll
-      ? `<div class="state"><div class="ic">📭</div><h3>暂时还没有公开短信</h3>
+      ? `<div class="state"><img class="state-art" src="assets/empty/empty-inbox.svg" alt="" width="150" height="120"><h3>暂时还没有公开短信</h3>
          <p>公共号码收信不保证，可稍后刷新或换一个号码试试。</p></div>`
-      : `<div class="state"><div class="ic">⏳</div><h3>${hasSession ? '本次使用后还没有新短信' : '还没有开始接码会话'}</h3>
+      : `<div class="state"><img class="state-art" src="assets/empty/waiting-sms.svg" alt="" width="150" height="120"><h3>${hasSession ? '本次使用后还没有新短信' : '还没有开始接码会话'}</h3>
          <p>${hasSession
             ? '历史短信可在「所有短信」查看。有些服务需要 1–2 分钟才会发送验证码。'
             : '点上方「复制号码」开始接码，之后收到的短信会单独归到这里，方便快速找到。'}</p>
-         ${hasSession ? '' : '<button class="btn btn-primary" id="startHere">⧉ 复制号码并开始</button>'}</div>`;
+         ${hasSession ? '' : '<button class="btn btn-primary" id="startHere"><span data-ic="copy"></span>复制号码并开始</button>'}</div>`;
     const sh = $('#startHere');
     if (sh) sh.onclick = doCopyNumber;
     return;
@@ -390,7 +391,7 @@ async function fetchMsgs(silent) {
   if (!silent) {
     $('#ibNote').textContent = '正在读取…';
     if (!MSGS.length) {
-      $('#msgState').innerHTML = '<div class="state"><div class="ic">⏳</div><h3>正在读取公开短信…</h3><p>首次读取需要启动渲染，通常 3–6 秒。</p></div>';
+      $('#msgState').innerHTML = '<div class="state"><div class="ic"><span class="spin"></span></div><h3>正在读取公开短信…</h3><p>首次读取需要启动渲染，通常 3–6 秒。</p></div>';
     }
     clearTimeout(slowTimer);
     slowTimer = setTimeout(() => {
@@ -418,7 +419,7 @@ async function fetchMsgs(silent) {
     if (!r.ok) {
       $('#ibNote').textContent = '读取失败，将自动重试';
       if (!MSGS.length) {
-        $('#msgState').innerHTML = `<div class="state"><div class="ic">⚠️</div><h3>读取失败</h3>
+        $('#msgState').innerHTML = `<div class="state"><img class="state-art" src="assets/empty/empty-error.svg" alt="" width="150" height="120"><h3>读取失败</h3>
           <p>${esc(d.error || ('HTTP ' + r.status))}</p><button class="btn btn-primary" id="retryMsg">立即重试</button></div>`;
         const rb = $('#retryMsg');
         if (rb) rb.onclick = () => { nextAt = 0; fetchMsgs(false); };
@@ -505,8 +506,8 @@ async function doCopyNumber() {
   if (f2) { f2.classList.add('on'); }
   toast('号码已复制：' + N.phone);
   setWait('wait', '把这个号码填写到需要接收短信的网站，本页正在自动等待新短信');
-  $('#stCopy').textContent = '⧉ 已复制号码';
-  setTimeout(() => { $('#stCopy').textContent = '⧉ 复制号码'; }, 2400);
+  $('#stCopy').innerHTML = '<span data-ic="check"></span>已复制号码';
+  setTimeout(() => { $('#stCopy').innerHTML = '<span data-ic="copy"></span>复制号码'; fillIcons($('#stCopy')); }, 2400);
   // 立即触发一次检查
   nextAt = Date.now() + 2000;
   startPolling();
@@ -562,7 +563,7 @@ document.addEventListener('visibilitychange', () => {
 
 /* ---------- 启动 ---------- */
 (async () => {
-  $('#msgState').innerHTML = '<div class="state"><div class="ic">⏳</div><h3>正在读取…</h3></div>';
+  $('#msgState').innerHTML = '<div class="state"><div class="ic"><span class="spin"></span></div><h3>正在读取…</h3></div>';
   try {
     DATA = await loadData();
     CTYS = countriesOf(DATA);

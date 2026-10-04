@@ -68,6 +68,7 @@ img{max-width:100%}
 }
 .hd-in{max-width:var(--maxw);margin:0 auto;padding:0 20px;height:100%;display:flex;align-items:center;gap:22px}
 .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:17px;letter-spacing:-.01em;flex:none}
+.brand .brand-logo{display:block;height:30px;width:auto}
 .brand .dot{width:22px;height:22px;border-radius:7px;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:12px;color:#04070d;font-weight:800}
 .nav{display:flex;align-items:center;gap:4px;flex:1;min-width:0}
 .nav a{
@@ -83,9 +84,13 @@ img{max-width:100%}
   color:var(--text-muted);font-size:14px;min-width:190px;cursor:pointer;transition:border-color .15s;
 }
 .hd-search:hover{border-color:var(--border-strong)}
+.hd-search svg{width:15px;height:15px;flex:none;opacity:.75}
+.hd-search svg path,.hd-search svg circle{stroke:currentColor}
 .burger{display:none;width:38px;height:38px;border:1px solid var(--border);border-radius:var(--r-btn);background:transparent;color:var(--text);cursor:pointer;align-items:center;justify-content:center;font-size:17px;flex:none}
 .icon-btn{width:38px;height:38px;border:1px solid var(--border);border-radius:var(--r-btn);background:transparent;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .15s,border-color .15s}
 .icon-btn:hover{color:var(--text);border-color:var(--border-strong)}
+.icon-btn svg{width:17px;height:17px}
+.icon-btn svg path,.icon-btn svg circle,.icon-btn svg rect,.icon-btn svg ellipse{stroke:currentColor}
 
 /* ---------- Buttons (§43) ---------- */
 .btn{
@@ -147,8 +152,9 @@ img{max-width:100%}
 @keyframes sp{to{transform:rotate(360deg)}}
 
 /* ---------- 空/错误态 ---------- */
-.state{text-align:center;padding:64px 20px;color:var(--text-muted)}
+.state{text-align:center;padding:56px 20px;color:var(--text-muted)}
 .state .ic{font-size:38px;margin-bottom:14px}
+.state .state-art{display:block;margin:0 auto 14px;width:150px;height:auto;opacity:.95}
 .state h3{color:var(--text);font-size:17px;margin:0 0 8px}
 .state p{margin:0 0 18px;font-size:14px}
 
@@ -162,7 +168,10 @@ img{max-width:100%}
 
 /* ---------- Footer ---------- */
 .ft{border-top:1px solid var(--border);margin-top:64px;padding:34px 0 46px;color:var(--text-dim);font-size:13px}
-.ft-in{max-width:var(--maxw);margin:0 auto;padding:0 20px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.ft-in{max-width:var(--maxw);margin:0 auto;padding:0 20px;display:flex;justify-content:space-between;gap:28px;flex-wrap:wrap;align-items:flex-start}
+.ft-brand{max-width:520px}
+.ft-brand img{display:block;height:28px;width:auto}
+.ft-links{display:flex;gap:18px;flex-wrap:wrap}
 .ft a{color:var(--text-muted)}
 .ft a:hover{color:var(--text)}
 
@@ -223,6 +232,17 @@ select.sel:focus{outline:0;border-color:var(--primary)}
 }
 .cp:hover{background:rgba(79,127,255,.16);border-color:rgba(79,127,255,.45);color:var(--text)}
 .cp.done{background:rgba(45,212,168,.16);border-color:rgba(45,212,168,.5);color:var(--accent)}
+.cp svg{width:16px;height:16px}
+.cp svg path,.cp svg rect,.cp svg circle{stroke:currentColor}
+/* 卡片右上角角标组 */
+.ncard-tags{display:flex;align-items:center;gap:8px;flex:none;flex-wrap:wrap;justify-content:flex-end}
+.badge{
+  display:inline-flex;align-items:center;height:22px;padding:0 9px;border-radius:var(--r-pill);
+  font-size:11.5px;font-weight:700;letter-spacing:.01em;white-space:nowrap;
+}
+.badge-recommended{background:var(--primary);color:#fff}
+.badge-new{background:#EF4444;color:#fff}
+.badge-hot{background:var(--warning);color:#1a1204}
 .ncard-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--text-muted)}
 .ncard-meta .sep{color:var(--text-dim);opacity:.5}
 .ncard-foot{display:flex;gap:9px;margin-top:2px}

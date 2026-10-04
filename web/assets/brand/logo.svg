@@ -1,10 +1,18 @@
-<svg width="260" height="64" viewBox="0 0 260 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect x="8" y="6" width="34" height="52" rx="10" fill="#5B8CFF"/>
-  <rect x="13" y="11" width="24" height="42" rx="7" fill="#0B1220"/>
-  <path d="M23 18H42C46.4183 18 50 21.5817 50 26V36C50 40.4183 46.4183 44 42 44H35L29 50V44H23C18.5817 44 15 40.4183 15 36V26C15 21.5817 18.5817 18 23 18Z" fill="#34D6B6"/>
-  <circle cx="25" cy="31" r="2.2" fill="#081018"/>
-  <circle cx="32.5" cy="31" r="2.2" fill="#081018"/>
-  <circle cx="40" cy="31" r="2.2" fill="#081018"/>
-  <text x="66" y="31" fill="#F8FAFC" font-size="24" font-weight="700" font-family="Inter, Arial, sans-serif">SMS Hub</text>
-  <text x="66" y="49" fill="#94A3B8" font-size="12" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif">全球公开号码聚合</text>
+<svg width="280" height="64" viewBox="0 0 280 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gPrimary" x1="10" y1="6" x2="44" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6B94FF"/><stop offset="1" stop-color="#4F7FFF"/>
+    </linearGradient>
+    <linearGradient id="gAccent" x1="17" y1="18" x2="52" y2="50" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2DD4A8"/><stop offset="1" stop-color="#1FB894"/>
+    </linearGradient>
+  </defs>
+  <rect x="10" y="6" width="34" height="52" rx="10" fill="url(#gPrimary)"/>
+  <rect x="15" y="11" width="24" height="42" rx="7" fill="#070B12"/>
+  <path d="M25 18H44C48.4183 18 52 21.5817 52 26V36C52 40.4183 48.4183 44 44 44H37L31 50V44H25C20.5817 44 17 40.4183 17 36V26C17 21.5817 20.5817 18 25 18Z" fill="url(#gAccent)"/>
+  <circle cx="27" cy="31" r="2.2" fill="#070B12"/>
+  <circle cx="34.5" cy="31" r="2.2" fill="#070B12"/>
+  <circle cx="42" cy="31" r="2.2" fill="#070B12"/>
+  <text x="70" y="32" fill="#F8FAFC" font-size="24" font-weight="700" font-family="Inter, PingFang SC, Microsoft YaHei, system-ui, sans-serif">SMS Hub</text>
+  <text x="70" y="50" fill="#94A3B8" font-size="12.5" font-family="Inter, PingFang SC, Microsoft YaHei, system-ui, sans-serif">免费在线接码</text>
 </svg>

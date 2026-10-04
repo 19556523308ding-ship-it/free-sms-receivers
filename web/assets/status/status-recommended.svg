@@ -1,0 +1,6 @@
+<svg width="120" height="36" viewBox="0 0 120 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="120" height="36" rx="18" fill="#101722" stroke="rgba(255,255,255,.08)"/>
+  <circle cx="22" cy="18" r="8" fill="#4F7FFF" fill-opacity=".18"/>
+  <circle cx="22" cy="18" r="4" fill="#4F7FFF"/>
+  <text x="40" y="23" fill="#4F7FFF" font-size="13" font-weight="600" font-family="Inter, PingFang SC, Microsoft YaHei, system-ui, sans-serif">推荐</text>
+</svg>

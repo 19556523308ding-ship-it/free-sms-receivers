@@ -1,0 +1,9 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="26" y="14" width="68" height="68" rx="20" fill="#4F7FFF" fill-opacity=".10" stroke="rgba(255,255,255,.08)"/>
+  <g transform="translate(36 24)">
+    <g fill="none" stroke="#4F7FFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2 24s8-13 22-13 22 13 22 13-8 13-22 13S2 24 2 24Z"/><circle cx="24" cy="24" r="5.5"/><circle cx="24" cy="24" r="1.6" fill="#4F7FFF" stroke="none"/>
+    </g>
+  </g>
+  <text x="60" y="104" fill="#F8FAFC" font-size="13" font-weight="600" text-anchor="middle" font-family="Inter, PingFang SC, Microsoft YaHei, system-ui, sans-serif">在线查看</text>
+</svg>

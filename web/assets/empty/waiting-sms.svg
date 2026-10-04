@@ -1,0 +1,19 @@
+<svg width="200" height="160" viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="wsA" x1="48" y1="30" x2="152" y2="128" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2DD4A8"/><stop offset="1" stop-color="#0E8F76"/>
+    </linearGradient>
+  </defs>
+  <!-- 信封+时钟 -->
+  <g>
+    <rect x="52" y="52" width="86" height="58" rx="10" fill="#16202E" stroke="rgba(255,255,255,.08)"/>
+    <path d="M52 60l43 28 43-28" stroke="#94A3B8" stroke-opacity=".7" stroke-width="2" fill="none"/>
+  </g>
+  <circle cx="146" cy="52" r="28" fill="#101722" stroke="url(#wsA)" stroke-width="2.4"/>
+  <path d="M146 36v17l11 7" stroke="#2DD4A8" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+  <!-- 光晕与点缀 -->
+  <ellipse cx="100" cy="140" rx="60" ry="8" fill="#2DD4A8" fill-opacity=".12"/>
+  <circle cx="36" cy="44" r="2.5" fill="#4F7FFF" fill-opacity=".7"/>
+  <circle cx="176" cy="106" r="2" fill="#2DD4A8" fill-opacity=".7"/>
+  <circle cx="30" cy="104" r="1.8" fill="#2DD4A8" fill-opacity=".6"/>
+</svg>

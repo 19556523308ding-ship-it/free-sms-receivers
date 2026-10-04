@@ -1,0 +1,19 @@
+<svg width="1200" height="420" viewBox="0 0 1200 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="wvA" x1="0" y1="0" x2="1200" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4F7FFF" stop-opacity="0"/>
+      <stop offset=".4" stop-color="#6B94FF" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#2DD4A8" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="wvB" x1="0" y1="0" x2="1200" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2DD4A8" stop-opacity="0"/>
+      <stop offset=".45" stop-color="#2DD4A8" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#4F7FFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="420" fill="#070B12"/>
+  <path d="M-20 250C160 190 320 300 500 250C680 200 840 290 1020 230C1100 205 1160 220 1240 200" stroke="url(#wvA)" stroke-width="2"/>
+  <path d="M-20 290C160 230 320 340 500 290C680 240 840 330 1020 270C1100 245 1160 260 1240 240" stroke="url(#wvB)" stroke-width="1.4"/>
+  <path d="M-20 330C160 275 320 380 500 330C680 280 840 370 1020 315C1100 290 1160 305 1240 285" stroke="url(#wvB)" stroke-width="1" stroke-opacity=".7"/>
+  <path d="M-20 210C160 155 320 262 500 212C680 162 840 252 1020 195C1100 170 1160 185 1240 165" stroke="url(#wvA)" stroke-width="1" stroke-opacity=".6"/>
+</svg>

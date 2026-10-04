@@ -1,0 +1,21 @@
+<svg width="200" height="160" viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="eibA" x1="40" y1="50" x2="160" y2="130" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6B94FF"/><stop offset="1" stop-color="#4F7FFF"/>
+    </linearGradient>
+  </defs>
+  <!-- 抽屉盒 -->
+  <rect x="46" y="72" width="108" height="60" rx="12" fill="#16202E" stroke="rgba(255,255,255,.08)"/>
+  <path d="M46 92h26l6 10h44l6-10h26" stroke="rgba(255,255,255,.08)" stroke-width="1.6" fill="none"/>
+  <!-- 弹出信件 -->
+  <g>
+    <rect x="66" y="34" width="68" height="48" rx="8" fill="url(#eibA)"/>
+    <path d="M66 40l34 22 34-22" stroke="#FFFFFF" stroke-opacity=".7" stroke-width="2" fill="none"/>
+  </g>
+  <!-- 光晕 -->
+  <ellipse cx="100" cy="142" rx="62" ry="9" fill="#4F7FFF" fill-opacity=".12"/>
+  <!-- 点缀 -->
+  <circle cx="40" cy="52" r="2.5" fill="#2DD4A8" fill-opacity=".7"/>
+  <circle cx="164" cy="66" r="2.5" fill="#2DD4A8" fill-opacity=".7"/>
+  <circle cx="158" cy="34" r="1.8" fill="#4F7FFF" fill-opacity=".7"/>
+</svg>

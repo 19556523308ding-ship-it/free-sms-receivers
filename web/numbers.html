@@ -133,10 +133,11 @@
 import {
   loadData, countriesOf, matchCountry, mainPool, sparePool, rank, scoreOf, isDirect, esc, flagImg,
   fmtPhone, statusHtml, statusLine, smsLine, toast, renderChrome, renderFooter, bindCopyButtons
-} from './assets/app.js';
+, fillIcons } from './assets/app.js';
 
 renderChrome('numbers');
 renderFooter();
+fillIcons();
 bindCopyButtons();
 
 const $ = s => document.querySelector(s);
@@ -192,14 +193,14 @@ function cardHtml(n) {
     </div>
     <div class="ncard-phone">
       <span class="val mono" title="${esc(n.phone)}">${esc(shown)}</span>
-      <button class="cp" data-phone="${esc(n.phone)}" data-icon="⧉" aria-label="复制号码 ${esc(n.phone)}" title="复制号码">⧉</button>
+      <button class="cp" data-phone="${esc(n.phone)}" data-ic="copy" aria-label="复制号码 ${esc(n.phone)}" title="复制号码"></button>
     </div>
     <div class="ncard-meta">
       <span>${direct ? esc(statusLine(n)) : '站内暂不支持查看'}</span><span class="sep">·</span><span>${smsLine(n)}</span>
     </div>
     <div class="ncard-foot">
       ${direct
-        ? `<a class="btn btn-primary btn-sm" href="number.html?id=${encodeURIComponent(n.id)}">使用此号码 →</a>`
+        ? `<a class="btn btn-primary btn-sm" href="number.html?id=${encodeURIComponent(n.id)}">使用此号码 <span data-ic="arrow-right"></span></a>`
         : `<a class="btn btn-sm" href="${esc(n.sourceUrl)}" target="_blank" rel="noopener nofollow">前往原站查看 ↗</a>`}
     </div>
   </article>`;
@@ -247,7 +248,7 @@ function render() {
   if (!LIST.length) {
     $('#grid').innerHTML = '';
     $('#moreBox').innerHTML = '';
-    $('#stateBox').innerHTML = `<div class="state"><div class="ic">🔍</div><h3>没有匹配的号码</h3>
+    $('#stateBox').innerHTML = `<div class="state"><img class="state-art" src="assets/empty/empty-search.svg" alt="" width="150" height="120"><h3>没有匹配的号码</h3>
       <p>换个国家或清空筛选条件再试试。</p><button class="btn btn-primary" id="resetAll">清除筛选</button></div>`;
     const rb = $('#resetAll');
     if (rb) rb.onclick = () => { F.country = F.status = F.q = ''; F.pool = 'main'; F.sort = 'rank'; $('#q').value = ''; SHOWN = PAGE; render(); };
@@ -256,6 +257,7 @@ function render() {
   $('#stateBox').innerHTML = '';
   const slice = LIST.slice(0, SHOWN);
   $('#grid').innerHTML = slice.map(cardHtml).join('');
+  fillIcons($('#grid'));
   $('#moreBox').innerHTML = LIST.length > SHOWN
     ? `<button class="btn" id="moreBtn">加载更多（还有 ${LIST.length - SHOWN} 个）</button>`
     : `<span style="font-size:13px;color:var(--text-dim)">已显示全部 ${LIST.length} 个号码</span>`;
@@ -322,7 +324,7 @@ document.addEventListener('keydown', e => {
   } catch (err) {
     $('#grid').innerHTML = '';
     $('#ptSub').textContent = '数据加载失败';
-    $('#stateBox').innerHTML = `<div class="state"><div class="ic">⚠️</div><h3>数据加载失败</h3>
+    $('#stateBox').innerHTML = `<div class="state"><img class="state-art" src="assets/empty/empty-error.svg" alt="" width="150" height="120"><h3>数据加载失败</h3>
       <p>${esc(err.message)}</p><button class="btn btn-primary" id="retry">重试</button></div>`;
     const rb = $('#retry'); if (rb) rb.onclick = () => location.reload();
   }

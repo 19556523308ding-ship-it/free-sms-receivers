@@ -1,0 +1,7 @@
+<svg width="72" height="92" viewBox="0 0 72 92" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="12" y="4" width="48" height="48" rx="14" fill="#4F7FFF" fill-opacity=".10" stroke="rgba(255,255,255,.08)"/>
+  <g transform="translate(24 16)" fill="none" stroke="#4F7FFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6.5 4.5L4 7l2.5 2.5M4 7h13a2.5 2.5 0 0 1 0 5h-1M17.5 19.5L20 17l-2.5-2.5M20 17H7a2.5 2.5 0 0 1 0-5h1"/>
+  </g>
+  <text x="36" y="76" fill="#F8FAFC" font-size="12" font-weight="600" text-anchor="middle" font-family="Inter, PingFang SC, Microsoft YaHei, system-ui, sans-serif">换号</text>
+</svg>

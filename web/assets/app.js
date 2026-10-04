@@ -229,6 +229,39 @@ export function toast(msg, kind = 'ok') {
 }
 
 /* ---------- 导航渲染（多页共用） ---------- */
+/* ---------- 素材助手 ---------- */
+/** 内联 SVG 图标（从 assets/icons 读取需异步，此处用 sprite 方式按需加载） */
+const ICON_CACHE = new Map();
+export async function icon(name, cls = '') {
+  if (!ICON_CACHE.has(name)) {
+    try {
+      const r = await fetch(`assets/icons/${name}.svg`);
+      ICON_CACHE.set(name, r.ok ? await r.text() : '');
+    } catch { ICON_CACHE.set(name, ''); }
+  }
+  const svg = ICON_CACHE.get(name);
+  if (!svg) return '';
+  return cls ? svg.replace('<svg ', `<svg class="${cls}" `) : svg;
+}
+/** 同步版本：从已缓存的图标拼 HTML（用于一次性渲染 chrome） */
+export async function icons(list) {
+  const out = {};
+  await Promise.all(list.map(async n => { out[n] = await icon(n); }));
+  return out;
+}
+
+/** 把页面上所有 [data-ic="name"] 占位替换成真实 SVG 图标 */
+export async function fillIcons(root = document) {
+  const slots = [...root.querySelectorAll('[data-ic]')];
+  if (!slots.length) return;
+  const names = [...new Set(slots.map(s => s.dataset.ic))];
+  const map = await icons(names);
+  slots.forEach(s => {
+    const svg = map[s.dataset.ic];
+    if (svg) s.innerHTML = svg;
+  });
+}
+
 export function renderChrome(active = '') {
   const nav = [
     ['index.html', '首页', 'home'],
@@ -241,16 +274,24 @@ export function renderChrome(active = '') {
     hd.innerHTML =
       `<div class="hd-in">
         <button class="burger" id="burger" aria-label="菜单" aria-expanded="false">☰</button>
-        <a class="brand" href="index.html"><span class="dot">S</span>SMS Hub</a>
+        <a class="brand" href="index.html"><img class="brand-logo" src="assets/brand/logo.svg" alt="SMS Hub 免费在线接码" width="140" height="32"></a>
         <nav class="nav" id="nav" aria-label="主导航">
           ${nav.map(([h, t, k]) => `<a href="${h}"${k === active ? ' aria-current="page"' : ''}>${t}</a>`).join('')}
         </nav>
         <div class="hd-act">
-          <a class="hd-search" href="numbers.html">🔍 搜索国家或区号</a>
+          <a class="hd-search" href="numbers.html" data-icon="search">搜索国家或区号</a>
           <a class="btn btn-primary btn-sm" href="numbers.html">选号码</a>
-          <button class="icon-btn" id="hdRefresh" title="刷新数据" aria-label="刷新数据">↻</button>
+          <button class="icon-btn" id="hdRefresh" title="刷新数据" aria-label="刷新数据" data-icon="refresh"></button>
         </div>
       </div>`;
+    // 用真实图标替换占位
+    (async () => {
+      const map = await icons(['search', 'refresh']);
+      const s = hd.querySelector('[data-icon="search"]');
+      if (s && map.search) s.innerHTML = `${map.search}<span>搜索国家或区号</span>`;
+      const rf = hd.querySelector('#hdRefresh');
+      if (rf && map.refresh) rf.innerHTML = map.refresh.replace('<svg ', '<svg width="17" height="17" ');
+    })();
     const b = hd.querySelector('#burger');
     b.onclick = () => {
       const n = hd.querySelector('#nav');
@@ -282,11 +323,13 @@ export function renderFooter() {
   const ft = document.getElementById('ft');
   if (!ft) return;
   ft.innerHTML = `<div class="ft-in">
-    <div>
-      <b style="color:var(--text)">SMS Hub</b> · 免费在线接码平台<br>
-      公共号码收到的短信任何人都可能看到，请勿用于银行、支付、邮箱或其他敏感账户。
+    <div class="ft-brand">
+      <img src="assets/brand/logo.svg" alt="SMS Hub" width="132" height="30">
+      <p style="margin:10px 0 0;color:var(--text-muted);font-size:13px;line-height:1.6">
+        公共号码收到的短信任何人都可能看到，请勿用于银行、支付、邮箱或其他敏感账户。
+      </p>
     </div>
-    <div style="display:flex;gap:18px;flex-wrap:wrap">
+    <div class="ft-links">
       <a href="index.html">首页</a>
       <a href="numbers.html">全部号码</a>
       <a href="guide.html">使用指南</a>
@@ -302,12 +345,19 @@ export function bindCopyButtons(root = document) {
     if (!b) return;
     e.preventDefault();
     const v = b.dataset.phone;
+    const store = b.dataset.ic || b.dataset.icon || 'copy';
     const ok = await copy(v);
     if (ok) {
       b.classList.add('done');
-      b.textContent = '✓';
-      const old = b.dataset.icon || '⧉';
-      setTimeout(() => { b.classList.remove('done'); b.textContent = old; }, 1500);
+      const ck = await icon('check');
+      if (ck) b.innerHTML = ck;
+      else b.textContent = '✓';
+      setTimeout(async () => {
+        b.classList.remove('done');
+        const back = await icon(store);
+        if (back) b.innerHTML = back;
+        else b.textContent = '⧉';
+      }, 1500);
       toast('号码已复制：' + v);
     } else {
       toast('复制失败，请手动选择号码', 'err');

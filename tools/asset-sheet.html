@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>SMS Hub 素材库总览</title>
+<style>
+  :root{--bg:#070B12;--surface:#101722;--surface-2:#16202E;--primary:#4F7FFF;--accent:#2DD4A8;
+        --text:#F8FAFC;--muted:#94A3B8;--dim:#64748B;--border:rgba(255,255,255,.08)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;padding:28px 32px 60px}
+  h1{font-size:24px;margin:0 0 6px}
+  .lead{color:var(--muted);font-size:13px;margin:0 0 26px}
+  h2{font-size:15px;margin:34px 0 14px;padding-left:10px;border-left:3px solid var(--primary);color:var(--text)}
+  h2 span{color:var(--dim);font-weight:400;font-size:12px;margin-left:8px}
+  .grid{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+  .cell{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+        padding:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+        min-width:104px}
+  .cell img{display:block;max-width:100%}
+  .cell .n{font-size:11px;color:var(--dim);text-align:center;word-break:break-all;font-family:ui-monospace,monospace}
+  .wide{flex:1 1 100%;overflow:hidden}
+  .wide img{width:100%;height:auto;border-radius:12px}
+  .heroimg{background:var(--bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;flex:1 1 100%}
+  .heroimg img{width:100%;display:block}
+  .flags .cell{min-width:0;padding:6px;background:transparent;border:none}
+  .flags img{width:60px;height:40px}
+  .flags .n{font-size:10px}
+</style>
+</head>
+<body>
+<h1>SMS Hub 素材库总览</h1>
+<p class="lead">设计资源库 12 分区 · 全部 SVG · 令牌对齐 §41（bg #070B12 / primary #4F7FFF / accent #2DD4A8）</p>
+
+<h2>01 · 品牌 Logo <span>brand/</span></h2>
+<div class="grid" id="g-brand"></div>
+
+<h2>02 · Hero 背景 <span>backgrounds/</span></h2>
+<div class="grid" id="g-hero"></div>
+
+<h2>05 · 品牌元素图 <span>elements/</span></h2>
+<div class="grid" id="g-el"></div>
+
+<h2>06 · 手机视觉 <span>elements/phone-mockup.svg</span></h2>
+<div class="grid" id="g-phone"></div>
+
+<h2>04 · 状态徽标 <span>status/</span></h2>
+<div class="grid" id="g-st"></div>
+
+<h2>09 · 角标 Badge <span>badges/</span></h2>
+<div class="grid" id="g-badge"></div>
+
+<h2>08 · 信任元素 USP <span>usp/</span></h2>
+<div class="grid" id="g-usp"></div>
+
+<h2>12 · 图标（节选）<span>icons/ · 共 46 个</span></h2>
+<div class="grid" id="g-icon"></div>
+
+<h2>07 · 功能图标 <span>functions/</span></h2>
+<div class="grid" id="g-fn"></div>
+
+<h2>10 · 服务图标 <span>services/</span></h2>
+<div class="grid" id="g-sv"></div>
+
+<h2>03 · 国旗 <span>flags/ · 24 国，纯 SVG 无外链</span></h2>
+<div class="grid flags" id="g-flag"></div>
+
+<h2>11 · 空态插画 <span>empty/</span></h2>
+<div class="grid" id="g-empty"></div>
+
+<script>
+const A = 'assets/';
+function add(box, list, cls){
+  const el = document.getElementById(box);
+  list.forEach(([src, name]) => {
+    const d = document.createElement('div');
+    d.className = 'cell';
+    d.innerHTML = `<img src="${A+src}" alt="${name}" loading="eager"><div class="n">${name}</div>`;
+    el.appendChild(d);
+  });
+}
+function wide(box, src, name){
+  const d = document.createElement('div');
+  d.className = 'heroimg';
+  d.innerHTML = `<img src="${A+src}" alt="${name}">`;
+  document.getElementById(box).appendChild(d);
+}
+function flags(list){
+  const el = document.getElementById('g-flag');
+  list.forEach(c => {
+    const d = document.createElement('div');
+    d.className = 'cell';
+    d.innerHTML = `<img src="${A}flags/${c}.svg" alt="${c}"><div class="n">${c}</div>`;
+    el.appendChild(d);
+  });
+}
+
+add('g-brand', [
+  ['brand/logo.svg','logo.svg'],
+  ['brand/logo-light.svg','logo-light.svg'],
+  ['brand/logo-mono.svg','logo-mono.svg'],
+  ['brand/logo-mark.svg','logo-mark.svg'],
+  ['brand/favicon.svg','favicon.svg'],
+]);
+wide('g-hero','backgrounds/hero-bg.svg','hero-bg 1200×420');
+add('g-hero', [
+  ['backgrounds/bg-gradient-1.svg','bg-gradient-1'],
+  ['backgrounds/bg-gradient-2.svg','bg-gradient-2'],
+  ['backgrounds/bg-wave.svg','bg-wave'],
+  ['backgrounds/world-map-bg.svg','world-map-bg'],
+  ['backgrounds/grid-overlay.svg','grid-overlay'],
+]);
+add('g-el', [
+  ['elements/element-sms-bubble.svg','element-sms-bubble'],
+  ['elements/element-otp-card.svg','element-otp-card'],
+  ['elements/element-shield.svg','element-shield'],
+  ['elements/element-paper-plane.svg','element-paper-plane'],
+]);
+add('g-phone', [ ['elements/phone-mockup.svg','phone-mockup.svg'] ]);
+add('g-st', [
+  ['status/status-available.svg','available 可用'],
+  ['status/status-low_usage.svg','low_usage 较少使用'],
+  ['status/status-unverified.svg','unverified 暂未验证'],
+  ['status/status-recommended.svg','recommended 推荐'],
+  ['status/status-offline.svg','offline 不可用'],
+]);
+add('g-badge', [
+  ['badges/badge-new.svg','badge-new'],['badges/badge-hot.svg','badge-hot'],
+  ['badges/badge-active.svg','badge-active'],['badges/badge-safe.svg','badge-safe'],
+  ['badges/badge-time.svg','badge-time'],['badges/badge-sync.svg','badge-sync'],
+  ['badges/badge-success.svg','badge-success'],['badges/badge-waiting.svg','badge-waiting'],
+  ['badges/badge-recommended.svg','badge-recommended'],
+]);
+add('g-usp', [
+  ['usp/usp-fast.svg','快速'],['usp/usp-free.svg','免费'],['usp/usp-no-register.svg','无需注册'],
+  ['usp/usp-public.svg','在线查看'],['usp/usp-multi-country.svg','多国家'],['usp/usp-safe.svg','安全'],
+  ['usp/usp-stable.svg','稳定'],['usp/usp-easy.svg','简单易用'],
+]);
+add('g-icon', [
+  'search','filter','refresh','copy','external-link','message','inbox','phone','globe','home',
+  'star','swap','bell','settings','help','guide','shield','country','database','sms','warning',
+  'clock','layers','menu','chevron-right','chevron-down','chevron-left','arrow-right','info',
+  'check','close','plus','mail','download','eye','user','lock','sparkles','zap','sort','calendar',
+  'activity','share','logout','empty-box'
+].map(n => [`icons/${n}.svg`, n]));
+add('g-fn', [
+  'search','filter','refresh','copy','external-link','message','inbox','phone','globe','home',
+  'star','swap','bell','settings','help','guide','shield','status-unknown'
+].map(n => [`functions/fn-${n}.svg`, n]));
+add('g-sv', [
+  ['services/google.svg','google'],['services/telegram.svg','telegram'],['services/whatsapp.svg','whatsapp'],
+  ['services/facebook.svg','facebook'],['services/twitter.svg','twitter'],['services/instagram.svg','instagram'],
+  ['services/source-generic.svg','source-generic'],
+]);
+flags(['us','gb','ca','de','fr','jp','au','sg','nl','it','es','in','br','id','ph','ro','pl','pr','ua','se','my','mx','vn','world']);
+add('g-empty', [
+  ['empty/empty-inbox.svg','empty-inbox'],
+  ['empty/waiting-sms.svg','waiting-sms'],
+  ['empty/empty-search.svg','empty-search'],
+  ['empty/empty-error.svg','empty-error'],
+]);
+</script>
+</body>
+</html>

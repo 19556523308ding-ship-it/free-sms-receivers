@@ -23,7 +23,15 @@
              radial-gradient(ellipse at 72% 62%,rgba(45,212,168,.16),transparent 62%);
   filter:blur(8px);
 }
-.hero-in{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+/* §02 Hero 背景素材：整幅铺底，左右淡出 */
+.hero-bg{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.hero-bg img{
+  width:100%;height:100%;object-fit:cover;object-position:center right;
+  opacity:.5;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 30%,#000 72%,transparent 100%);
+          mask-image:linear-gradient(90deg,transparent 0%,#000 30%,#000 72%,transparent 100%);
+}
+.hero-in{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
 .hero h1{
   font-size:52px;line-height:1.1;margin:0 0 16px;font-weight:800;letter-spacing:-.025em;
 }
@@ -34,6 +42,17 @@
 .hero-cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .hero-cta .btn-primary{min-width:196px}
 .hero-safe{margin-top:26px}
+/* 图标占位：由 app.js 注入真实 SVG 后统一上色 */
+[data-ic]{display:inline-flex;align-items:center;justify-content:center}
+[data-ic]:empty{display:none}
+[data-ic] svg{width:17px;height:17px;flex:none}
+[data-ic] svg path,[data-ic] svg circle,[data-ic] svg rect,
+[data-ic] svg line,[data-ic] svg ellipse{stroke:currentColor}
+.hero-search [data-ic] svg{width:18px;height:18px}
+.hero-cta .btn [data-ic]{margin-right:2px}
+.hero-cta .btn [data-ic] svg{width:18px;height:18px}
+.safety .safety-ic{flex:none;color:var(--warning)}
+.safety .safety-ic svg{width:19px;height:19px}
 
 /* Hero 统计 (§5.4) */
 .hstats{display:flex;gap:30px;margin-top:30px;padding-top:26px;border-top:1px solid var(--border);flex-wrap:wrap}
@@ -172,24 +191,25 @@
 <main>
   <!-- ========== Hero (§5.2-§5.5 / §44) ========== -->
   <section class="hero">
+    <div class="hero-bg" aria-hidden="true"><img src="assets/backgrounds/hero-bg.svg" alt="" width="1200" height="420"></div>
     <div class="wrap hero-in">
       <div>
         <h1>免费<em style="font-style:normal" class="hl">接收短信</em>验证码</h1>
         <p class="sub">无需注册 · 免费使用 · <b>在线查看短信</b></p>
 
         <form class="search hero-search" id="hsearch" role="search" autocomplete="off">
-          <span class="ic">🔍</span>
+          <span class="ic" data-ic="search"></span>
           <input id="hq" type="search" placeholder="搜索国家或区号，例如：美国 / +1"
                  aria-label="搜索国家或区号" enterkeyhint="search">
         </form>
 
         <div class="hero-cta">
-          <button class="btn btn-primary btn-lg" id="pickBtn" type="button">🎲 帮我选个号码</button>
-          <a class="btn btn-lg" href="numbers.html">查看全部号码 →</a>
+          <button class="btn btn-primary btn-lg" id="pickBtn" type="button"><span data-ic="sparkles"></span>帮我选个号码</button>
+          <a class="btn btn-lg" href="numbers.html">查看全部号码 <span data-ic="arrow-right"></span></a>
         </div>
 
         <div class="safety hero-safe" role="note">
-          <span aria-hidden="true">🔒</span>
+          <span class="safety-ic" data-ic="shield" aria-hidden="true"></span>
           <div><b>请勿用于敏感账户。</b>公共号码及收到的短信任何人都可能看到，请勿用于银行、支付、邮箱或身份验证。</div>
         </div>
 
@@ -236,7 +256,7 @@
           <h2 class="sec-title">推荐号码</h2>
           <p class="sec-sub">优先展示最近成功接收到短信的号码 · 默认仅展示站内可直接收短信的号码</p>
         </div>
-        <button class="btn btn-sm" id="shuffle" type="button">换一批 ↻</button>
+        <button class="btn btn-sm" id="shuffle" type="button"><span data-ic="refresh"></span>换一批</button>
       </div>
       <div class="rec-grid" id="recGrid"></div>
 
@@ -274,12 +294,14 @@
 <script type="module">
 import {
   loadData, countriesOf, matchCountry, mainPool, sparePool, rank, pickDiverse, esc, flagImg,
-  fmtPhone, statusHtml, statusLine, smsLine, copy, toast, renderChrome, renderFooter, bindCopyButtons
+  fmtPhone, statusHtml, statusLine, smsLine, copy, toast, renderChrome, renderFooter, bindCopyButtons,
+  fillIcons
 } from './assets/app.js';
 
 renderChrome('home');
 renderFooter();
 bindCopyButtons();
+fillIcons();
 
 let DATA = null, CTYS = [], REC = [], REC_OFFSET = 0, KEYWORD = '';
 
@@ -363,20 +385,21 @@ function renderRec(animate) {
     return `<article class="ncard">
       <div class="ncard-top">
         <div class="ncard-ctry">${flagImg(n.countryCode)}<span class="nm">${esc(n.countryNameZh)}</span></div>
-        ${statusHtml(n)}
+        <div class="ncard-tags"><span class="badge badge-recommended">推荐</span>${statusHtml(n)}</div>
       </div>
       <div class="ncard-phone">
         <span class="val mono" title="${esc(n.phone)}">${esc(shown)}</span>
-        <button class="cp" data-phone="${esc(n.phone)}" data-icon="⧉" aria-label="复制号码 ${esc(n.phone)}" title="复制号码">⧉</button>
+        <button class="cp" data-phone="${esc(n.phone)}" data-ic="copy" aria-label="复制号码 ${esc(n.phone)}" title="复制号码"></button>
       </div>
       <div class="ncard-meta">
         <span>${esc(statusLine(n))}</span><span class="sep">·</span><span>${smsLine(n)}</span>
       </div>
       <div class="ncard-foot">
-        <a class="btn btn-primary btn-sm" href="number.html?id=${encodeURIComponent(n.id)}">使用此号码 →</a>
+        <a class="btn btn-primary btn-sm" href="number.html?id=${encodeURIComponent(n.id)}">使用此号码 <span data-ic="arrow-right"></span></a>
       </div>
     </article>`;
   }).join('');
+  fillIcons(box);
 
   if (animate) {
     box.querySelectorAll('.ncard').forEach((el, i) => {
@@ -441,6 +464,7 @@ $('#shuffle').onclick = () => {
   REC_OFFSET = (REC_OFFSET + REC_SIZE) % REC.length;
   renderRec(true);
   toast('已换一批');
+  fillIcons($('#shuffle'));
 };
 
 $('#spare').addEventListener('toggle', e => {

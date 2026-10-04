@@ -1,0 +1,16 @@
+<svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bsq" x1="20" y1="18" x2="120" y2="122" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6B94FF"/><stop offset="1" stop-color="#4F7FFF"/>
+    </linearGradient>
+    <filter id="bShadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity=".45"/>
+    </filter>
+  </defs>
+  <g filter="url(#bShadow)">
+    <rect x="20" y="22" width="100" height="78" rx="22" fill="url(#bsq)"/>
+    <path d="M48 100L44 122L70 100Z" fill="#4F7FFF"/>
+    <rect x="22" y="24" width="96" height="30" rx="15" fill="#FFFFFF" fill-opacity=".14"/>
+  </g>
+  <text x="70" y="72" fill="#FFFFFF" font-size="27" font-weight="800" text-anchor="middle" letter-spacing="1" font-family="Inter, PingFang SC, Microsoft YaHei, system-ui, sans-serif">SMS</text>
+</svg>

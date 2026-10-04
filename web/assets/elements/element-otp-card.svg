@@ -1,0 +1,19 @@
+<svg width="160" height="120" viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="otpFill" x1="14" y1="14" x2="146" y2="106" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#16202E"/><stop offset="1" stop-color="#101722"/>
+    </linearGradient>
+    <filter id="otpShadow" x="-25%" y="-25%" width="150%" height="165%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000000" flood-opacity=".5"/>
+    </filter>
+    <linearGradient id="otpEdge" x1="14" y1="14" x2="146" y2="106" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4F7FFF" stop-opacity=".6"/><stop offset="1" stop-color="#2DD4A8" stop-opacity=".45"/>
+    </linearGradient>
+  </defs>
+  <g filter="url(#otpShadow)">
+    <rect x="14" y="14" width="132" height="92" rx="18" fill="url(#otpFill)" stroke="url(#otpEdge)"/>
+    <rect x="14" y="14" width="132" height="92" rx="18" fill="none" stroke="rgba(255,255,255,.08)"/>
+  </g>
+  <text x="30" y="46" fill="#F8FAFC" font-size="11" font-family="Inter, PingFang SC, Microsoft YaHei, system-ui, sans-serif">Your verification code is</text>
+  <text x="30" y="82" fill="#2DD4A8" font-size="32" font-weight="800" letter-spacing="1.6" font-family="Inter, PingFang SC, Microsoft YaHei, system-ui, sans-serif">682491</text>
+</svg>

@@ -1,0 +1,19 @@
+<svg width="150" height="140" viewBox="0 0 150 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ppA" x1="18" y1="62" x2="134" y2="34" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4F7FFF"/><stop offset="1" stop-color="#6B94FF"/>
+    </linearGradient>
+    <linearGradient id="ppB" x1="18" y1="76" x2="134" y2="102" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7FA8FF"/><stop offset="1" stop-color="#4F7FFF"/>
+    </linearGradient>
+    <filter id="ppShadow" x="-25%" y="-30%" width="155%" height="170%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity=".45"/>
+    </filter>
+  </defs>
+  <g filter="url(#ppShadow)">
+    <path d="M18 68L134 26L92 122L68 84L18 68Z" fill="url(#ppA)"/>
+    <path d="M18 68L134 26L68 84L18 68Z" fill="#FFFFFF" fill-opacity=".16"/>
+    <path d="M68 84L92 122L134 26L68 84Z" fill="url(#ppB)"/>
+    <path d="M68 84L134 26" stroke="#FFFFFF" stroke-opacity=".28" stroke-width="1.5"/>
+  </g>
+</svg>

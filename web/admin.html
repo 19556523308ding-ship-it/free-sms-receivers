@@ -96,10 +96,11 @@ td.num{font-variant-numeric:tabular-nums;text-align:right}
 <footer class="ft" id="ft"></footer>
 
 <script type="module">
-import { loadData, countriesOf, mainPool, sparePool, esc, relTime, renderChrome, renderFooter } from './assets/app.js';
+import { loadData, countriesOf, mainPool, sparePool, esc, relTime, renderChrome, renderFooter, fillIcons } from './assets/app.js';
 
 renderChrome('');
 renderFooter();
+fillIcons();
 
 const $ = s => document.querySelector(s);
 const HL = { HEALTHY: '健康', EMPTY: '空结果', FAILING: '采集失败', SUSPICIOUS_ZERO: '可疑零值', SUSPECTED_DEGRADATION: '疑似退化' };

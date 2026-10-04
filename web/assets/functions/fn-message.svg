@@ -1,0 +1,7 @@
+<svg width="72" height="92" viewBox="0 0 72 92" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="12" y="4" width="48" height="48" rx="14" fill="#4F7FFF" fill-opacity=".10" stroke="rgba(255,255,255,.08)"/>
+  <g transform="translate(24 16)" fill="none" stroke="#4F7FFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4 4v-4H6.5A2.5 2.5 0 0 1 4 14.5v-8Z"/>
+  </g>
+  <text x="36" y="76" fill="#F8FAFC" font-size="12" font-weight="600" text-anchor="middle" font-family="Inter, PingFang SC, Microsoft YaHei, system-ui, sans-serif">短信</text>
+</svg>

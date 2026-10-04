@@ -1,0 +1,7 @@
+<svg width="72" height="92" viewBox="0 0 72 92" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="12" y="4" width="48" height="48" rx="14" fill="#4F7FFF" fill-opacity=".10" stroke="rgba(255,255,255,.08)"/>
+  <g transform="translate(24 16)" fill="none" stroke="#4F7FFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3.5 5.5h17M6.5 12h11M9.5 18.5h5"/>
+  </g>
+  <text x="36" y="76" fill="#F8FAFC" font-size="12" font-weight="600" text-anchor="middle" font-family="Inter, PingFang SC, Microsoft YaHei, system-ui, sans-serif">筛选</text>
+</svg>

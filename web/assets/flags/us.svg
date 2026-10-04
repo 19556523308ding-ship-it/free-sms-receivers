@@ -1,0 +1,45 @@
+<svg width="60" height="40" viewBox="0 0 60 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g clip-path="url(#clip_us)">
+  <rect width="60" height="40" fill="#FFFFFF"/>
+  <rect y="0.00" width="60" height="3.08" fill="#B22234"/>
+  <rect y="6.15" width="60" height="3.08" fill="#B22234"/>
+  <rect y="12.31" width="60" height="3.08" fill="#B22234"/>
+  <rect y="18.46" width="60" height="3.08" fill="#B22234"/>
+  <rect y="24.62" width="60" height="3.08" fill="#B22234"/>
+  <rect y="30.77" width="60" height="3.08" fill="#B22234"/>
+  <rect y="36.92" width="60" height="3.08" fill="#B22234"/>
+  <rect width="26.4" height="21.6" fill="#3C3B6E"/>
+  <circle cx="3.0" cy="3.0" r="1" fill="#FFFFFF"/>
+  <circle cx="7.2" cy="3.0" r="1" fill="#FFFFFF"/>
+  <circle cx="11.4" cy="3.0" r="1" fill="#FFFFFF"/>
+  <circle cx="15.6" cy="3.0" r="1" fill="#FFFFFF"/>
+  <circle cx="19.8" cy="3.0" r="1" fill="#FFFFFF"/>
+  <circle cx="24.0" cy="3.0" r="1" fill="#FFFFFF"/>
+  <circle cx="3.0" cy="7.2" r="1" fill="#FFFFFF"/>
+  <circle cx="7.2" cy="7.2" r="1" fill="#FFFFFF"/>
+  <circle cx="11.4" cy="7.2" r="1" fill="#FFFFFF"/>
+  <circle cx="15.6" cy="7.2" r="1" fill="#FFFFFF"/>
+  <circle cx="19.8" cy="7.2" r="1" fill="#FFFFFF"/>
+  <circle cx="24.0" cy="7.2" r="1" fill="#FFFFFF"/>
+  <circle cx="3.0" cy="11.4" r="1" fill="#FFFFFF"/>
+  <circle cx="7.2" cy="11.4" r="1" fill="#FFFFFF"/>
+  <circle cx="11.4" cy="11.4" r="1" fill="#FFFFFF"/>
+  <circle cx="15.6" cy="11.4" r="1" fill="#FFFFFF"/>
+  <circle cx="19.8" cy="11.4" r="1" fill="#FFFFFF"/>
+  <circle cx="24.0" cy="11.4" r="1" fill="#FFFFFF"/>
+  <circle cx="3.0" cy="15.6" r="1" fill="#FFFFFF"/>
+  <circle cx="7.2" cy="15.6" r="1" fill="#FFFFFF"/>
+  <circle cx="11.4" cy="15.6" r="1" fill="#FFFFFF"/>
+  <circle cx="15.6" cy="15.6" r="1" fill="#FFFFFF"/>
+  <circle cx="19.8" cy="15.6" r="1" fill="#FFFFFF"/>
+  <circle cx="24.0" cy="15.6" r="1" fill="#FFFFFF"/>
+  <circle cx="3.0" cy="19.8" r="1" fill="#FFFFFF"/>
+  <circle cx="7.2" cy="19.8" r="1" fill="#FFFFFF"/>
+  <circle cx="11.4" cy="19.8" r="1" fill="#FFFFFF"/>
+  <circle cx="15.6" cy="19.8" r="1" fill="#FFFFFF"/>
+  <circle cx="19.8" cy="19.8" r="1" fill="#FFFFFF"/>
+  <circle cx="24.0" cy="19.8" r="1" fill="#FFFFFF"/>
+  </g>
+  <defs><clipPath id="clip_us"><rect width="60" height="40" rx="4"/></clipPath></defs>
+  <rect width="60" height="40" rx="4" fill="none" stroke="rgba(255,255,255,.16)"/>
+</svg>
