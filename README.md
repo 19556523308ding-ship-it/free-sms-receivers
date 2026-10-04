@@ -15,6 +15,9 @@
 
 合计 **94 个去重号码 / 14 个国家**。
 
+> 原始的 16 平台文字介绍（来自上游 `fazgal0/free-sms-receivers`）已保留在
+> [`docs/PLATFORMS.md`](docs/PLATFORMS.md)，作为选型参考。
+
 ## 合规边界（重要）
 
 本项目**刻意不做**以下事情：
