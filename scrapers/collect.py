@@ -30,6 +30,12 @@ UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(BASE, "data", "numbers.json")
+# Source Health 档案：记录各源历史计数，用于识别「ok:true 但 count:0」的静默失效
+HEALTH = os.path.join(BASE, "data", "source-health.json")
+# 前端消费用的紧凑 JSON（无缩进，体积更小）
+APIOUT = os.path.join(BASE, "data", "sms-api.json")
+# 号码可达性探测档案（由 probe_numbers.py 轮转维护）
+PROBE = os.path.join(BASE, "data", "number-probe.json")
 
 CTX = ssl.create_default_context()
 CTX.check_hostname = False
@@ -642,6 +648,129 @@ SOURCES = [
 ]
 
 
+# 站内可直接收短信的来源（Inbox Adapter 已接通的源）。
+# 这是 SMS Hub 2.0 的核心口径：只有这些源上的号码，用户点进去
+# 才能真的在站内等到验证码；其余源只能跳原站看，属于「备用池」。
+DIRECT_INBOX_SOURCES = {"receiveasmsonline"}
+
+
+def availability_score(rec):
+    """
+    推荐排序分（设计文档 §12）。用户只看到「推荐」两个字，不外露分数。
+
+    availability_score =
+        0.35 * recent_sms_score     最近有短信
+      + 0.25 * fetch_success_score  抓取成功率（站内可收 = 1）
+      + 0.20 * source_health_score  来源健康
+      + 0.10 * multi_source_score   多源交叉
+      + 0.10 * recency_score        状态新鲜度
+    """
+    s = 0.0
+
+    # 最近短信：有短信数就说明历史上收到过；站内可收再加权
+    if rec.get("directInbox"):
+        s += 0.35
+    elif rec.get("availability") == "recent_activity":
+        s += 0.20
+
+    # 抓取成功率：站内通道已接通即满分
+    s += 0.25 if rec.get("directInbox") else 0.0
+
+    # 来源健康：源本次采集成功
+    s += 0.20 if rec.get("sourceStatus") == "ok" else 0.0
+
+    # 多源交叉：多站同时收录是免费的可靠性信号
+    if rec.get("sourceCount", 1) >= 2:
+        s += 0.10
+
+    # 新鲜度：状态是本次采集核实的
+    if rec.get("statusCheckedAt"):
+        s += 0.10
+
+    return round(s, 4)
+
+
+def status_of(rec):
+    """
+    新状态模型（§10）：不再出现「状态未知」这种对用户无意义的词。
+      可用     available    —— 站内可收，且近期有短信
+      较少使用 low_usage    —— 站内可收，但近期无短信
+      暂未验证 unverified   —— 无站内通道或无近期证据
+    """
+    if rec.get("directInbox"):
+        return "available" if rec.get("availability") == "recent_activity" else "low_usage"
+    return "unverified"
+
+
+def enrich(rec):
+    """给记录补齐 SMS Hub 2.0 需要的派生字段。"""
+    rec["directInbox"] = rec.get("sourceId") in DIRECT_INBOX_SOURCES
+    rec["status"] = status_of(rec)
+    # 列表页没有「最近短信时间」，一律 null，绝不用采集时间冒充（诚实口径）
+    rec["lastSmsAt"] = rec.get("lastMessageAt")
+    rec["smsToday"] = rec.get("messageCount")
+    rec["availabilityScore"] = availability_score(rec)
+    return rec
+
+
+def load_probe_db():
+    """读取号码可达性探测档案（由 probe_numbers.py 维护）。"""
+    if not os.path.exists(PROBE):
+        return {}
+    try:
+        with open(PROBE, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def apply_probe(rec, probe_db):
+    """
+    把真实探测结果并入记录。
+
+    这一步解决的正是「源可用 ≠ 每个号可用」的问题：
+    实测同一来源下有的号码 403、有的正常，所以 direct inbox 不能只看来源，
+    必须看该号码自己探出来的成功率。
+    """
+    if not rec.get("directInbox"):
+        # 非站内号码也带上字段，前端好统一处理（值为 null 表示无通道）
+        rec["fetchSuccessRate"] = None
+        rec["reachable"] = False
+        rec["probed"] = False
+        return rec
+
+    p = probe_db.get(rec.get("phone"))
+    if not p:
+        # 还没探过：保留 directInbox（有通道），但标记为未验证
+        rec["fetchSuccessRate"] = None
+        rec["reachable"] = None
+        rec["probed"] = False
+        rec["status"] = "unverified"
+        rec["availabilityScore"] = round(max(0.0, rec["availabilityScore"] - 0.25), 4)
+        return rec
+
+    rate = p.get("fetch_success_rate")
+    rec["fetchSuccessRate"] = rate
+    rec["reachable"] = bool(p.get("reachable"))
+    rec["probed"] = True
+    if p.get("lastMessageCount"):
+        rec["smsToday"] = p["lastMessageCount"]
+
+    # 探测过的号码按真实成功率定状态（这才是诚实的「可用」口径）
+    if not p.get("reachable"):
+        rec["status"] = "unverified"
+        rec["availabilityScore"] = round(max(0.0, rec["availabilityScore"] - 0.30), 4)
+    elif p.get("lastMessageCount", 0) > 0:
+        rec["status"] = "available"
+    else:
+        rec["status"] = "low_usage"
+
+    # 成功率直接参与推荐分（覆盖掉「有通道即满分」的近似）
+    rec["availabilityScore"] = round(
+        rec["availabilityScore"] - 0.25 + 0.25 * (rate or 0), 4)
+    return rec
+
+
 def merge_by_e164(rows):
     """
     按 E.164 全局去重：同一号码在多个源出现时合并为一条，
@@ -716,10 +845,144 @@ def run():
 
     final = [r for r in all_rows if r.get("phone")]
     final = merge_by_e164(final)
-    final.sort(key=lambda x: (-(x["messageCount"] or 0), x["countryNameZh"], x["phone"]))
+    final = [enrich(r) for r in final]
+    # 并入真实探测结果（源可用 ≠ 每个号可用）
+    probe_db = load_probe_db()
+    final = [apply_probe(r, probe_db) for r in final]
+    # 排序：站内可收优先 -> 推荐分降序 -> 短信数 -> 国家 -> 号码
+    final.sort(key=lambda x: (
+        not x.get("directInbox"),
+        -x.get("availabilityScore", 0),
+        -(x["messageCount"] or 0),
+        x["countryNameZh"],
+        x["phone"],
+    ))
 
     unique_phones = {r["phone"] for r in final}
     countries = sorted({r["countryCode"] for r in final if r["countryCode"] != "XX"})
+
+    # ---------------- 国家聚合（首页国家卡 / 国家落地页要用）----------------
+    by_country = {}
+    for r in final:
+        iso = r.get("countryCode") or "XX"
+        if iso == "XX":
+            continue
+        c = by_country.setdefault(iso, {
+            "iso": iso,
+            "nameZh": r.get("countryNameZh"),
+            "nameEn": r.get("countryNameEn"),
+            "flag": r.get("flag"),
+            "callingCode": r.get("callingCode"),
+            "total": 0, "directInbox": 0, "active": 0,
+            "lowUsage": 0, "unverified": 0,
+        })
+        c["total"] += 1
+        if r.get("directInbox"):
+            c["directInbox"] += 1
+        st = r.get("status")
+        if st == "available":
+            c["active"] += 1
+        elif st == "low_usage":
+            c["lowUsage"] += 1
+        else:
+            c["unverified"] += 1
+    # 国家列表按「站内可收」降序排，首页一屏就能看到最有用的国家
+    country_list = sorted(by_country.values(),
+                          key=lambda c: (-c["directInbox"], -c["total"], c["nameZh"]))
+
+    # ---------------- Source Health（设计文档 §30-§33）----------------
+    # 核心教训：ok:true + count:0 不等于健康。源站改版、被限流、结构变化
+    # 都可能让解析器「跑通但一个都没抓到」，而这类静默失效不会报错。
+    # 所以这里做三件事：① 记录历史计数 ② 标记 SUSPICIOUS_ZERO
+    # ③ 连续异常累计（供后台告警）。
+    health_path = HEALTH
+    health = {}
+    if os.path.exists(health_path):
+        try:
+            with open(health_path, encoding="utf-8") as f:
+                health = json.load(f)
+        except Exception:
+            health = {}
+
+    total_records = max(1, len(final))
+    for s in report:
+        sid = s["sourceId"]
+        prev = health.get(sid, {})
+        prev_count = prev.get("current_count")
+        cur = s.get("count", 0) if s.get("ok") else 0
+
+        # 零结果检测：之前有量，这次归零 —— 极可能是源站变了或被限流
+        suspicious_zero = bool(prev_count and prev_count >= 20 and cur == 0)
+        # 疑似劣化：跌幅超过 65%
+        degradation = bool(prev_count and prev_count >= 20
+                           and cur > 0 and cur < prev_count * 0.35)
+
+        cz = prev.get("consecutive_zero_results", 0)
+        cf = prev.get("consecutive_failures", 0)
+        if suspicious_zero:
+            cz += 1
+        else:
+            cz = 0
+        if not s.get("ok"):
+            cf += 1
+        else:
+            cf = 0
+
+        if suspicious_zero:
+            health_status = "SUSPICIOUS_ZERO"
+        elif degradation:
+            health_status = "SUSPECTED_DEGRADATION"
+        elif not s.get("ok"):
+            health_status = "FAILING"
+        elif cur == 0:
+            health_status = "EMPTY"
+        else:
+            health_status = "HEALTHY"
+
+        s["healthStatus"] = health_status
+        s["previousCount"] = prev_count
+        s["consecutiveZeroResults"] = cz
+        s["consecutiveFailures"] = cf
+        s["dependencyRatio"] = round(cur / total_records, 4)
+        s["highDependency"] = s["dependencyRatio"] > 0.40   # §33 阈值 40%
+
+        health[sid] = {
+            "source_id": sid,
+            "source_name": s["sourceName"],
+            "last_fetch_at": now,
+            "last_success_at": now if s.get("ok") else prev.get("last_success_at"),
+            "last_nonzero_at": now if cur > 0 else prev.get("last_nonzero_at"),
+            "current_count": cur,
+            "previous_count": prev_count,
+            "consecutive_failures": cf,
+            "consecutive_zero_results": cz,
+            "http_status": 200 if s.get("ok") else None,
+            "parser_status": "ok" if s.get("ok") else "error",
+            "health_status": health_status,
+        }
+
+    # 写健康档案（失败也别让主流程挂掉）
+    try:
+        os.makedirs(os.path.dirname(health_path), exist_ok=True)
+        with open(health_path, "w", encoding="utf-8") as f:
+            json.dump(health, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"[WARN] Source Health 写入失败: {e}")
+
+    # 总号码数骤降保护（§31）：低于上次 35% 时拒绝自动覆盖线上数据。
+    # 注意这里只报警并保留产出，是否覆盖交给 refresh.sh 判断，
+    # 避免把「采集器自己的判断」和「部署决策」混在一起。
+    snapshot_ok = True
+    if os.path.exists(OUT):
+        try:
+            with open(OUT, encoding="utf-8") as f:
+                old = json.load(f)
+            old_n = len(old.get("numbers", []))
+            if old_n >= 100 and len(final) < old_n * 0.35:
+                snapshot_ok = False
+                print(f"[WARN] 号码数骤降：{old_n} -> {len(final)}，已标记 SUSPECTED_DEGRADATION")
+        except Exception:
+            pass
 
     payload = {
         "generatedAt": now,
@@ -730,7 +993,19 @@ def run():
             "countries": len(countries),
             "sources": len([s for s in report if s["ok"]]),
             "multiSourcePhones": len([r for r in final if len(r.get("alsoOn", [])) > 0]),
+            # SMS Hub 2.0 关键指标
+            "directInbox": len([r for r in final if r.get("directInbox")]),
+            "directInboxRatio": round(
+                len([r for r in final if r.get("directInbox")]) / max(1, len(final)), 4),
+            "available": len([r for r in final if r.get("status") == "available"]),
+            "lowUsage": len([r for r in final if r.get("status") == "low_usage"]),
+            "unverified": len([r for r in final if r.get("status") == "unverified"]),
+            # 真实探测覆盖情况（诚实口径：探过才算数）
+            "probed": len([r for r in final if r.get("probed")]),
+            "reachable": len([r for r in final if r.get("reachable")]),
         },
+        "snapshotOk": snapshot_ok,
+        "countries": country_list,
         "sources": report,
         "numbers": final,
     }
@@ -738,11 +1013,17 @@ def run():
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
 
+    # JSON 端点同样输出，供前端按文档 §37 的 API 形态消费
+    with open(APIOUT, "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
+
     avail = {}
     for r in final:
-        avail[r["availability"]] = avail.get(r["availability"], 0) + 1
+        avail[r["status"]] = avail.get(r["status"], 0) + 1
+    di = payload["totals"]["directInbox"]
     print(f"\n记录 {len(final)} 条 / 去重号码 {len(unique_phones)} 个 / {len(countries)} 个国家")
-    print(f"状态分布: {avail}")
+    print(f"站内可收短信号码: {di} 个（覆盖率 {payload['totals']['directInboxRatio']:.0%}）")
+    print(f"新状态分布: {avail}")
     print(f"已写入 {OUT}")
     return payload
 

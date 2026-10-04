@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>接收短信 - 在线查看验证码 | SMS Hub</title>
+<meta name="description" content="在站内等待并查看该号码收到的公开短信验证码，自动刷新，一键复制。">
+<meta name="theme-color" content="#070B12">
+<meta name="robots" content="noindex,follow">
+<link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/brand/favicon.svg">
+<link rel="stylesheet" href="assets/app.css">
+<style>
+.np{padding:22px 0 0}
+.crumb{font-size:13px;color:var(--text-dim);margin-bottom:14px}
+.crumb a{color:var(--text-muted)}
+.crumb a:hover{color:var(--text)}
+
+/* ---------- 号码头 (§14) ---------- */
+.nhead{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:22px 24px;margin-bottom:20px}
+.nhead-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.nhead .lbl{font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:8px;margin-bottom:9px;font-weight:600}
+.nhead .pn{font-size:31px;font-weight:800;letter-spacing:-.02em;word-break:break-all;line-height:1.15}
+.nhead-acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.nmeta{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px;padding-top:18px;border-top:1px solid var(--border)}
+.nmeta .m .k{font-size:12.5px;color:var(--text-dim);margin-bottom:3px}
+.nmeta .m .v{font-size:14.5px;font-weight:600}
+.nmeta .m .v.ac{color:var(--accent)}
+
+/* ---------- 流程条 (§15) ---------- */
+.flow{display:flex;align-items:center;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:15px 20px;margin-bottom:20px;overflow-x:auto}
+.fstep{display:flex;align-items:center;gap:9px;font-size:13.5px;color:var(--text-dim);white-space:nowrap;font-weight:600}
+.fstep .d{width:22px;height:22px;border-radius:50%;border:1.6px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:12px;flex:none}
+.fstep.on{color:var(--primary)}
+.fstep.on .d{background:var(--primary);border-color:var(--primary);color:#fff}
+.fstep.ok{color:var(--success)}
+.fstep.ok .d{background:var(--success);border-color:var(--success);color:#04070d}
+.fline{flex:1;min-width:22px;height:1.5px;background:var(--border-strong);margin:0 12px}
+
+/* ---------- 等待状态 (§17) ---------- */
+.wait{
+  display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-card);padding:18px 20px;margin-bottom:20px;
+}
+.wait.hit{border-color:rgba(45,212,168,.45);background:linear-gradient(150deg,rgba(45,212,168,.10),var(--surface))}
+.pulse{width:11px;height:11px;border-radius:50%;background:var(--primary);flex:none;position:relative}
+.pulse::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:2px solid var(--primary);opacity:.6;animation:ring 1.6s ease-out infinite}
+@keyframes ring{to{transform:scale(1.7);opacity:0}}
+.wait .t{flex:1;min-width:0}
+.wait .t b{display:block;font-size:15px;margin-bottom:3px}
+.wait .t span{font-size:13px;color:var(--text-muted)}
+.wait .num{font-variant-numeric:tabular-nums;color:var(--primary);font-weight:700}
+
+/* ---------- 收件箱 (§21) ---------- */
+.ib-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.msgs{display:flex;flex-direction:column;gap:12px}
+.msg{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:16px 18px;
+  transition:border-color .2s,background .2s;
+}
+.msg.isnew{border-color:rgba(45,212,168,.45);background:linear-gradient(150deg,rgba(45,212,168,.07),var(--surface))}
+.msg.flash{animation:flash 1.5s ease-out}
+@keyframes flash{0%,100%{box-shadow:0 0 0 0 rgba(45,212,168,0)}30%{box-shadow:0 0 0 4px rgba(45,212,168,.2)}}
+.msg-top{display:flex;align-items:center;gap:10px;margin-bottom:11px;flex-wrap:wrap}
+.msg-from{font-weight:700;font-size:14.5px}
+.msg-time{font-size:12.5px;color:var(--text-dim)}
+.msg-body{font-size:14px;color:var(--text-muted);line-height:1.62;word-break:break-word;white-space:pre-wrap}
+
+/* OTP 卡 (§19) 验证码是最醒目内容 */
+.otp-box{
+  margin-top:14px;padding:16px 18px;border-radius:var(--r-card);
+  background:linear-gradient(150deg,rgba(45,212,168,.13),rgba(79,127,255,.09));
+  border:1px solid rgba(45,212,168,.36);
+  display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+}
+.otp-cap{font-size:12.5px;color:var(--text-muted);font-weight:600;letter-spacing:.04em}
+.otp-val{font-size:40px;font-weight:800;letter-spacing:.13em;color:var(--accent);font-variant-numeric:tabular-nums;line-height:1.1}
+.otp-side{margin-left:auto;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.otp-hint{font-size:11.5px;color:var(--text-dim);text-align:right}
+
+/* 无 OTP 短信 (§20) */
+.msg-actions{display:flex;gap:9px;margin-top:12px;flex-wrap:wrap}
+
+/* 本次使用后 tab */
+.ib-tabs{display:flex;gap:8px;flex-wrap:wrap}
+
+/* 移动端 Sticky Bar (§26) */
+.sticky-bar{
+  display:none;position:fixed;left:0;right:0;bottom:62px;z-index:66;
+  background:rgba(10,15,24,.97);backdrop-filter:blur(14px);border-top:1px solid var(--border);
+  padding:10px 14px;gap:10px;
+}
+.sticky-bar .btn{flex:1}
+
+@media (max-width:900px){
+  .nmeta{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:767px){
+  .np{padding:14px 0 0}
+  .nhead{padding:17px 16px;border-radius:var(--r-card)}
+  .nhead .pn{font-size:24px}
+  .nhead-acts{flex-direction:column;gap:9px;margin-top:14px}
+  .nhead-acts .btn{width:100%}
+  .nmeta{grid-template-columns:repeat(2,1fr);gap:11px;margin-top:16px;padding-top:15px}
+  .nmeta .m .v{font-size:13.5px}
+  .flow{padding:12px 14px;gap:0}
+  .fstep{font-size:12.5px}
+  .fline{margin:0 8px;min-width:12px}
+  .wait{padding:15px 16px;gap:12px}
+  .wait .t b{font-size:14px}
+  .otp-box{padding:14px 15px;gap:12px}
+  .otp-val{font-size:33px}
+  .otp-side{margin-left:0;width:100%;align-items:stretch}
+  .otp-hint{text-align:left}
+  .msg{padding:14px 15px}
+  .sticky-bar{display:flex}
+  body{padding-bottom:132px}
+  .ib-head{flex-direction:column;align-items:stretch}
+}
+</style>
+</head>
+<body>
+<header class="hd" id="hd"></header>
+
+<main class="wrap np" id="main">
+  <div class="crumb" id="crumb"></div>
+
+  <!-- 号码头 -->
+  <section class="nhead" id="nhead" aria-live="polite">
+    <div class="nhead-top">
+      <div>
+        <div class="lbl" id="nhLbl">—</div>
+        <div class="pn mono" id="nhPhone">—</div>
+      </div>
+      <div id="nhStatus"></div>
+    </div>
+    <div class="nhead-acts">
+      <button class="btn btn-primary" id="cpNum" type="button">⧉ 复制号码</button>
+      <button class="btn" id="switchNum" type="button">换一个同国家号码</button>
+      <button class="btn" id="allNum" type="button">全部号码 →</button>
+    </div>
+    <div class="nmeta" id="nmeta"></div>
+  </section>
+
+  <!-- 流程条 (§15) -->
+  <div class="flow" id="flow" aria-label="使用流程">
+    <div class="fstep on" data-k="copy"><span class="d">1</span>复制号码</div>
+    <div class="fline"></div>
+    <div class="fstep" data-k="fill"><span class="d">2</span>填写到目标服务</div>
+    <div class="fline"></div>
+    <div class="fstep" data-k="wait"><span class="d">3</span>等待新短信</div>
+  </div>
+
+  <!-- 等待状态 (§17 / §22) -->
+  <div class="wait" id="wait" role="status" aria-live="polite">
+    <span class="pulse"></span>
+    <div class="t"><b id="waitT">准备就绪</b><span id="waitS">点击「复制号码」后本页会自动等待新短信</span></div>
+    <button class="btn btn-sm" id="manualRefresh" type="button">手动刷新</button>
+  </div>
+
+  <!-- 收件箱 (§21) -->
+  <section>
+    <div class="ib-head">
+      <div class="tabs ib-tabs" id="ibTabs" role="tablist" aria-label="短信范围">
+        <button class="tab" id="tabSession" role="tab" aria-selected="true" type="button">本次使用后 <span class="ct" id="ctSession">0</span></button>
+        <button class="tab" id="tabAll" role="tab" aria-selected="false" type="button">所有短信 <span class="ct" id="ctAll">0</span></button>
+      </div>
+      <span style="font-size:12.5px;color:var(--text-dim)" id="ibNote">每 15 秒自动检查</span>
+    </div>
+    <div class="msgs" id="msgs"></div>
+    <div id="msgState"></div>
+  </section>
+</main>
+
+<footer class="ft" id="ft"></footer>
+<nav class="bnav" id="bnav" aria-label="底部导航"></nav>
+
+<div class="sticky-bar" id="sticky">
+  <button class="btn btn-primary" id="stCopy" type="button">⧉ 复制号码</button>
+  <button class="btn" id="stRefresh" type="button">刷新短信</button>
+</div>
+
+<script type="module">
+import {
+  loadData, countriesOf, mainPool, rank, esc, flagImg, fmtPhone, statusHtml,
+  STATUS_LABEL, relTime, copy, toast, renderChrome, renderFooter
+} from './assets/app.js';
+
+renderChrome('numbers');
+renderFooter();
+
+const $ = s => document.querySelector(s);
+const sp = new URLSearchParams(location.search);
+const NID = sp.get('id') || '';
+const PICKED = sp.get('picked') === '1';
+
+/* ---------- Session (§16 / §21 / §24) ---------- */
+const SKEY = 'smshub.session.v2';
+function saveSession(s) { try { localStorage.setItem(SKEY, JSON.stringify(s)); } catch (e) {} }
+function loadSession() { try { return JSON.parse(localStorage.getItem(SKEY) || 'null'); } catch (e) { return null; } }
+function clearSession() { try { localStorage.removeItem(SKEY); } catch (e) {} }
+
+/* ---------- 状态 ---------- */
+let DATA = null, N = null, CTYS = [];
+let SESSION = null;                 // { numberId, country, sessionStartedAt, initialMessageIds }
+let MSGS = [], SEEN = new Set(), LAST_IDS = null;
+let timerId = null, countdownId = null, nextAt = 0, inflight = false, tick = 0;
+
+const SLUG_BY_ISO = {
+  US:'united-states', GB:'united-kingdom', DE:'germany', FR:'france', CN:'china',
+  CA:'canada', RU:'russia', NL:'netherlands', IN:'india', IL:'israel',
+  KZ:'kazakhstan', MX:'mexico', ID:'indonesia', PT:'portugal', TH:'thailand',
+  PH:'philippines', HR:'croatia', SE:'sweden', HK:'hong-kong', FI:'finland',
+  UA:'ukraine', IE:'ireland', NG:'nigeria', BR:'brazil', BE:'belgium',
+  ES:'spain', RO:'romania', CZ:'czech-republic', IT:'italy', JP:'japan',
+  AT:'austria', TW:'taiwan', SG:'singapore', KR:'south-korea', PL:'poland',
+};
+const canRead = n => n && n.directInbox && SLUG_BY_ISO[n.countryCode];
+
+/* ---------- 头部渲染 (§14) ---------- */
+function renderHead() {
+  $('#crumb').innerHTML = `<a href="index.html">首页</a> › <a href="numbers.html">全部号码</a>` +
+    (N.countryCode ? ` › <a href="country.html?c=${encodeURIComponent(N.countryCode)}">${esc(N.countryNameZh)}</a>` : '') +
+    ` › <span>${esc(fmtPhone(N.phone, N.callingCode))}</span>`;
+
+  $('#nhLbl').innerHTML = `${flagImg(N.countryCode)}<span>${esc(N.countryNameZh)}号码</span>`;
+  $('#nhPhone').textContent = fmtPhone(N.phone, N.callingCode);
+  $('#nhStatus').innerHTML = canRead(N)
+    ? statusHtml(N)
+    : `<span class="st st-unverified">站内暂不支持查看</span>`;
+
+  const sc = N.lastSmsAt || N.lastMessageAt;
+  $('#nmeta').innerHTML = `
+    <div class="m"><div class="k">最近活跃</div><div class="v">${esc(relTime(sc) || '暂无记录')}</div></div>
+    <div class="m"><div class="k">今日短信</div><div class="v">${(N.smsToday ?? N.messageCount) != null ? Number(N.smsToday ?? N.messageCount).toLocaleString() + ' 条' : '未提供'}</div></div>
+    <div class="m"><div class="k">当前状态</div><div class="v ${N.status === 'available' ? 'ac' : ''}">${esc(STATUS_LABEL[N.status] || '暂未验证')}</div></div>
+    <div class="m"><div class="k">自动检测</div><div class="v">每 15 秒</div></div>`;
+
+  document.title = `${fmtPhone(N.phone, N.callingCode)} · SMS Hub`;
+}
+
+/* ---------- 流程条 (§15) ---------- */
+function setFlow(step) {   // 'copy' | 'fill' | 'wait'
+  const order = ['copy', 'fill', 'wait'];
+  const i = order.indexOf(step);
+  $('#flow').querySelectorAll('.fstep').forEach(el => {
+    const j = order.indexOf(el.dataset.k);
+    el.classList.toggle('ok', j < i);
+    el.classList.toggle('on', j === i);
+    const d = el.querySelector('.d');
+    d.textContent = j < i ? '✓' : String(j + 1);
+  });
+}
+
+/* ---------- 等待状态 (§17 / §22) ---------- */
+function setWait(state, extra) {
+  const w = $('#wait'), t = $('#waitT'), s = $('#waitS');
+  w.classList.toggle('hit', state === 'hit');
+  if (state === 'idle') { t.textContent = '准备就绪'; s.textContent = '点击「复制号码」后本页会自动等待新短信'; }
+  else if (state === 'wait') { t.innerHTML = '正在等待新短信…'; s.innerHTML = extra || '实时检测中'; }
+  else if (state === 'hit') { t.innerHTML = '已收到新短信 🎉'; s.innerHTML = extra || '验证码已自动提取，可直接复制'; }
+  else if (state === 'slow30') { t.textContent = '暂时还没有新短信'; s.textContent = '有些服务需要 1–2 分钟发送验证码'; }
+  else if (state === 'slow90') { t.textContent = '这个号码可能暂时无法收到短信'; s.textContent = '建议换一个同国家的活跃号码'; }
+  else if (state === 'err') { t.textContent = '读取失败'; s.textContent = extra || '将自动重试，也可点「手动刷新」'; }
+}
+
+function startCountdown() {
+  clearInterval(countdownId);
+  const paint = () => {
+    const left = Math.max(0, Math.ceil((nextAt - Date.now()) / 1000));
+    const tap = $('#waitT'), sp = $('#waitS');
+    if (Date.now() - (SESSION ? new Date(SESSION.sessionStartedAt).getTime() : Date.now()) > 90000 && !MSGS.filter(isNew).length) {
+      // §22 90 秒
+      if (tap && tap.textContent.indexOf('可能暂时') < 0) setWait('slow90');
+    } else if (Date.now() - (SESSION ? new Date(SESSION.sessionStartedAt).getTime() : Date.now()) > 30000 && !MSGS.filter(isNew).length) {
+      if (tap && tap.textContent.indexOf('还没有') < 0) setWait('slow30');
+    }
+    if (sp && tap && tap.textContent.indexOf('等待') >= 0) {
+      sp.innerHTML = left > 0 ? `实时检测中 · <span class="num">${left}</span> 秒后自动检查` : '正在检查…';
+    }
+  };
+  paint();
+  countdownId = setInterval(paint, 1000);
+}
+
+/* ---------- OTP 卡 (§19) / 非 OTP 短信 (§20) ---------- */
+function msgHtml(m) {
+  const isNew = isNewMsg(m);
+  const otp = m.otp
+    ? `<div class="otp-box">
+         <div>
+           <div class="otp-cap">验证码</div>
+           <div class="otp-val mono">${esc(m.otp)}</div>
+         </div>
+         <div class="otp-side">
+           <button class="btn btn-accent" data-otp="${esc(m.otp)}" type="button">复制验证码</button>
+           <span class="otp-hint">自动识别，请自行核对</span>
+         </div>
+       </div>`
+    : `<div class="msg-actions">
+         <button class="btn btn-sm" data-body="${esc(m.body)}" type="button">复制短信</button>
+       </div>`;
+  return `<article class="msg${isNew ? ' isnew' : ''}" data-id="${esc(m.id)}">
+    <div class="msg-top">
+      ${isNew ? '<span class="pill pill-new">NEW</span>' : ''}
+      <span class="msg-from">${esc(m.sender || '未知发送方')}</span>
+      <span class="msg-time">${esc(m.when || '')}</span>
+    </div>
+    <div class="msg-body">${esc(m.body || '')}</div>
+    ${otp}
+  </article>`;
+}
+
+function isNewMsg(m) {
+  if (!SESSION) return false;
+  const t = new Date(SESSION.sessionStartedAt).getTime();
+  const mt = m.ts ? new Date(m.ts).getTime() : NaN;
+  if (!isNaN(mt)) return mt >= t;
+  return !SESSION.initialMessageIds.includes(m.id);
+}
+
+function paintMsgs(flashIds) {
+  const box = $('#msgs');
+  const sessMsgs = MSGS.filter(isNewMsg);
+  const show = $('#tabSession').getAttribute('aria-selected') === 'true' ? sessMsgs : MSGS;
+
+  $('#ctSession').textContent = sessMsgs.length;
+  $('#ctAll').textContent = MSGS.length;
+
+  if (!MSGS.length) {
+    box.innerHTML = '';
+    $('#msgState').innerHTML = `<div class="state"><div class="ic">📭</div><h3>暂时还没有公开短信</h3>
+      <p>公共号码收信不保证，可稍后刷新或换一个号码试试。</p></div>`;
+    return;
+  }
+  if (!show.length) {
+    box.innerHTML = '';
+    $('#msgState').innerHTML = `<div class="state"><div class="ic">⏳</div><h3>本次使用后还没有新短信</h3>
+      <p>历史短信可在「所有短信」查看。有些服务需要 1–2 分钟才会发送验证码。</p></div>`;
+    return;
+  }
+  $('#msgState').innerHTML = '';
+  box.innerHTML = show.map(msgHtml).join('');
+
+  if (flashIds && flashIds.length) {
+    flashIds.forEach(id => {
+      const el = box.querySelector(`.msg[data-id="${CSS.escape(id)}"]`);
+      if (el) { el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 1600); }
+    });
+  }
+
+  box.querySelectorAll('[data-otp]').forEach(b => {
+    b.onclick = async () => {
+      const ok = await copy(b.dataset.otp);
+      if (ok) { b.textContent = '已复制 ✓'; toast('验证码已复制：' + b.dataset.otp); setTimeout(() => b.textContent = '复制验证码', 2200); }
+      else toast('复制失败，请手动选择', 'err');
+    };
+  });
+  box.querySelectorAll('[data-body]').forEach(b => {
+    b.onclick = async () => {
+      const ok = await copy(b.dataset.body);
+      toast(ok ? '短信内容已复制' : '复制失败，请手动选择', ok ? 'ok' : 'err');
+    };
+  });
+}
+
+/* ---------- 拉取短信 (§17) ---------- */
+let slowTimer = null;
+async function fetchMsgs(silent) {
+  if (!canRead(N) || inflight) return;
+  inflight = true;
+  nextAt = Date.now() + 15000;
+  const t0 = performance.now();
+  if (!silent) {
+    $('#ibNote').textContent = '正在读取…';
+    if (!MSGS.length) {
+      $('#msgState').innerHTML = '<div class="state"><div class="ic">⏳</div><h3>正在读取公开短信…</h3><p>首次读取需要启动渲染，通常 3–6 秒。</p></div>';
+    }
+    clearTimeout(slowTimer);
+    slowTimer = setTimeout(() => {
+      if (inflight) $('#ibNote').textContent = '源站响应较慢，仍在等待…';
+    }, 12000);
+  }
+
+  try {
+    const r = await fetch('/api/sms?slug=' + encodeURIComponent(SLUG_BY_ISO[N.countryCode]) +
+                          '&phone=' + encodeURIComponent(String(N.phone).replace(/\D/g, '')),
+                          { cache: 'no-store', signal: AbortSignal.timeout(45000) });
+    const d = await r.json().catch(() => ({ error: '返回格式异常' }));
+
+    if (r.status === 429) {
+      const wait = d.retryAfter || 15;
+      nextAt = Date.now() + wait * 1000;
+      $('#ibNote').textContent = `请求过于频繁，${wait} 秒后自动重试`;
+      if (!MSGS.length) {
+        $('#msgState').innerHTML = `<div class="state"><div class="ic">⏱️</div><h3>请求过于频繁</h3>
+          <p>为避免给上游站点造成压力，同一号码 15 秒内只查询一次。${wait} 秒后会自动重试。</p></div>`;
+      }
+      if (!MSGS.length) setWait('err', `请求过于频繁，${wait} 秒后自动重试`);
+      return;
+    }
+    if (!r.ok) {
+      $('#ibNote').textContent = '读取失败，将自动重试';
+      if (!MSGS.length) {
+        $('#msgState').innerHTML = `<div class="state"><div class="ic">⚠️</div><h3>读取失败</h3>
+          <p>${esc(d.error || ('HTTP ' + r.status))}</p><button class="btn btn-primary" id="retryMsg">立即重试</button></div>`;
+        const rb = $('#retryMsg');
+        if (rb) rb.onclick = () => { nextAt = 0; fetchMsgs(false); };
+      }
+      if (!MSGS.length) setWait('err', d.error || ('HTTP ' + r.status));
+      return;
+    }
+
+    const list = Array.isArray(d.messages) ? d.messages : [];
+    const secs = ((performance.now() - t0) / 1000).toFixed(1);
+    const ids = list.map(m => m.id);
+    const firstLoad = LAST_IDS === null;
+    const added = firstLoad ? [] : ids.filter(id => !LAST_IDS.includes(id));
+
+    MSGS = list;
+    LAST_IDS = ids;
+
+    $('#ibNote').textContent = (d.count || list.length)
+      ? `${d.count || list.length} 条 · ${secs}s · 每 15 秒自动检查`
+      : `暂无短信 · ${secs}s · 每 15 秒自动检查`;
+
+    if (added.length) {
+      // §18 新短信到达：置顶 + NEW + 高亮 + Tab Title
+      MSGS = list.slice().sort((a, b) => {
+        const an = added.includes(a.id) ? 1 : 0, bn = added.includes(b.id) ? 1 : 0;
+        return bn - an;
+      });
+      $('#tabSession').setAttribute('aria-selected', 'true');
+      $('#tabAll').setAttribute('aria-selected', 'false');
+      paintMsgs(added);
+      setWait('hit', `已收到 ${added.length} 条新短信，验证码已自动提取`);
+      document.title = `(${added.length}) 新短信 · SMS Hub`;
+      const first = MSGS.find(m => added.includes(m.id) && m.otp);
+      if (first) setTimeout(() => { copy(first.otp); toast('验证码已自动复制：' + first.otp); }, 350);
+      // 切换「填写」流程
+      setFlow('wait');
+      const f = $('#flow').querySelectorAll('.fstep')[1];
+      if (f) { f.classList.remove('on'); f.classList.add('ok'); f.querySelector('.d').textContent = '✓'; }
+    } else {
+      paintMsgs(null);
+      if (!MSGS.filter(isNewMsg).length) {
+        const elapsed = SESSION ? Date.now() - new Date(SESSION.sessionStartedAt).getTime() : 0;
+        if (elapsed > 90000) setWait('slow90');
+        else if (elapsed > 30000) setWait('slow30');
+        else if (SESSION) setWait('wait');
+      }
+    }
+  } catch (e) {
+    const timedOut = e.name === 'TimeoutError';
+    $('#ibNote').textContent = timedOut ? '读取超时，将自动重试' : '网络错误，将自动重试';
+    if (!MSGS.length) setWait('err', timedOut ? '源站响应超时' : '网络错误');
+  } finally {
+    clearTimeout(slowTimer); slowTimer = null;
+    inflight = false;
+    startCountdown();
+  }
+}
+
+function startPolling() {
+  clearInterval(timerId);
+  timerId = setInterval(() => {
+    if (Date.now() >= nextAt) fetchMsgs(true);
+  }, 1500);
+}
+function stopPolling() { clearInterval(timerId); clearInterval(countdownId); timerId = countdownId = null; }
+
+/* ---------- 复制号码 (§16) ---------- */
+async function doCopyNumber() {
+  const ok = await copy(N.phone);
+  if (!ok) { toast('复制失败，请手动选择号码', 'err'); return; }
+
+  // §16 创建接码 Session
+  if (!SESSION) {
+    SESSION = {
+      numberId: N.id,
+      country: N.countryCode,
+      sessionStartedAt: new Date().toISOString(),
+      initialMessageIds: MSGS.map(m => m.id),
+    };
+    saveSession(SESSION);
+  }
+  setFlow('fill');
+  const f2 = $('#flow').querySelectorAll('.fstep')[1];
+  if (f2) { f2.classList.add('on'); }
+  toast('号码已复制：' + N.phone);
+  setWait('wait', '把这个号码填写到需要接收短信的网站，本页正在自动等待新短信');
+  $('#stCopy').textContent = '⧉ 已复制号码';
+  setTimeout(() => { $('#stCopy').textContent = '⧉ 复制号码'; }, 2400);
+  // 立即触发一次检查
+  nextAt = Date.now() + 2000;
+  startPolling();
+}
+
+/* ---------- 一键换号 (§23) ---------- */
+async function switchNumber() {
+  const pool = rank(mainPool(DATA)).filter(n => n.countryCode === N.countryCode && n.id !== N.id);
+  if (!pool.length) { toast('该国家暂无其他号码，可回列表换个国家', 'err'); return; }
+  const next = pool[0];
+  clearSession(); SESSION = null;
+  const ok = await copy(next.phone);
+  toast(ok ? `已切换到 ${next.phone} 并复制` : `已切换到 ${next.phone}`);
+  setTimeout(() => location.href = 'number.html?id=' + encodeURIComponent(next.id), 480);
+}
+
+/* ---------- Session 恢复 (§24) ---------- */
+function restoreSession() {
+  const s = loadSession();
+  if (!s || s.numberId !== NID) return false;
+  SESSION = s;
+  setFlow('wait');
+  const f = $('#flow').querySelectorAll('.fstep');
+  if (f[0]) { f[0].classList.remove('on'); f[0].classList.add('ok'); f[0].querySelector('.d').textContent = '✓'; }
+  if (f[1]) { f[1].classList.remove('on'); f[1].classList.add('ok'); f[1].querySelector('.d').textContent = '✓'; }
+  if (f[2]) { f[2].classList.add('on'); }
+  setWait('wait', `继续等待 ${fmtPhone(N.phone, N.callingCode)} 的短信 · 开始于 ${relTime(s.sessionStartedAt)}`);
+  return true;
+}
+
+/* ---------- 事件 ---------- */
+$('#cpNum').onclick = doCopyNumber;
+$('#stCopy').onclick = doCopyNumber;
+$('#manualRefresh').onclick = () => { nextAt = 0; fetchMsgs(false); toast('已触发刷新'); };
+$('#stRefresh').onclick = () => { nextAt = 0; fetchMsgs(false); toast('已触发刷新'); };
+$('#switchNum').onclick = switchNumber;
+$('#allNum').onclick = () => location.href = 'numbers.html' + (N.countryCode ? '?c=' + encodeURIComponent(N.countryCode) : '');
+
+$('#tabSession').onclick = () => {
+  $('#tabSession').setAttribute('aria-selected', 'true');
+  $('#tabAll').setAttribute('aria-selected', 'false');
+  paintMsgs(null);
+};
+$('#tabAll').onclick = () => {
+  $('#tabSession').setAttribute('aria-selected', 'false');
+  $('#tabAll').setAttribute('aria-selected', 'true');
+  paintMsgs(null);
+};
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && SESSION) { nextAt = 0; fetchMsgs(true); }
+});
+
+/* ---------- 启动 ---------- */
+(async () => {
+  $('#msgState').innerHTML = '<div class="state"><div class="ic">⏳</div><h3>正在读取…</h3></div>';
+  try {
+    DATA = await loadData();
+    CTYS = countriesOf(DATA);
+    N = DATA.numbers.find(x => x.id === NID);
+    if (!N) {
+      $('#nhead').innerHTML = `<div class="state"><div class="ic">🚫</div><h3>号码不存在</h3>
+        <p>该号码可能已下线，请回列表重新选择。</p><a class="btn btn-primary" href="numbers.html">返回全部号码</a></div>`;
+      $('#flow').hidden = true; $('#wait').hidden = true;
+      $('#msgState').innerHTML = '';
+      return;
+    }
+    renderHead();
+    $('#nhead').hidden = false;
+
+    if (!canRead(N)) {
+      $('#wait').innerHTML = `<span aria-hidden="true">↗</span>
+        <div class="t"><b>该号码暂不支持站内查看短信</b>
+        <span>可前往原站查看，或从站内可接码号码中重新选择。</span></div>
+        <a class="btn btn-sm" href="${esc(N.sourceUrl)}" target="_blank" rel="noopener nofollow">前往原站 ↗</a>`;
+      $('#msgState').innerHTML = '';
+      $('#sticky').hidden = true;
+      return;
+    }
+
+    setFlow('copy');
+    const restored = restoreSession();
+    if (restored) { startPolling(); nextAt = 0; }
+    await fetchMsgs(false);
+    if (!restored) setWait('idle');
+    if (PICKED) { toast('已为你选好号码，点「复制号码」开始接码'); }
+
+    // 恢复会话时补一次（页面打开即刷新）
+    if (restored) fetchMsgs(true);
+  } catch (err) {
+    $('#msgState').innerHTML = `<div class="state"><div class="ic">⚠️</div><h3>加载失败</h3>
+      <p>${esc(err.message)}</p><button class="btn btn-primary" id="retry">重试</button></div>`;
+    const rb = $('#retry'); if (rb) rb.onclick = () => location.reload();
+  }
+})();
+</script>
+</body>
+</html>

@@ -6,13 +6,33 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://sms.jinzhai.icu/guide.html</loc>
-    <changefreq>monthly</changefreq>
+    <loc>https://sms.jinzhai.icu/numbers</loc>
+    <changefreq>hourly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://sms.jinzhai.icu/country/us</loc>
+    <changefreq>hourly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sms.jinzhai.icu/country/gb</loc>
+    <changefreq>hourly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sms.jinzhai.icu/country/ua</loc>
+    <changefreq>hourly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sms.jinzhai.icu/guide</loc>
+    <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://sms.jinzhai.icu/sources.html</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
+    <loc>https://sms.jinzhai.icu/faq</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
 </urlset>

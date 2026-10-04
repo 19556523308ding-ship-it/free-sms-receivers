@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>后台健康监控 - SMS Hub</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#070B12">
+<link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/brand/favicon.svg">
+<link rel="stylesheet" href="assets/app.css">
+<style>
+.ad{padding:26px 0 40px}
+.ad h1{font-size:24px;margin:0 0 6px;font-weight:800}
+.ad .sub{color:var(--text-muted);font-size:13.5px;margin:0 0 24px}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:14px;margin-bottom:24px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:16px 17px}
+.kpi .k{font-size:12.5px;color:var(--text-dim);margin-bottom:7px}
+.kpi .v{font-size:25px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.kpi .v.ac{color:var(--accent)}
+.kpi .v.wn{color:var(--warning)}
+.kpi .v.er{color:#EF4444}
+.kpi .d{font-size:12px;color:var(--text-muted);margin-top:4px}
+
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);margin-bottom:20px;overflow:hidden}
+.panel h2{font-size:15px;margin:0;padding:15px 18px;border-bottom:1px solid var(--border);font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.panel h2 .tag{font-size:12px;font-weight:600;color:var(--text-dim)}
+.panel-body{padding:16px 18px}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);white-space:nowrap}
+th{font-size:12px;color:var(--text-dim);font-weight:600;background:rgba(255,255,255,.02)}
+tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums;text-align:right}
+.tw{overflow-x:auto}
+
+.hs{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:3px 10px;border-radius:var(--r-pill)}
+.hs::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.hs-HEALTHY{color:#22C55E;background:rgba(34,197,94,.12)}
+.hs-EMPTY{color:#64748B;background:rgba(100,116,139,.14)}
+.hs-FAILING{color:#EF4444;background:rgba(239,68,68,.13)}
+.hs-SUSPICIOUS_ZERO{color:#F59E0B;background:rgba(245,158,11,.14)}
+.hs-SUSPECTED_DEGRADATION{color:#F59E0B;background:rgba(245,158,11,.14)}
+
+.warnrow{background:rgba(245,158,11,.06)}
+.badge-dep{font-size:11px;font-weight:700;color:var(--warning);border:1px solid rgba(245,158,11,.4);padding:2px 8px;border-radius:var(--r-pill);margin-left:8px}
+
+.bar-bg{height:6px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden;min-width:80px}
+.bar-bg i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:3px}
+.dep-hi i{background:linear-gradient(90deg,var(--warning),#EF4444)}
+@media (max-width:640px){.ad h1{font-size:20px}.kpi .v{font-size:21px}}
+</style>
+</head>
+<body>
+<header class="hd" id="hd"></header>
+
+<main class="wrap ad">
+  <h1>后台健康监控</h1>
+  <p class="sub">对内向视图（仅管理员）。展示数据刷新链路、各源计数与异常，不对外暴露来源。</p>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="panel">
+    <h2>数据刷新链路 <span class="tag" id="refreshTag">—</span></h2>
+    <div class="panel-body" id="refreshBody"></div>
+  </div>
+
+  <div class="panel">
+    <h2>数据源健康 <span class="tag" id="srcTag">—</span></h2>
+    <div class="tw"><table id="srcTable">
+      <thead><tr>
+        <th>来源</th><th style="text-align:right">当前</th><th style="text-align:right">上次</th>
+        <th>状态</th><th style="text-align:right">连续失败</th><th style="text-align:right">连续空结果</th>
+        <th>依赖占比</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </div>
+
+  <div class="panel">
+    <h2>号码池结构</h2>
+    <div class="tw"><table id="poolTable">
+      <thead><tr><th>国家 / 地区</th><th style="text-align:right">总数</th><th style="text-align:right">站内可收</th>
+      <th style="text-align:right">可用</th><th style="text-align:right">较少使用</th><th style="text-align:right">暂未验证</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </div>
+
+  <div class="panel">
+    <h2>探测覆盖 <span class="tag" id="probeTag">—</span></h2>
+    <div class="panel-body" id="probeBody"></div>
+  </div>
+</main>
+
+<footer class="ft" id="ft"></footer>
+
+<script type="module">
+import { loadData, countriesOf, mainPool, sparePool, esc, relTime, renderChrome, renderFooter } from './assets/app.js';
+
+renderChrome('');
+renderFooter();
+
+const $ = s => document.querySelector(s);
+const HL = { HEALTHY: '健康', EMPTY: '空结果', FAILING: '采集失败', SUSPICIOUS_ZERO: '可疑零值', SUSPECTED_DEGRADATION: '疑似退化' };
+
+function kpi(k, v, d, cls) {
+  return `<div class="kpi"><div class="k">{${k}}</div><div class="v ${cls || ''}">${v}</div>${d ? `<div class="d">${d}</div>` : ''}</div>`.replace(/\{|\}/g, '');
+}
+
+(async () => {
+  try {
+    const d = await loadData({ force: true });
+    const t = d.totals || {};
+    const direct = t.directInbox ?? mainPool(d).length;
+    const ratio = t.directInboxRatio != null ? Math.round(t.directInboxRatio * 100) : Math.round(direct / d.numbers.length * 100);
+    const synced = relTime(d.generatedAt) || '—';
+
+    $('#kpis').innerHTML = [
+      `<div class="kpi"><div class="k">系统状态</div><div class="v ac">● 正常</div><div class="d">快照 ${d.snapshotOk === false ? '已保护' : '正常'}</div></div>`,
+      `<div class="kpi"><div class="k">最新刷新</div><div class="v">${esc(synced)}</div><div class="d">${esc(String(d.generatedAt || '').slice(0, 19).replace('T', ' '))}</div></div>`,
+      `<div class="kpi"><div class="k">号码总数</div><div class="v">${d.numbers.length}</div><div class="d">去重后唯一号码</div></div>`,
+      `<div class="kpi"><div class="k">站内可收短信</div><div class="v ac">${direct}</div><div class="d">direct inbox</div></div>`,
+      `<div class="kpi"><div class="k">覆盖率</div><div class="v ${ratio >= 50 ? 'ac' : 'wn'}">${ratio}%</div><div class="d">目标 70%+</div></div>`,
+      `<div class="kpi"><div class="k">国家 / 地区</div><div class="v">${t.countries ?? countriesOf(d).length}</div><div class="d">未识别国家 0</div></div>`,
+      `<div class="kpi"><div class="k">可用 / 较少使用</div><div class="v">${t.available ?? 0} / ${t.lowUsage ?? 0}</div><div class="d">暂未验证 ${t.unverified ?? 0}</div></div>`,
+      `<div class="kpi"><div class="k">仅跳原站备用池</div><div class="v">${sparePool(d).length}</div><div class="d">不进推荐与默认列表</div></div>`,
+    ].join('');
+
+    /* 刷新链路 */
+    const bad = (d.sources || []).filter(s => !s.ok || (s.healthStatus && s.healthStatus !== 'HEALTHY'));
+    const okAll = bad.length === 0;
+    $('#refreshTag').innerHTML = okAll
+      ? '<span class="hs hs-HEALTHY">全部正常</span>'
+      : `<span class="hs hs-FAILING">${bad.length} 个来源异常</span>`;
+    $('#refreshBody').innerHTML = `
+      <div style="display:flex;gap:26px;flex-wrap:wrap">
+        <div><div style="font-size:12.5px;color:var(--text-dim)">采集成功来源</div>
+          <div style="font-size:19px;font-weight:700">${(d.sources || []).filter(s => s.ok).length} / ${(d.sources || []).length}</div></div>
+        <div><div style="font-size:12.5px;color:var(--text-dim)">快照保护</div>
+          <div style="font-size:19px;font-weight:700;color:${d.snapshotOk === false ? 'var(--warning)' : 'var(--success)'}">
+            ${d.snapshotOk === false ? '已触发' : '未触发'}</div></div>
+        <div><div style="font-size:12.5px;color:var(--text-dim)">调度说明</div>
+          <div style="font-size:13.5px;color:var(--text-muted);max-width:520px">${esc(d.scheduleNote || '—')}</div></div>
+      </div>`;
+
+    /* 来源健康 */
+    const srcs = (d.sources || []).slice().sort((a, b) => (b.count || 0) - (a.count || 0));
+    $('#srcTag').textContent = `${srcs.length} 个来源`;
+    $('#srcTable tbody').innerHTML = srcs.map(s => {
+      const hs = s.healthStatus || (s.ok ? (s.count ? 'HEALTHY' : 'EMPTY') : 'FAILING');
+      const dep = s.dependencyRatio != null ? Math.round(s.dependencyRatio * 100) : Math.round((s.count || 0) / d.numbers.length * 100);
+      const hi = s.highDependency || dep > 40;
+      return `<tr class="${hs === 'HEALTHY' ? '' : 'warnrow'}">
+        <td>${esc(s.sourceName || s.sourceId)}${hi ? '<span class="badge-dep">高依赖风险</span>' : ''}</td>
+        <td class="num">${s.count ?? 0}</td>
+        <td class="num">${s.previousCount ?? '—'}</td>
+        <td><span class="hs hs-${hs}">${HL[hs] || hs}</span>
+          ${!s.ok && s.error ? `<div style="font-size:11.5px;color:var(--text-dim);margin-top:4px;white-space:normal;max-width:280px">${esc(s.error)}</div>` : ''}</td>
+        <td class="num">${s.consecutiveFailures ?? 0}</td>
+        <td class="num">${s.consecutiveZeroResults ?? 0}</td>
+        <td><div style="display:flex;align-items:center;gap:8px">
+          <div class="bar-bg ${hi ? 'dep-hi' : ''}" style="flex:1"><i style="width:${Math.min(100, dep)}%"></i></div>
+          <span class="num" style="min-width:34px">${dep}%</span></div></td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="7" style="color:var(--text-dim)">暂无来源记录</td></tr>';
+
+    /* 号码池结构 */
+    const cs = countriesOf(d).slice().sort((a, b) => b.directInbox - a.directInbox || b.total - a.total);
+    $('#poolTable tbody').innerHTML = cs.map(c => `<tr>
+      <td>${esc(c.nameZh)} <span style="color:var(--text-dim);font-size:11.5px">${esc(c.iso)}</span></td>
+      <td class="num">${c.total}</td>
+      <td class="num" style="color:var(--accent);font-weight:600">${c.directInbox}</td>
+      <td class="num">${c.active}</td><td class="num">${c.lowUsage}</td><td class="num">${c.unverified}</td>
+    </tr>`).join('');
+
+    /* 探测覆盖 */
+    const probed = t.probed ?? d.numbers.filter(n => n.probed).length;
+    $('#probeTag').textContent = `${probed} / ${direct} 已探测`;
+    const reach = d.numbers.filter(n => n.probed && n.reachable).length;
+    $('#probeBody').innerHTML = `<div style="font-size:13.5px;color:var(--text-muted);line-height:1.7">
+      号码可达性探测：已覆盖 <b style="color:var(--text)">${probed}</b> / ${direct} 个站内号码，
+      其中 <b style="color:var(--success)">${reach}</b> 个可达。
+      ${probed < direct ? `<br>⚠️ 未覆盖的号码状态统一标记为「暂未验证」，不计入推荐优先。` : ''}
+      <br>探测区分 403（源站拒绝该号码）与 429（本站限频，不计入失败率）。
+    </div>`;
+  } catch (err) {
+    $('#kpis').innerHTML = `<div class="kpi"><div class="k">加载失败</div><div class="v er">✕</div><div class="d">${esc(err.message)}</div></div>`;
+  }
+})();
+</script>
+</body>
+</html>

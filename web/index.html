@@ -1,1083 +1,474 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SMS Hub · 全球公开临时号码聚合</title>
-<meta name="description" content="聚合多个公开 SMS 平台的临时号码索引，按国家、来源和短信记录查找，跳转原站查看短信。不存储短信内容。">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>免费接码 - 在线接收短信验证码 | SMS Hub</title>
+<meta name="description" content="SMS Hub 提供免费的临时手机号码在线接收短信，无需注册。选择国家和号码即可查看收到的公开短信验证码。">
+<meta name="theme-color" content="#070B12">
 <link rel="canonical" href="https://sms.jinzhai.icu/">
-<meta property="og:title" content="SMS Hub · 全球公开临时号码聚合">
-<meta property="og:description" content="聚合公开 SMS 平台的临时号码索引，按国家、来源查找。">
-<meta property="og:url" content="https://sms.jinzhai.icu/">
+<meta property="og:title" content="免费接码 - 在线接收短信验证码 | SMS Hub">
+<meta property="og:description" content="选择国家和号码，无需注册，免费在线查看收到的公开短信验证码。">
 <meta property="og:type" content="website">
-<link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/brand/favicon.svg">
+<link rel="stylesheet" href="assets/app.css">
 <style>
-/* ============ 设计 token（方案第 3.1 节） ============ */
-:root{
-  --bg:#080B12;
-  --surface:#10151F;
-  --surface-raised:#151B27;
-  --primary:#5B8CFF;
-  --accent:#34D6B6;
-  --text:#F8FAFC;
-  --text-muted:#94A3B8;
-  --border:rgba(255,255,255,.08);
-  --success:#22C55E;
-  --warning:#F59E0B;
-  --unknown:#94A3B8;
-  --notice-bg:#17140B;
-
-  --r-card:14px;
-  --r-ctrl:10px;
-  --r-tag:6px;
-
-  --maxw:1200px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{-webkit-text-size-adjust:100%}
-body{
-  background:var(--bg);color:var(--text);
-  font-family:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
-  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
-}
-body::before{
-  content:"";position:fixed;inset:0 0 auto 0;height:420px;pointer-events:none;z-index:0;
-  background:radial-gradient(ellipse 900px 320px at 50% -60px,rgba(91,140,255,.16),transparent 70%);
-}
-.wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px;position:relative;z-index:1}
-a{color:inherit;text-decoration:none}
-button,input,select{font:inherit;color:inherit}
-.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
-:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-
-/* ============ Header ============ */
-header{height:72px;display:flex;align-items:center;border-bottom:1px solid var(--border);position:relative}
-.logo{display:flex;align-items:center;gap:10px}
-.logo img{height:38px;width:auto;display:block;flex:none}
-.logo b{font-size:16px;font-weight:600;letter-spacing:.2px;display:block}
-.logo small{font-size:11.5px;color:var(--text-muted);display:block;line-height:1.2}
-.nav{margin-left:auto;display:flex;gap:28px;font-size:14px}
-.nav a{color:var(--text-muted);transition:color .15s}
-.nav a:hover{color:var(--text)}
-.btn-menu{display:none;margin-left:auto;background:none;border:0;width:44px;height:44px;
-  align-items:center;justify-content:center;cursor:pointer;border-radius:var(--r-ctrl)}
-.btn-menu span,.btn-menu span::before,.btn-menu span::after{
-  display:block;width:18px;height:1.5px;background:var(--text);border-radius:2px}
-.btn-menu span{position:relative}
-.btn-menu span::before{content:"";position:absolute;top:-6px}
-.btn-menu span::after{content:"";position:absolute;top:6px}
-
-/* ============ Hero ============ */
-.hero{padding:48px 0 24px;text-align:center;position:relative}
+/* ---------- Hero (§5.2-§5.5 / §44) ---------- */
+.hero{position:relative;overflow:hidden;padding:64px 0 52px}
 .hero::before{
-  content:"";position:absolute;inset:0;pointer-events:none;opacity:.85;
-  /* 官方素材：世界地图点阵 + 极淡网格 */
-  background-image:url('/assets/backgrounds/world-map-bg.svg'),
-                   url('/assets/backgrounds/grid-overlay.svg');
-  background-repeat:no-repeat,repeat;
-  background-position:center top,0 0;
-  background-size:1200px 420px,160px 160px;
-  -webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.95),transparent 80%);
-  mask-image:linear-gradient(180deg,rgba(0,0,0,.95),transparent 80%);
+  content:"";position:absolute;top:-260px;left:50%;transform:translateX(-50%);
+  width:1100px;height:620px;pointer-events:none;
+  background:radial-gradient(ellipse at 30% 40%,rgba(79,127,255,.20),transparent 62%),
+             radial-gradient(ellipse at 72% 62%,rgba(45,212,168,.16),transparent 62%);
+  filter:blur(8px);
 }
-.hero>*{position:relative}
-h1{font-size:52px;line-height:1.2;font-weight:700;letter-spacing:-.5px}
-.sub{color:var(--text-muted);font-size:16px;margin-top:14px}
-.searchbox{display:flex;gap:10px;max-width:680px;margin:28px auto 0}
-.searchbox>div{flex:1;position:relative}
-.searchbox input{
-  width:100%;height:56px;padding:0 44px 0 46px;border-radius:var(--r-ctrl);
-  background:var(--surface);border:1px solid var(--border);font-size:15px;
+.hero-in{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+.hero h1{
+  font-size:52px;line-height:1.1;margin:0 0 16px;font-weight:800;letter-spacing:-.025em;
 }
-.searchbox input::placeholder{color:#64748B}
-.searchbox input:focus{border-color:var(--primary);outline:none;box-shadow:0 0 0 3px rgba(91,140,255,.18)}
-.searchbox .ico{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text-muted)}
-.searchbox .ico img{display:block}
-.searchbox .clr{position:absolute;right:8px;top:50%;transform:translateY(-50%);
-  width:32px;height:32px;border:0;background:none;color:var(--text-muted);cursor:pointer;
-  border-radius:6px;font-size:17px;display:none}
-.searchbox .clr:hover{color:var(--text);background:var(--surface-raised)}
-.searchbox.has .clr{display:block}
-.btn-primary{
-  height:56px;padding:0 28px;border:0;border-radius:var(--r-ctrl);cursor:pointer;
-  background:var(--primary);color:#080B12;font-weight:600;font-size:15px;white-space:nowrap;
+.hero h1 .hl{background:linear-gradient(100deg,var(--primary),var(--accent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero .sub{font-size:17px;color:var(--text-muted);margin:0 0 28px;font-weight:500}
+.hero .sub b{color:var(--text);font-weight:600}
+.hero-search{margin-bottom:18px}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.hero-cta .btn-primary{min-width:196px}
+.hero-safe{margin-top:26px}
+
+/* Hero 统计 (§5.4) */
+.hstats{display:flex;gap:30px;margin-top:30px;padding-top:26px;border-top:1px solid var(--border);flex-wrap:wrap}
+.hstat .n{font-size:26px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.hstat .n.ac{color:var(--accent)}
+.hstat .l{font-size:13px;color:var(--text-muted);margin-top:2px}
+
+/* §44 Hero 视觉：手机 + 短信气泡 + OTP */
+.mock{position:relative;display:flex;justify-content:center}
+.mock::after{
+  content:"";position:absolute;inset:-40px -20px;pointer-events:none;
+  background:radial-gradient(ellipse at 55% 45%,rgba(45,212,168,.14),transparent 66%);
 }
-.btn-primary:hover{filter:brightness(1.1)}
-.btn-primary:disabled{opacity:.55;cursor:not-allowed}
-
-/* ============ 统计条 ============ */
-.stats{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-top:22px;font-size:14px;color:var(--text-muted)}
-.stats b{color:var(--text);font-weight:600}
-.stats .dot{width:12px;height:12px;vertical-align:-1.5px;margin-right:4px}
-.stats .sep{color:#334155}
-
-/* ============ 提醒条 ============ */
-.notice{
-  display:flex;align-items:center;gap:12px;margin:24px 0;
-  background:var(--notice-bg);border:1px solid rgba(245,158,11,.28);
-  border-radius:var(--r-card);padding:14px 18px;font-size:14px;color:#FCD34D;
+.phone{
+  position:relative;width:296px;border-radius:32px;padding:10px;
+  background:linear-gradient(160deg,#1c2836,#0c1420);
+  border:1px solid var(--border-strong);box-shadow:var(--shadow-lg);
 }
-.notice .txt{flex:1}
-.notice a{color:var(--primary);font-weight:500;white-space:nowrap}
-
-/* ============ 版块通用 ============ */
-.sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px}
-.sec-head h2,.list-head h2{font-size:23px;font-weight:600}
-.sec-head a{font-size:14px;color:var(--text-muted)}
-.sec-head a:hover{color:var(--primary)}
-section{margin-bottom:48px}
-
-/* ============ 热门国家 ============ */
-.countries{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
-.ctry{
-  display:flex;align-items:center;gap:8px;padding:12px 14px;
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-ctrl);
-  cursor:pointer;font-size:14px;transition:.15s;text-align:left;color:var(--text);
+.phone-scr{background:#080D16;border-radius:24px;overflow:hidden;padding:14px 13px 18px;min-height:418px}
+.ph-top{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--text-dim);padding:0 4px 12px}
+.ph-badge{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--accent);font-weight:600;padding:0 4px 12px}
+.bub{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:11px 13px;margin-bottom:9px;font-size:12.5px;line-height:1.5;color:var(--text-muted);
+  animation:pop .5s cubic-bezier(.2,.8,.3,1.2) backwards;
 }
-.ctry:hover{border-color:rgba(91,140,255,.5);background:var(--surface-raised)}
-.ctry[aria-pressed="true"]{border-color:var(--primary);background:rgba(91,140,255,.12)}
-.ctry .fl{font-size:19px;line-height:1;flex:none}
-.fl-img{width:21px;height:16px;border-radius:2px;object-fit:cover;flex:none;display:block;background:#1E293B}
-.ctry .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ctry .ct{color:var(--text-muted);font-size:13px;font-variant-numeric:tabular-nums}
-
-/* ============ 筛选栏 ============ */
-.list-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.list-head .cnt{color:var(--text-muted);font-size:14px}
-.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
-.bar select,.bar .btn{
-  height:44px;padding:0 14px;border-radius:var(--r-ctrl);
-  background:var(--surface);border:1px solid var(--border);font-size:14px;cursor:pointer;
+.bub:nth-child(1){animation-delay:.15s}
+.bub:nth-child(2){animation-delay:.35s}
+.bub:nth-child(3){animation-delay:.55s}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+.bub .from{display:block;color:var(--text);font-weight:600;font-size:11.5px;margin-bottom:4px}
+.bub-otp{
+  background:linear-gradient(150deg,rgba(45,212,168,.14),rgba(79,127,255,.10));
+  border-color:rgba(45,212,168,.36);
 }
-.bar select:hover,.bar .btn:hover{border-color:rgba(91,140,255,.5)}
-.bar .spacer{flex:1}
-.bar .btn{display:inline-flex;align-items:center;gap:7px}
-.bar .btn img{display:block}
-.bar .btn.primary{background:var(--primary);border-color:var(--primary);color:#080B12;font-weight:600}
-.bar .btn.primary:hover{filter:brightness(1.1)}
-.bar .btn:disabled{opacity:.55;cursor:not-allowed}
-.spin{animation:sp .7s linear infinite}
-@keyframes sp{to{transform:rotate(360deg)}}
-.only-mobile{display:none}
+.otp{
+  display:block;font-size:36px;font-weight:800;letter-spacing:.14em;color:var(--accent);
+  margin:6px 0 2px;font-variant-numeric:tabular-nums;line-height:1.15;
+}
+.otp-cap{font-size:11px;color:var(--text-dim)}
+.ph-bar{height:4px;background:var(--surface-2);border-radius:2px;overflow:hidden;margin-top:13px}
+.ph-bar i{display:block;height:100%;width:38%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:2px;animation:prog 2.6s ease-in-out infinite}
+@keyframes prog{0%{width:12%}50%{width:74%}100%{width:12%}}
 
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.chip{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border-radius:var(--r-tag);
-  background:rgba(91,140,255,.13);border:1px solid rgba(91,140,255,.3);
-  font-size:13px;color:#A8C6FF}
-.chip button{background:none;border:0;color:inherit;cursor:pointer;font-size:15px;line-height:1;padding:0 2px}
-.chip button:hover{color:#fff}
-
-/* ============ 号码卡片 ============ */
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.card{
+/* ---------- 国家卡 (§6) ---------- */
+.ctys{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.cty{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);
-  padding:18px;display:flex;flex-direction:column;gap:11px;
-  transition:border-color .15s,background .15s,transform .15s;min-height:224px;
+  padding:16px 15px;display:flex;flex-direction:column;gap:9px;cursor:pointer;
+  transition:border-color .15s,background .15s,transform .15s;text-align:left;color:inherit;
 }
-.card:hover{border-color:rgba(91,140,255,.45);background:var(--surface-raised);transform:translateY(-2px)}
-.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.card-country{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text)}
-.card-country .fl{font-size:20px;line-height:1}
-.badge{font-size:12px;padding:3px 8px;border-radius:var(--r-tag);white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
-.badge img{width:12px;height:12px;flex:none}
-/* 设计图 C01：近期有短信 = 琥珀警示色，状态未知 = 灰 */
-.badge.recent{background:rgba(245,158,11,.13);color:var(--warning);border:1px solid rgba(245,158,11,.25)}
-.badge.unknown{background:rgba(148,163,184,.12);color:var(--unknown);border:1px solid rgba(148,163,184,.22)}
-.card-phone{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.card-phone .num{font-size:22px;font-weight:600;letter-spacing:.2px;word-break:break-all}
-.copy{
-  width:32px;height:32px;flex:none;border:1px solid var(--border);border-radius:8px;
-  background:none;cursor:pointer;color:var(--text-muted);
-  display:grid;place-items:center;transition:.15s;
-}
-.copy:hover{border-color:var(--accent);color:var(--accent)}
-.card-src{font-size:13px;color:var(--text-muted)}
-/* 设计图 C01：短信数与活跃记录单行展示 */
-.card-meta{font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden}
-.card-meta .sep{color:#334155}
-.card-meta .na{color:#64748B}
-.card-foot{margin-top:auto;padding-top:13px;border-top:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;gap:10px}
-.card-foot time{font-size:12.5px;color:var(--text-muted)}
-/* 设计图 C01：主操作为蓝色文字链接，非实心按钮 */
-.go{
-  display:inline-flex;align-items:center;gap:5px;padding:10px 6px;border-radius:8px;min-height:44px;
-  color:var(--primary);font-size:13.5px;font-weight:500;white-space:nowrap;
-}
-.go:hover{color:#8FB0FF}
-/* 站内查看：与「查看原站」并列，但用主色描边区分「站内」与「站外」 */
-.inline-read{
-  border:1px solid rgba(91,140,255,.32);background:rgba(91,140,255,.08);
-  padding:9px 11px;cursor:pointer;font-family:inherit;
-}
-.inline-read:hover{background:rgba(91,140,255,.16);border-color:rgba(91,140,255,.5)}
-.inline-read[disabled]{opacity:.55;cursor:progress}
+.cty:hover{border-color:var(--border-strong);background:var(--surface-2);transform:translateY(-2px)}
+.cty .top{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px}
+.cty .st1{font-size:13px;color:var(--accent);font-weight:600}
+.cty .st2{font-size:12.5px;color:var(--text-muted)}
 
-/* ============ 短信查看抽屉 ============
-   注意：.reader 不能直接写 display:flex —— 那会覆盖 [hidden] 属性的
-   display:none（作者样式优先级高于 UA 样式），导致面板关不掉、甚至
-   页面一加载就常驻显示。同理遮罩另起 .reader-mask，避免与下方移动端
-   筛选面板的 .sheet-mask（那个用 .on 控制 display）互相覆盖。 */
-[hidden]{display:none !important}
-.reader-mask{position:fixed;inset:0;background:rgba(3,6,12,.66);backdrop-filter:blur(3px);
-  z-index:70;animation:fadeIn .18s ease}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.reader:not([hidden]){
-  position:fixed;z-index:71;background:var(--surface);border:1px solid var(--border);
-  display:flex;flex-direction:column;
-  right:0;top:0;bottom:0;width:min(520px,100vw);
-  box-shadow:-24px 0 60px rgba(0,0,0,.5);
-  animation:slideIn .22s cubic-bezier(.22,.61,.36,1);
+/* ---------- 推荐号码 (§7) ---------- */
+.rec-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.rec-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:20px}
+@media (max-width:1023px){
+  .hero-in{grid-template-columns:1fr;gap:38px}
+  .hero h1{font-size:40px}
+  .mock{order:-1}
+  .phone{width:270px}
+  .ctys{grid-template-columns:repeat(3,1fr)}
+  .rec-grid{grid-template-columns:repeat(2,1fr)}
 }
-@keyframes slideIn{from{transform:translateX(24px);opacity:.4}to{transform:none;opacity:1}}
-.reader-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
-  padding:18px 20px 14px;border-bottom:1px solid var(--border)}
-.reader-head h2{margin:0;font-size:17px;font-weight:600;color:var(--text)}
-.reader-sub{margin-top:5px;font-size:13px;color:var(--text-muted);font-variant-numeric:tabular-nums}
-.reader-x{width:44px;height:44px;flex:none;border-radius:8px;border:1px solid var(--border);
-  background:var(--bg-soft);color:var(--text-muted);font-size:14px;cursor:pointer;
-  display:inline-flex;align-items:center;justify-content:center}
-.reader-x:hover{color:var(--text);border-color:var(--border-hi)}
-.reader-x:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
-.reader-body{flex:1;overflow-y:auto;padding:16px 20px;-webkit-overflow-scrolling:touch}
-.reader-tip{font-size:12.5px;color:var(--text-muted);background:var(--bg-soft);
-  border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:14px;line-height:1.6}
-.reader-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:13px 20px;border-top:1px solid var(--border);min-height:56px}
-.reader-note{font-size:12.5px;color:var(--text-muted)}
-.reader-refresh{font-size:13.5px;color:var(--primary);background:transparent;
-  border:1px solid var(--border);border-radius:9px;padding:10px 14px;min-height:44px;
-  cursor:pointer;white-space:nowrap;font-family:inherit;transition:border-color .15s,color .15s}
-.reader-refresh:hover{color:#8FB0FF;border-color:var(--primary)}
-.reader-refresh[disabled]{opacity:.55;cursor:progress}
-.reader-refresh:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
-
-/* 短信条目 */
-.msg{border:1px solid var(--border);border-radius:12px;padding:13px 14px;margin-bottom:11px;
-  background:var(--bg-soft)}
-.msg-top{display:flex;align-items:center;gap:9px;margin-bottom:8px;flex-wrap:wrap}
-.msg-from{font-size:12px;font-weight:600;color:var(--accent);background:rgba(52,214,182,.11);
-  border:1px solid rgba(52,214,182,.24);border-radius:6px;padding:2px 7px;max-width:180px;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.msg-time{font-size:11.5px;color:var(--text-muted);margin-left:auto;font-variant-numeric:tabular-nums}
-.msg-body{font-size:14px;line-height:1.65;color:var(--text);word-break:break-word}
-.msg-otp{margin-top:10px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-.otp-val{font-size:19px;font-weight:700;letter-spacing:2.5px;color:var(--primary);
-  background:rgba(91,140,255,.1);border:1px dashed rgba(91,140,255,.42);
-  border-radius:8px;padding:6px 12px;font-variant-numeric:tabular-nums}
-.otp-cp{font-size:12.5px;color:var(--primary);background:none;border:1px solid rgba(91,140,255,.3);
-  border-radius:7px;padding:8px 11px;cursor:pointer;min-height:36px;font-family:inherit}
-.otp-cp:hover{background:rgba(91,140,255,.14)}
-.otp-tag{font-size:11.5px;color:var(--text-muted)}
-
-.reader-empty{text-align:center;padding:36px 16px;color:var(--text-muted);font-size:13.5px;line-height:1.8}
-.reader-empty b{display:block;color:var(--text);font-size:15px;margin-bottom:6px;font-weight:600}
-.reader-err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.28);
-  border-radius:10px;padding:12px 14px;font-size:13px;color:#FCA5A5;line-height:1.7}
-.reader-load{display:flex;align-items:center;justify-content:center;gap:10px;padding:34px 0;
-  color:var(--text-muted);font-size:13.5px}
-.spin{width:16px;height:16px;border:2px solid rgba(91,140,255,.22);
-  border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-
 @media (max-width:767px){
-  /* 移动端改为底部抽屉，更符合单手操作 */
-  .reader:not([hidden]){right:0;left:0;top:auto;bottom:0;width:100%;max-height:86vh;
-    border-radius:16px 16px 0 0;border-bottom:0;
-    box-shadow:0 -20px 50px rgba(0,0,0,.5);animation:slideUp .24s cubic-bezier(.22,.61,.36,1)}
-  @keyframes slideUp{from{transform:translateY(28px);opacity:.4}to{transform:none;opacity:1}}
-  .reader-head{padding:15px 16px 12px}
-  .reader-body{padding:13px 16px}
-  .reader-foot{padding:11px 16px}
-  .otp-val{font-size:17px;letter-spacing:2px}
-  .inline-read{padding:12px 11px}
-}
-
-/* ============ 数据源状态 ============ */
-.srcs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.src{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:18px}
-.src-head{display:flex;align-items:center;gap:10px;margin-bottom:11px}
-.src-head .ic{width:32px;height:32px;flex:none}
-.src-head .ic img{width:100%;height:100%;display:block;border-radius:8px}
-/* 无官方识别图形的新增源：回退为首字母徽标 */
-.src-head .ic .ini{
-  width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;
-  background:rgba(91,140,255,.12);color:var(--primary);
-  font-size:12px;font-weight:700;letter-spacing:.3px;
-}
-.src-head b{font-size:15px;font-weight:600}
-.src-head .st{margin-left:auto;font-size:12.5px;display:flex;align-items:center;gap:6px}
-.st.ok{color:var(--success)}
-.st.fail{color:#EF4444}
-.src .n{font-size:13px;color:var(--text-muted);margin-bottom:4px}
-/* 设计图 C02：数量与上次成功同步同一行两端对齐 */
-.src .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--text-muted)}
-.src .row .t{font-size:12.5px;color:#64748B}
-
-/* ============ 状态页 ============ */
-.state{padding:56px 24px;text-align:center;color:var(--text-muted)}
-.state .ic{font-size:38px;margin-bottom:14px}
-.state h3{font-size:17px;color:var(--text);margin-bottom:8px;font-weight:600}
-.state p{font-size:14px;margin-bottom:16px}
-.skel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);
-  height:224px;position:relative;overflow:hidden}
-.skel::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.045),transparent);
-  animation:sh 1.4s infinite}
-@keyframes sh{100%{transform:translateX(100%)}}
-
-/* ============ Footer ============ */
-footer{border-top:1px solid var(--border);padding:32px 0 48px}
-.foot{display:flex;gap:48px;flex-wrap:wrap;justify-content:space-between}
-.foot-brand{max-width:280px}
-.foot-brand p{font-size:13px;color:var(--text-muted);margin-top:11px}
-.foot-cols{display:flex;gap:64px;flex-wrap:wrap}
-.foot-col h4{font-size:13px;font-weight:600;margin-bottom:12px}
-.foot-col a{display:block;font-size:13.5px;color:var(--text-muted);margin-bottom:9px}
-.foot-col a:hover{color:var(--primary)}
-.foot-bot{margin-top:32px;padding-top:16px;border-top:1px solid var(--border);
-  font-size:12.5px;color:#64748B;display:flex;gap:24px;flex-wrap:wrap;justify-content:space-between}
-
-/* ============ 移动端筛选面板 ============ */
-.sheet-mask{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:60;display:none}
-.sheet-mask.on{display:block}
-.sheet{
-  position:fixed;left:0;right:0;bottom:0;z-index:61;background:var(--surface-raised);
-  border-radius:16px 16px 0 0;border-top:1px solid var(--border);
-  padding:8px 20px calc(20px + env(safe-area-inset-bottom));
-  transform:translateY(100%);transition:transform .22s;max-height:85vh;overflow-y:auto;
-}
-.sheet.on{transform:translateY(0)}
-.sheet .grab{width:38px;height:4px;border-radius:2px;background:#334155;margin:0 auto 16px}
-.sheet h3{font-size:17px;margin-bottom:16px}
-.sheet label{display:block;font-size:13px;color:var(--text-muted);margin:14px 0 7px}
-.sheet select{width:100%;height:46px;padding:0 14px;border-radius:var(--r-ctrl);
-  background:var(--surface);border:1px solid var(--border)}
-.sheet-actions{display:flex;gap:10px;margin-top:22px}
-.sheet-actions button{flex:1;height:48px;border-radius:var(--r-ctrl);font-size:15px;cursor:pointer;border:1px solid var(--border)}
-.sheet-actions .cancel{background:none;color:var(--text)}
-.sheet-actions .apply{background:var(--primary);border-color:var(--primary);color:#080B12;font-weight:600}
-
-/* ============ 响应式（方案 3.3） ============ */
-@media(max-width:1100px){
-  .grid{grid-template-columns:repeat(2,1fr)}
-  .countries{grid-template-columns:repeat(4,1fr)}
-  h1{font-size:42px}
-}
-@media(max-width:767px){
-  .wrap{padding:0 16px}
-  header{height:60px}
-  .nav{display:none}
-  .btn-menu{display:flex}
-  .nav.open{
-    display:flex;position:absolute;top:60px;left:0;right:0;flex-direction:column;gap:0;
-    background:var(--surface);border-bottom:1px solid var(--border);padding:8px 0;z-index:50;
+  .hero{padding:26px 0 28px}
+  /* 移动端改为纵向流：文案块 → 手机视觉（§25） */
+  .hero-in{display:flex;flex-direction:column;gap:22px}
+  .hero-in > div:first-child{display:flex;flex-direction:column}
+  .hero h1{font-size:31px;margin-bottom:12px;order:1}
+  .hero .sub{font-size:15px;margin-bottom:20px;order:2}
+  .hero-search{order:3;margin-bottom:14px}
+  .hero-cta{order:4;flex-direction:column;align-items:stretch;gap:10px}
+  .hero-cta .btn{width:100%}
+  .hero-safe{order:6;margin-top:18px}
+  .hstats{order:5;gap:0;margin-top:22px;padding-top:18px}
+  .hstat{flex:1 1 50%;padding:8px 0}
+  .hstat .n{font-size:21px}
+  .mock{order:2;margin-top:0}
+  .phone{width:100%;max-width:250px;border-radius:24px}
+  .phone-scr{min-height:0;padding:10px 10px 13px}
+  .otp{font-size:29px}
+  .bub{font-size:12px;padding:9px 11px;margin-bottom:7px}
+  /* §6 Mobile：国家横滑 */
+  .ctys{
+    display:flex;overflow-x:auto;gap:12px;padding-bottom:6px;
+    margin:0 -16px;padding-left:16px;padding-right:16px;
+    scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;
   }
-  .nav.open a{padding:14px 16px}
-  h1{font-size:32px;line-height:1.25;letter-spacing:-.3px}
-  .sub{font-size:14.5px;margin-top:10px}
-  .hero{padding:32px 0 16px}
-  .searchbox{flex-direction:column;margin-top:20px}
-  .searchbox input,.searchbox .btn-primary{height:52px}
-  .stats{gap:8px 16px;margin-top:18px;font-size:13.5px;justify-content:flex-start}
-  .stats .sep{display:none}
-  .notice{flex-direction:column;align-items:flex-start;gap:9px;padding:13px 15px;font-size:13.5px}
-  .countries{display:flex;overflow-x:auto;gap:8px;padding:0 16px 8px;margin:0 -16px}
-  .countries::-webkit-scrollbar{display:none}
-  .ctry{flex:none;min-width:118px}
-  .grid{grid-template-columns:1fr}
-  .srcs{grid-template-columns:1fr}
-  .card{min-height:0}
-  /* 移动端操作目标不小于 44px（方案第 5 节） */
-  .copy{width:44px;height:44px}
-  .go{padding:12px 8px;min-height:44px}
-  .ctry{min-height:44px}
-  .only-desk{display:none!important}
-  .only-mobile{display:inline-flex}
-  .foot{gap:24px}
-  .foot-cols{gap:32px}
+  .ctys::-webkit-scrollbar{display:none}
+  .cty{flex:0 0 148px;scroll-snap-align:start}
+  .rec-grid{grid-template-columns:1fr;gap:12px}
+  .rec-head{flex-direction:column;align-items:stretch}
 }
-@media(max-width:360px){
-  h1{font-size:27px}
-  .ctry{min-width:108px;padding:10px 12px;font-size:13px}
-  .card-phone .num{font-size:19px}
+
+/* ---------- 如何使用 (§8) ---------- */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:22px}
+.stepc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:20px 18px;position:relative}
+.stepc .sn{
+  width:29px;height:29px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:14px;color:#04070d;margin-bottom:13px;
+  background:linear-gradient(135deg,var(--primary),var(--accent));
 }
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
-    transition-duration:.01ms!important}
-  .card:hover{transform:none}
+.stepc h3{margin:0 0 6px;font-size:15px;font-weight:700}
+.stepc p{margin:0;font-size:13px;color:var(--text-muted);line-height:1.55}
+@media (max-width:1023px){.steps{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:480px){.steps{grid-template-columns:1fr;gap:12px}}
+
+/* ---------- 备用池折叠 (§11) ---------- */
+.spare{margin-top:22px;border:1px solid var(--border);border-radius:var(--r-card);background:var(--surface);overflow:hidden}
+.spare summary{
+  cursor:pointer;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  font-size:14px;font-weight:600;list-style:none;
 }
+.spare summary::-webkit-details-marker{display:none}
+.spare summary .r{color:var(--text-muted);font-weight:400;font-size:13px;display:flex;align-items:center;gap:8px}
+.spare summary .r::after{content:"▾";transition:transform .2s}
+.spare[open] summary .r::after{transform:rotate(180deg)}
+.spare-body{padding:0 18px 18px;border-top:1px solid var(--border);padding-top:16px}
+.spare-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;max-height:330px;overflow-y:auto}
+.spare-grid .sp{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:10px 12px;border:1px solid var(--border);border-radius:var(--r-btn);font-size:13px;background:rgba(255,255,255,.02);
+}
+.spare-grid .sp .p{font-weight:600;font-variant-numeric:tabular-nums}
+.spare-grid .sp a{color:var(--text-muted);font-size:12px;white-space:nowrap}
+.spare-grid .sp a:hover{color:var(--primary)}
 </style>
 </head>
 <body>
-
-<header>
-  <div class="wrap" style="display:flex;align-items:center;height:100%;width:100%">
-    <a class="logo" href="/">
-      <img src="/assets/brand/logo.svg" alt="SMS Hub · 全球公开号码聚合" width="154" height="38">
-    </a>
-    <button class="btn-menu" id="menuBtn" aria-label="打开菜单" aria-expanded="false"><span></span></button>
-    <nav class="nav" id="nav">
-      <a href="/#numbers">全部号码</a>
-      <a href="/#sources">数据源</a>
-      <a href="/guide.html">使用说明</a>
-    </nav>
-  </div>
-</header>
+<header class="hd" id="hd"></header>
 
 <main>
-  <div class="wrap">
-    <div class="hero">
-      <h1>全球公开临时号码，一站查找</h1>
-      <p class="sub">聚合公开 SMS 平台，按国家、来源和活跃记录快速查找</p>
-      <form class="searchbox" id="searchForm" role="search">
-        <div id="searchWrap">
-          <span class="ico" aria-hidden="true"><img src="/assets/icons/search.svg" width="18" height="18" alt=""></span>
-          <label class="sr" for="q">搜索国家、区号、号码或平台</label>
-          <input id="q" type="search" placeholder="搜索国家、区号、号码或平台" autocomplete="off">
-          <button class="clr" type="button" id="clrBtn" aria-label="清除搜索">×</button>
+  <!-- ========== Hero (§5.2-§5.5 / §44) ========== -->
+  <section class="hero">
+    <div class="wrap hero-in">
+      <div>
+        <h1>免费<em style="font-style:normal" class="hl">接收短信</em>验证码</h1>
+        <p class="sub">无需注册 · 免费使用 · <b>在线查看短信</b></p>
+
+        <form class="search hero-search" id="hsearch" role="search" autocomplete="off">
+          <span class="ic">🔍</span>
+          <input id="hq" type="search" placeholder="搜索国家或区号，例如：美国 / +1"
+                 aria-label="搜索国家或区号" enterkeyhint="search">
+        </form>
+
+        <div class="hero-cta">
+          <button class="btn btn-primary btn-lg" id="pickBtn" type="button">🎲 帮我选个号码</button>
+          <a class="btn btn-lg" href="numbers.html">查看全部号码 →</a>
         </div>
-        <button class="btn-primary" type="submit">搜索</button>
-      </form>
-      <div class="stats" id="stats"></div>
-    </div>
 
-    <div class="notice">
-      <img src="/assets/icons/warning.svg" width="18" height="18" alt="" aria-hidden="true">
-      <span class="txt">公共号码的短信可能被任何人查看，请勿用于银行、支付、邮箱等敏感账户。</span>
-      <a href="/guide.html">使用说明 ↗</a>
-    </div>
+        <div class="safety hero-safe" role="note">
+          <span aria-hidden="true">🔒</span>
+          <div><b>请勿用于敏感账户。</b>公共号码及收到的短信任何人都可能看到，请勿用于银行、支付、邮箱或身份验证。</div>
+        </div>
 
-    <section id="countries-sec">
-      <div class="sec-head"><h2>热门国家</h2><a href="/guide.html#countries">全部国家</a></div>
-      <div class="countries" id="countries"></div>
-    </section>
-
-    <section id="numbers">
-      <div class="list-head">
-        <h2>全部号码</h2><span class="cnt" id="matchCnt"></span>
+        <div class="hstats" id="hstats"></div>
       </div>
 
-      <div class="bar">
-        <select id="f-country" class="only-desk" aria-label="按国家筛选"></select>
-        <select id="f-source" class="only-desk" aria-label="按来源筛选"></select>
-        <select id="f-status" class="only-desk" aria-label="按状态筛选">
-          <option value="">全部状态</option>
-          <option value="recent_activity">有短信记录</option>
-          <option value="unknown">状态未知</option>
-        </select>
-        <button class="btn primary only-mobile" id="openSheet"><img src="/assets/icons/filter.svg" width="15" height="15" alt="">筛选</button>
-        <span class="spacer"></span>
-        <select id="f-sort" aria-label="排序方式">
-          <option value="recent">最近更新</option>
-          <option value="sms">短信数量</option>
-          <option value="country">按国家</option>
-        </select>
-        <button class="btn only-desk" id="refresh"><img src="/assets/icons/refresh.svg" width="15" height="15" alt="">刷新</button>
+      <div class="mock" aria-hidden="true">
+        <div class="phone">
+          <div class="phone-scr">
+            <div class="ph-top"><span>9:41</span><span>SMS Hub</span></div>
+            <div class="ph-badge">● 正在等待新短信</div>
+            <div class="bub"><span class="from">Telegram</span>Login attempt detected from a new device.</div>
+            <div class="bub bub-otp">
+              <span class="from">Google</span>
+              <span class="otp">682491</span>
+              <span class="otp-cap">Your Google verification code</span>
+            </div>
+            <div class="bub"><span class="from">WhatsApp</span>Your code is 174920. Don't share it.</div>
+            <div class="ph-bar"><i></i></div>
+          </div>
+        </div>
       </div>
+    </div>
+  </section>
+  <!-- ========== 选择号码国家 (§6) ========== -->
+  <section class="sec" id="secCountry">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <h2 class="sec-title">选择号码国家</h2>
+          <p class="sec-sub" id="ctySub">优先展示站内可直接收短信的号码</p>
+        </div>
+        <a class="btn btn-sm" href="numbers.html">全部国家 →</a>
+      </div>
+      <div class="ctys" id="ctys"></div>
+    </div>
+  </section>
 
-      <div class="chips" id="chips"></div>
-      <div class="grid" id="grid"></div>
-      <div id="stateBox"></div>
-    </section>
+  <!-- ========== 推荐号码 (§7) ========== -->
+  <section class="sec" id="secRec" style="padding-top:0">
+    <div class="wrap">
+      <div class="rec-head">
+        <div>
+          <h2 class="sec-title">推荐号码</h2>
+          <p class="sec-sub">优先展示最近成功接收到短信的号码 · 默认仅展示站内可直接收短信的号码</p>
+        </div>
+        <button class="btn btn-sm" id="shuffle" type="button">换一批 ↻</button>
+      </div>
+      <div class="rec-grid" id="recGrid"></div>
 
-    <section id="sources">
-      <div class="sec-head"><h2>数据源状态</h2><a href="/sources.html">查看详情</a></div>
-      <div class="srcs" id="srcs"></div>
-    </section>
-  </div>
+      <!-- §11 备用池折叠 -->
+      <details class="spare" id="spare">
+        <summary>
+          <span id="spareTitle">其他号码（仅可跳转原站查看）</span>
+          <span class="r" id="spareHint">展开</span>
+        </summary>
+        <div class="spare-body">
+          <p style="margin:0 0 14px;font-size:13px;color:var(--text-muted)" id="spareNote"></p>
+          <div class="spare-grid" id="spareGrid"></div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ========== 如何使用 (§8) ========== -->
+  <section class="sec" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head"><div><h2 class="sec-title">如何使用</h2></div></div>
+      <div class="steps">
+        <div class="stepc"><div class="sn">1</div><h3>选择号码</h3><p>按国家挑选一个号码，或点「帮我选个号码」随机分配。</p></div>
+        <div class="stepc"><div class="sn">2</div><h3>复制号码</h3><p>点击复制按钮，号码会复制到剪贴板，同时本页自动开始等待短信。</p></div>
+        <div class="stepc"><div class="sn">3</div><h3>填写到目标服务</h3><p>把号码粘贴到需要验证的网站或 App 的注册/验证页面。</p></div>
+        <div class="stepc"><div class="sn">4</div><h3>查看短信验证码</h3><p>短信到达后自动置顶，验证码高亮显示，一键复制即可。</p></div>
+      </div>
+    </div>
+  </section>
 </main>
 
-<footer>
-  <div class="wrap">
-    <div class="foot">
-      <div class="foot-brand">
-        <a class="logo" href="/" aria-label="SMS Hub 首页">
-          <img src="/assets/brand/logo.svg" alt="SMS Hub · 全球公开号码聚合" width="138" height="34">
-        </a>
-        <p>号码信息来自公开第三方平台，短信在原站查看。</p>
-      </div>
-      <div class="foot-cols">
-        <div class="foot-col">
-          <h4>产品</h4>
-          <a href="/#numbers">全部号码</a>
-          <a href="/#countries-sec">国家</a>
-          <a href="/#sources">数据源</a>
-        </div>
-        <div class="foot-col">
-          <h4>说明</h4>
-          <a href="/guide.html">使用说明</a>
-          <a href="/sources.html">数据来源</a>
-          <a href="/guide.html#privacy">隐私与免责</a>
-        </div>
-        <div class="foot-col">
-          <h4>其他项目</h4>
-          <a href="https://news.jinzhai.icu">新闻早知道</a>
-        </div>
-      </div>
-    </div>
-    <div class="foot-bot">
-      <span id="footNote">—</span>
-      <span>© 2026 SMS Hub</span>
-    </div>
-  </div>
-</footer>
+<footer class="ft" id="ft"></footer>
+<nav class="bnav" id="bnav" aria-label="底部导航"></nav>
 
-<div class="sheet-mask" id="mask"></div>
-<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
-  <div class="grab"></div>
-  <h3 id="sheetTitle">筛选</h3>
-  <label for="s-country">国家</label>
-  <select id="s-country"></select>
-  <label for="s-source">来源</label>
-  <select id="s-source"></select>
-  <label for="s-status">状态</label>
-  <select id="s-status">
-    <option value="">全部状态</option>
-    <option value="recent_activity">有短信记录</option>
-    <option value="unknown">状态未知</option>
-  </select>
-  <div class="sheet-actions">
-    <button class="cancel" id="sheetClear">清除</button>
-    <button class="apply" id="sheetApply">应用</button>
-  </div>
-</div>
+<script type="module">
+import {
+  loadData, countriesOf, matchCountry, mainPool, sparePool, rank, pickDiverse, esc, flagImg,
+  fmtPhone, statusHtml, statusLine, smsLine, copy, toast, renderChrome, renderFooter, bindCopyButtons
+} from './assets/app.js';
 
-<script>
-(() => {
-'use strict';
+renderChrome('home');
+renderFooter();
+bindCopyButtons();
+
+let DATA = null, CTYS = [], REC = [], REC_OFFSET = 0, KEYWORD = '';
+
 const $ = s => document.querySelector(s);
-const DATA_URL = 'data/numbers.json';
-let DATA = null, CACHE = null;
-const F = { country:'', source:'', status:'', sort:'recent' };
+const REC_SIZE = 8;
 
-/* ---------- 站内短信查看（能力白名单） ----------
-   只有 2026-10-05 实测确认「页面公开可见、无验证码、无 X-Frame-Options 限制」
-   的源才允许站内展示正文。其余源一律跳原站，不做技术承诺，也不给用户错误预期。 */
-const READABLE = new Set(['receiveasmsonline']);
-/* ISO 两字母 -> receiveasmsonline 的国家路径 slug（与后端白名单一致） */
-const SLUG_BY_ISO = {
-  US:'united-states', GB:'united-kingdom', DE:'germany', FR:'france', CN:'china',
-  CA:'canada', RU:'russia', NL:'netherlands', IN:'india', IL:'israel',
-  KZ:'kazakhstan', MX:'mexico', ID:'indonesia', PT:'portugal', TH:'thailand',
-  PH:'philippines', HR:'croatia', SE:'sweden', HK:'hong-kong', FI:'finland',
-  UA:'ukraine', IE:'ireland', NG:'nigeria', BR:'brazil', BE:'belgium',
-  ES:'spain', RO:'romania', CZ:'czech-republic', IT:'italy', JP:'japan',
-  AT:'austria', TW:'taiwan', SG:'singapore', KR:'south-korea', PL:'poland',
-  MU:'mauritius', MA:'morocco', GE:'georgia',
-};
+/* ---------- 状态渲染 (§5.4 只保留用户关心的四项) ---------- */
+function renderStats() {
+  const t = DATA.totals || {};
+  const direct = t.directInbox ?? mainPool(DATA).length;
+  const cty = t.countries ?? CTYS.length;
+  $('#hstats').innerHTML =
+    `<div class="hstat"><div class="n ac">${direct}</div><div class="l">可直接收短信号码</div></div>
+     <div class="hstat"><div class="n">${cty}</div><div class="l">国家 / 地区</div></div>
+     <div class="hstat"><div class="n">实时</div><div class="l">短信检测</div></div>
+     <div class="hstat"><div class="n">免费</div><div class="l">无需注册</div></div>`;
+}
 
-const esc = s => String(s??'').replace(/[&<>"']/g, c =>
-  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const shorten = s => s && s.length>26 ? s.slice(0,26)+'…' : s;
-
-/* 设计图：彩色小国旗。Windows 不渲染国旗 emoji，改用 21x16 图片；
-   加载失败时隐藏图片，国家名文字始终在场（方案第 5 节要求） */
-const flagImg = cc => '<img class="fl-img" src="https://flagcdn.com/w40/'+String(cc||'').toLowerCase()+'.png"'+
-  ' width="21" height="16" alt="" loading="lazy" onerror="this.style.display=\'none\'">';
-
-/* 设计图 C01：号码按国际惯例分组展示，如 +1 202 555 0188；复制仍是完整 E.164 */
-function fmtPhone(phone, callingCode){
-  const bare = String(phone).replace(/\D/g,'');
-  const cc = String(callingCode||'').replace(/\D/g,'');
-  const rest = cc && bare.startsWith(cc) && bare.length > cc.length ? bare.slice(cc.length) : bare;
-  if(!rest) return '+' + (cc || bare);
-  let chunks = rest.match(/.{1,3}/g) || [];
-  if(chunks.length > 1 && chunks[chunks.length-1].length === 1){
-    const last = chunks.pop(); chunks[chunks.length-1] += last;
+/* ---------- 国家卡 (§6) ---------- */
+function renderCountries() {
+  const direct = CTYS.filter(c => c.directInbox > 0);
+  const keyword = KEYWORD;
+  // §6 首页展示 6–8 个国家：站内可收的优先；不足时用其他有号码的国家补足（标注为仅跳原站）
+  let show;
+  if (keyword) {
+    show = direct.filter(c => matchCountry(c, keyword)).slice(0, 8)
+      .concat(CTYS.filter(c => c.directInbox === 0 && matchCountry(c, keyword)).slice(0, 8))
+      .slice(0, 8);
+    $('#ctySub').textContent = show.length
+      ? `搜索「${keyword}」，找到 ${show.length} 个国家`
+      : `搜索「${keyword}」无结果`;
+  } else {
+    show = direct.slice(0, 8);
+    const rest = CTYS.filter(c => c.directInbox === 0 && c.total > 0)
+      .sort((a, b) => b.total - a.total);
+    if (show.length < 6) show = show.concat(rest.slice(0, 8 - show.length));
+    $('#ctySub').textContent = '优先展示站内可直接收短信的号码';
   }
-  return '+' + cc + ' ' + chunks.join(' ');
-}
 
-function relTime(iso){
-  if(!iso) return null;
-  const t = new Date(iso).getTime();
-  if(isNaN(t)) return null;
-  const s = Math.floor((Date.now()-t)/1000);
-  if(s<60) return '刚刚';
-  if(s<3600) return Math.floor(s/60)+' 分钟前';
-  if(s<86400) return Math.floor(s/3600)+' 小时前';
-  return Math.floor(s/86400)+' 天前';
-}
-function absTime(iso){
-  if(!iso) return '';
-  const d = new Date(iso);
-  if(isNaN(d)) return '';
-  return d.toLocaleString('zh-CN',{hour12:false})+' ('+Intl.DateTimeFormat().resolvedOptions().timeZone+')';
-}
+  const box = $('#ctys');
+  if (!show.length) {
+    box.innerHTML = `<div class="state" style="grid-column:1/-1;padding:34px 12px">
+      <div class="ic">🔍</div><h3>没有匹配的国家</h3><p>试试输入「美国」「US」或「+1」</p></div>`;
+    return;
+  }
 
-async function load(){
-  $('#grid').innerHTML = Array.from({length:6},()=>'<div class="skel"></div>').join('');
-  $('#stats').innerHTML = '<span>载入中…</span>';
-  $('#matchCnt').textContent = '';
-  $('#stateBox').innerHTML = '';
-  const eb = $('#errBanner'); if(eb) eb.remove();
-  try{
-    const r = await fetch(DATA_URL + '?t=' + Date.now(), {cache:'no-store'});
-    if(!r.ok) throw new Error('HTTP ' + r.status);
-    const j = await r.json();
-    if(!j || !Array.isArray(j.numbers)) throw new Error('数据格式异常');
-    DATA = CACHE = j;
-    buildFilters(); render();
-  }catch(e){
-    if(CACHE){
-      DATA = CACHE; buildFilters(); render(); banner('更新失败，当前为上次同步数据', true);
-    }else{
-      $('#grid').innerHTML = '';
-      $('#stats').innerHTML = '<span>—</span>';
-      $('#stateBox').innerHTML =
-        '<div class="state"><div class="ic">⚠️</div><h3>数据加载失败</h3><p>'+esc(e.message)+
-        '</p><button class="btn-primary" id="retryBtn">重试</button></div>';
-      $('#retryBtn').onclick = ()=>load();
-      $('#srcs').innerHTML=''; $('#countries').innerHTML='';
+  box.innerHTML = show.map(c => {
+    if (!c.directInbox) {
+      return `<a class="cty" href="country.html?c=${encodeURIComponent(c.iso)}&pool=spare">
+        <div class="top">${flagImg(c.iso)}<span class="nm">${esc(c.nameZh)}</span></div>
+        <div class="st1" style="color:var(--text-muted)">${c.total} 个号码</div>
+        <div class="st2">仅可跳转原站查看</div>
+      </a>`;
     }
-  }
-}
-
-function banner(text, retry){
-  let el = $('#errBanner');
-  if(!el){
-    el = document.createElement('div');
-    el.id='errBanner';
-    el.style.cssText='padding:14px 18px;display:flex;gap:12px;align-items:center;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-radius:14px;margin-bottom:16px;font-size:14px';
-    $('#numbers').insertBefore(el, $('#chips'));
-  }
-  el.innerHTML = '<span style="font-size:18px">⚠️</span><span style="flex:1;color:#FCA5A5">'+esc(text)+'</span>'+
-    (retry?'<button class="btn" style="height:36px;padding:0 14px;border-radius:8px;background:var(--surface);border:1px solid var(--border);cursor:pointer">重试</button>':'');
-  const b = el.querySelector('button'); if(b) b.onclick = ()=>load();
-}
-
-function buildFilters(){
-  const nums = DATA.numbers;
-  const cs = [...new Map(nums.map(n=>[n.countryCode,n])).values()]
-    .sort((a,b)=> nums.filter(x=>x.countryCode===b.countryCode).length - nums.filter(x=>x.countryCode===a.countryCode).length);
-  const ss = [...new Set(nums.map(n=>n.sourceId))];
-  const opt = (arr,cur,label) =>
-    '<option value="">'+label+'</option>'+arr.map(x=>'<option value="'+x.v+'"'+(x.v===cur?' selected':'')+'>'+esc(x.t)+'</option>').join('');
-
-  $('#f-country').innerHTML = opt(cs.map(c=>({v:c.countryCode,t:c.flag+' '+c.countryNameZh})), F.country,'全部国家');
-  $('#f-source').innerHTML  = opt(ss.map(s=>({v:s,t:nums.find(n=>n.sourceId===s).sourceName})), F.source,'全部来源');
-  $('#s-country').innerHTML = $('#f-country').innerHTML;
-  $('#s-source').innerHTML  = $('#f-source').innerHTML;
-
-  $('#countries').innerHTML = cs.slice(0,6).map(c=>{
-    const n = nums.filter(x=>x.countryCode===c.countryCode).length;
-    return '<button class="ctry" data-c="'+c.countryCode+'" aria-pressed="false">'+
-      flagImg(c.countryCode)+
-      '<span class="nm">'+esc(c.countryNameZh)+'</span><span class="ct">'+n+'</span></button>';
+    const avail = c.active > 0 ? c.active : c.directInbox;
+    return `<a class="cty" href="country.html?c=${encodeURIComponent(c.iso)}">
+      <div class="top">${flagImg(c.iso)}<span class="nm">${esc(c.nameZh)}</span></div>
+      <div class="st1">${c.directInbox} 个可直接收短信</div>
+      <div class="st2">${avail} 个当前较活跃</div>
+    </a>`;
   }).join('');
-  $('#countries').querySelectorAll('.ctry').forEach(b=>{
-    b.onclick = ()=>{
-      F.country = (F.country===b.dataset.c) ? '' : b.dataset.c;
-      render();
-    };
-  });
+}/* ---------- 推荐号码 (§7) ---------- */
+function buildRec() {
+  const pool = mainPool(DATA);
+  // §7 推荐：国家轮转采样，保证首屏国家多样（不会一个国家的号码霸屏）
+  REC = pool.length ? pickDiverse(pool, 120) : rank(DATA.numbers).slice(0, 120);
 }
 
-const countryName = c => (DATA.numbers.find(n=>n.countryCode===c)||{}).countryNameZh || c;
-const sourceName  = s => (DATA.numbers.find(n=>n.sourceId===s)||{}).sourceName || s;
+function renderRec(animate) {
+  const box = $('#recGrid');
+  if (!REC.length) {
+    box.innerHTML = `<div class="state" style="grid-column:1/-1"><div class="ic">📭</div><h3>暂无站内可接码号码</h3><p>数据同步中，请稍后刷新重试。</p></div>`;
+    return;
+  }
+  // 轮转窗口：每次「换一批」向后滑 8 个，覆盖整个推荐池后再从头开始
+  const slice = [];
+  for (let i = 0; i < Math.min(REC_SIZE, REC.length); i++) {
+    slice.push(REC[(REC_OFFSET + i) % REC.length]);
+  }  box.innerHTML = slice.map(n => {
+    const shown = fmtPhone(n.phone, n.callingCode);
+    return `<article class="ncard">
+      <div class="ncard-top">
+        <div class="ncard-ctry">${flagImg(n.countryCode)}<span class="nm">${esc(n.countryNameZh)}</span></div>
+        ${statusHtml(n)}
+      </div>
+      <div class="ncard-phone">
+        <span class="val mono" title="${esc(n.phone)}">${esc(shown)}</span>
+        <button class="cp" data-phone="${esc(n.phone)}" data-icon="⧉" aria-label="复制号码 ${esc(n.phone)}" title="复制号码">⧉</button>
+      </div>
+      <div class="ncard-meta">
+        <span>${esc(statusLine(n))}</span><span class="sep">·</span><span>${smsLine(n)}</span>
+      </div>
+      <div class="ncard-foot">
+        <a class="btn btn-primary btn-sm" href="number.html?id=${encodeURIComponent(n.id)}">使用此号码 →</a>
+      </div>
+    </article>`;
+  }).join('');
 
-function apply(){
-  const q = $('#q').value.trim().toLowerCase();
-  let list = DATA.numbers.slice();
-  if(F.country) list = list.filter(n=>n.countryCode===F.country);
-  if(F.source)  list = list.filter(n=>n.sourceId===F.source);
-  if(F.status)  list = list.filter(n=>n.availability===F.status);
-  if(q){
-    const digits = q.replace(/[\s()\-]/g,'');
-    //纯数字且长度>=3 时优先当作区号/号码前缀匹配，避免被号码中间的数字误伤
-    const isNumeric = /^\+?\d{3,}$/.test(q.replace(/[\s()\-]/g,''));
-    list = list.filter(n=>{
-      if(isNumeric){
-        const bare = n.phone.replace(/\D/g,'');
-        return bare.startsWith(digits) || n.callingCode===digits;
-      }
-      const hay = [n.phone, n.countryNameZh, n.countryNameEn,
-                   n.countryCode, n.callingCode, n.sourceName].join(' ').toLowerCase();
-      return hay.includes(q) || (digits.length>2 && n.phone.replace(/\D/g,'').includes(digits));
+  if (animate) {
+    box.querySelectorAll('.ncard').forEach((el, i) => {
+      el.style.animation = `pop .38s cubic-bezier(.2,.8,.3,1.15) ${i * 0.04}s backwards`;
     });
   }
-  if(F.sort==='sms')        list.sort((a,b)=>(b.messageCount||0)-(a.messageCount||0));
-  else if(F.sort==='country')list.sort((a,b)=>a.countryNameZh.localeCompare(b.countryNameZh,'zh')||a.phone.localeCompare(b.phone));
-  else list.sort((a,b)=>new Date(b.collectedAt)-new Date(a.collectedAt));
-  return list;
 }
 
-function render(){
-  if(!DATA) return;
-  const list = apply(), nums = DATA.numbers, t = DATA.totals||{};
-  const lastSync = relTime(DATA.generatedAt);
-
-  $('#stats').innerHTML =
-    '<span><b>'+(t.uniquePhones??nums.length)+'</b> 收录号码</span><span class="sep">·</span>'+
-    '<span><b>'+(t.countries??0)+'</b> 国家</span><span class="sep">·</span>'+
-    '<span><b>'+(t.sources??0)+'</b> 数据源</span><span class="sep">·</span>'+
-    '<span><img class="dot" src="/assets/icons/status-online.svg" alt="" width="12" height="12">'+'<span>'+(lastSync?lastSync+'同步':'同步 —')+'</span></span>';
-
-  /* 设计图：未筛选显示「N 个收录号码」，筛选后显示「N 个匹配号码」 */
-  $('#matchCnt').textContent = list.length === nums.length
-    ? list.length + ' 个收录号码'
-    : list.length + ' 个匹配号码';
-  $('#footNote').textContent = (DATA.scheduleNote||'')+'｜本站仅聚合号码索引，短信内容在原站查看，本站不存储。';
-
-  $('#countries').querySelectorAll('.ctry').forEach(b=>{
-    b.setAttribute('aria-pressed', String(b.dataset.c===F.country));
-  });
-  $('#f-country').value=F.country; $('#f-source').value=F.source; $('#f-status').value=F.status;
-
-  const chips=[];
-  if(F.country) chips.push(['country','国家：'+countryName(F.country)]);
-  if(F.source)  chips.push(['source','来源：'+sourceName(F.source)]);
-  if(F.status)  chips.push(['status','状态：'+(F.status==='recent_activity'?'有短信记录':'状态未知')]);
-  $('#chips').innerHTML = chips.map(([k,t2])=>
-    '<span class="chip">'+esc(t2)+'<button data-k="'+k+'" aria-label="移除筛选">×</button></span>').join('');
-  $('#chips').querySelectorAll('button').forEach(b=>{
-    b.onclick = ()=>{ F[b.dataset.k]=''; if(b.dataset.k==='status') $('#s-status').value=''; render(); };
-  });
-
-  const grid = $('#grid'), box = $('#stateBox');
-  if(!nums.length){
-    grid.innerHTML='';
-    box.innerHTML='<div class="state"><div class="ic">📭</div><h3>暂未收录号码</h3>'+
-      '<p>数据源暂时没有可用记录，请稍后再试或查看来源状态。</p></div>';
-    return;
-  }
-  if(!list.length){
-    grid.innerHTML='';
-    const cond=[F.country?countryName(F.country):null, sourceName(F.source),
-      F.status?(F.status==='recent_activity'?'有短信记录':'状态未知'):null,
-      $('#q').value.trim()?'搜索「'+$('#q').value.trim()+'」':null].filter(Boolean).join(' · ');
-    box.innerHTML='<div class="state"><div class="ic">🔍</div><h3>没有匹配的号码</h3>'+
-      '<p>当前条件：'+esc(cond||'无')+'</p><button class="btn-primary" id="resetAll">清除筛选</button></div>';
-    $('#resetAll').onclick = ()=>{
-      $('#q').value=''; $('#searchWrap').classList.remove('has');
-      F.country=F.source=F.status=''; F.sort='recent'; $('#f-sort').value='recent'; render();
-    };
-    return;
-  }
-  box.innerHTML='';
-
-  grid.innerHTML = list.map(n=>{
-    /* 设计图 C01：状态标签在右上角，证据写入 tooltip，不占版面 */
-    const isRecent = n.availability==='recent_activity';
-    const badge = isRecent
-      ? '<span class="badge recent" title="'+esc(n.statusEvidence||'原站提供了短信记录')+'">'+
-        '<img src="/assets/icons/status-recent.svg" alt="">近期有短信</span>'
-      : '<span class="badge unknown" title="'+esc(n.statusEvidence||'原站未提供可核实的活跃证据')+'">'+
-        '<img src="/assets/icons/status-unknown.svg" alt="">状态未知</span>';
-    const shown = fmtPhone(n.phone, n.callingCode);
-    /* 设计图 C01：短信数与最近短信时间同一行；缺失显示「未提供」，不编造 */
-    const parts = [];
-    parts.push('<span>'+(n.messageCount!=null ? n.messageCount.toLocaleString()+' 条短信'
-                                              : '<span class="na">短信数未提供</span>')+'</span>');
-    if(n.lastMessageAt){
-      const lm = relTime(n.lastMessageAt);
-      parts.push('<span>'+(lm ? '最近短信 '+lm : '<span class="na">最近短信未提供</span>')+'</span>');
-    }else{
-      parts.push('<span class="na">活跃记录未提供</span>');
-    }
-    const meta = parts.join('<span class="sep">·</span>');
-    const rel = relTime(n.collectedAt);
-    return '<article class="card">'+
-      '<div class="card-top"><div class="card-country">'+flagImg(n.countryCode)+esc(n.countryNameZh)+'</div>'+badge+'</div>'+
-      '<div class="card-phone"><span class="num mono" title="'+esc(n.phone)+'">'+esc(shown)+'</span>'+
-        '<button class="copy" data-p="'+esc(n.phone)+'" aria-label="复制完整号码 '+esc(n.phone)+'" title="复制完整号码">⧉</button></div>'+
-      '<div class="card-src">'+esc(n.sourceName)+'</div>'+
-      '<div class="card-meta">'+meta+'</div>'+
-      '<div class="card-foot"><time datetime="'+esc(n.collectedAt)+'" title="'+esc(absTime(n.collectedAt))+'">'+(rel?rel+'收录':'—')+'</time>'+
-        (READABLE.has(n.sourceId) && SLUG_BY_ISO[n.countryCode]
-          /* 仅实测可读正文的源给「站内查看」，其余源一律跳原站，不做技术承诺 */
-          ? '<button class="go inline-read" data-slug="'+esc(SLUG_BY_ISO[n.countryCode])+'" data-phone="'+esc((n.phone||'').replace(/\D/g,''))+'" type="button">站内查看短信</button>'
-          : '')+
-        '<a class="go" href="'+esc(n.sourceUrl)+'" target="_blank" rel="noopener noreferrer">查看原站短信 ↗</a></div>'+
-    '</article>';
-  }).join('');
-
-  grid.querySelectorAll('.copy').forEach(b=>{
-    b.onclick = async ()=>{
-      const old=b.textContent;
-      try{ await navigator.clipboard.writeText(b.dataset.p); b.textContent='✓'; }
-      catch(e){ b.textContent='✕'; b.title='复制失败，请手动选择号码'; }
-      setTimeout(()=>b.textContent=old,1500);
-    };
-  });
-  renderSources();
+/* ---------- 备用池折叠 (§11) ---------- */
+function renderSpare() {
+  const spare = sparePool(DATA);
+  $('#spareTitle').textContent = `其他号码（仅可跳转原站查看）· ${spare.length} 个`;
+  $('#spareHint').textContent = '展开';
+  $('#spareNote').textContent =
+    '这些号码暂不支持站内查看短信，只能跳转到原站查看。它们不参与首页推荐与默认列表，作为备用池保留。';
+  const byC = new Map();
+  for (const n of spare) byC.set(n.countryCode, (byC.get(n.countryCode) || 0) + 1);
+  const top = [...byC.entries()].sort((a, b) => b[1] - a[1]).slice(0, 40);
+  const nameOf = iso => (CTYS.find(c => c.iso === iso) || {}).nameZh || iso;
+  $('#spareGrid').innerHTML = top.map(([iso, cnt]) =>
+    `<a class="sp" href="country.html?c=${encodeURIComponent(iso)}&pool=spare">
+      <span>${flagImg(iso)} <span style="margin-left:4px">${esc(nameOf(iso))}</span></span>
+      <span class="p">${cnt} 个 ›</span>
+    </a>`).join('');
 }
 
-function renderSources(){
-  const box=$('#srcs'); if(!box) return;
-  /* 官方素材：各数据源识别图形，缺失时回退到源名首字母徽标（新增源无官方图形） */
-  const SRC_ICON = {
-    'receive-sms-online': '/assets/sources/receive-sms-online.svg',
-    'quackr': '/assets/sources/quackr.svg',
-    'wetalk': '/assets/sources/wetalk.svg',
-  };
-  const initial = name => {
-    const t = String(name||'?').trim();
-    return t.slice(0,2).toUpperCase();
-  };
-  box.innerHTML = (DATA.sources||[]).map(s=>{
-    /* 设计图 C02：同步状态只描述采集链路，不代表号码一定可收短信 */
-    const st = s.ok ? '<span class="st ok">● 同步正常</span>' : '<span class="st fail">● 本次同步失败</span>';
-    const sync = s.ok
-      ? '上次成功同步 ' + (relTime(DATA.generatedAt)||'—')
-      : esc(s.error||'采集失败，已保留上次快照');
-    const icon = SRC_ICON[s.sourceId]
-      ? '<img src="'+SRC_ICON[s.sourceId]+'" alt="" width="32" height="32">'
-      : '<span class="ini">'+esc(initial(s.sourceName))+'</span>';
-    return '<div class="src"><div class="src-head"><span class="ic">'+icon+'</span>'+
-      '<b>'+esc(s.sourceName)+'</b>'+st+'</div>'+
-      '<div class="row"><span>'+s.count+' 个号码</span><span class="t">'+sync+'</span></div></div>';
-  }).join('') || '<div class="src"><div class="row"><span>暂无来源记录</span></div></div>';
+/* ---------- 帮我选个号码 (§5.3) ---------- */
+async function pickNumber() {
+  const pool = rank(mainPool(DATA)).filter(n => n.countryCode);
+  if (!pool.length) return toast('暂无可选号码，请稍后重试', 'err');
+  // 加权随机：前 60 个里抽，越靠前概率越高
+  const top = pool.slice(0, Math.min(60, pool.length));
+  const weights = top.map((_, i) => 1 / (i + 1.6));
+  const sum = weights.reduce((a, b) => a + b, 0);
+  let r = Math.random() * sum, idx = 0;
+  for (let i = 0; i < weights.length; i++) { r -= weights[i]; if (r <= 0) { idx = i; break; } }
+  const n = top[idx];
+  const ok = await copy(n.phone);
+  toast(ok ? `已为你选好并复制：${n.phone}` : `已为你选好号码：${n.phone}`);
+  setTimeout(() => { location.href = 'number.html?id=' + encodeURIComponent(n.id) + '&picked=1'; }, ok ? 620 : 320);
 }
 
 /* ---------- 事件 ---------- */
-let tm;
-$('#q').addEventListener('input', e=>{
-  $('#searchWrap').classList.toggle('has', !!e.target.value);
-  clearTimeout(tm); tm = setTimeout(render, 250);
+let tmr;
+$('#hq').addEventListener('input', e => {
+  KEYWORD = e.target.value.trim();
+  clearTimeout(tmr);
+  tmr = setTimeout(() => { renderCountries(); }, 160);
 });
-$('#searchForm').addEventListener('submit', e=>{ e.preventDefault(); clearTimeout(tm); render(); });
-$('#clrBtn').onclick = ()=>{ $('#q').value=''; $('#searchWrap').classList.remove('has'); render(); $('#q').focus(); };
-$('#f-country').onchange = e=>{ F.country=e.target.value; render(); };
-$('#f-source').onchange  = e=>{ F.source=e.target.value; render(); };
-$('#f-status').onchange  = e=>{ F.status=e.target.value; render(); };
-$('#f-sort').onchange    = e=>{ F.sort=e.target.value; render(); };
+$('#hsearch').addEventListener('submit', e => {
+  e.preventDefault();
+  const q = KEYWORD;
+  if (!q) { location.href = 'numbers.html'; return; }
+  const hit = CTYS.filter(c => c.directInbox > 0).filter(c => matchCountry(c, q));
+  if (hit.length === 1) location.href = 'country.html?c=' + encodeURIComponent(hit[0].iso);
+  else location.href = 'numbers.html?q=' + encodeURIComponent(q);
+});
+$('#pickBtn').onclick = pickNumber;
 
-$('#refresh').onclick = async e=>{
-  const b=e.currentTarget; b.disabled=true;
-  b.innerHTML='<img class="spin" src="/assets/icons/refresh.svg" width="15" height="15" alt="">同步中';
-  CACHE = DATA; await load();
-  b.disabled=false; b.innerHTML='<img src="/assets/icons/refresh.svg" width="15" height="15" alt="">刷新';
+$('#shuffle').onclick = () => {
+  if (REC.length <= REC_SIZE) return toast('已是全部推荐号码');
+  REC_OFFSET = (REC_OFFSET + REC_SIZE) % REC.length;
+  renderRec(true);
+  toast('已换一批');
 };
 
-const sheet=$('#sheet'), mask=$('#mask');
-let lastFocus=null;
-function openSheet(){
-  lastFocus=document.activeElement;
-  $('#s-country').value=F.country; $('#s-source').value=F.source; $('#s-status').value=F.status;
-  sheet.classList.add('on'); mask.classList.add('on'); $('#sheetApply').focus();
-}
-function closeSheet(){
-  sheet.classList.remove('on'); mask.classList.remove('on');
-  if(lastFocus) lastFocus.focus();
-}
-$('#openSheet').onclick = openSheet;
-mask.onclick = closeSheet;
-$('#sheetApply').onclick = ()=>{
-  F.country=$('#s-country').value; F.source=$('#s-source').value; F.status=$('#s-status').value;
-  closeSheet(); render();
-};
-$('#sheetClear').onclick = ()=>{ $('#s-country').value=''; $('#s-source').value=''; $('#s-status').value=''; };
-
-const toggleMenu = on => {
-  $('#nav').classList.toggle('open', on);
-  $('#menuBtn').setAttribute('aria-expanded', String(on));
-};
-$('#menuBtn').onclick = ()=> toggleMenu(!$('#nav').classList.contains('open'));
-document.addEventListener('keydown', e=>{
-  if(e.key==='Escape'){
-    if(sheet.classList.contains('on')) closeSheet();
-    if($('#nav').classList.contains('open')) toggleMenu(false);
-  }
+$('#spare').addEventListener('toggle', e => {
+  $('#spareHint').textContent = e.target.open ? '收起' : '展开';
 });
 
-if(matchMedia('(max-width:767px)').matches){
-  $('#searchForm').addEventListener('submit', ()=>{
-    setTimeout(()=>$('#numbers').scrollIntoView({behavior:'smooth',block:'start'}),60);
-  });
-}
-
-/* ================= 短信查看抽屉 =================
-   注意：本脚本位于 <head> 内的 <script> 中，而面板 DOM 在 </body> 前，
-   直接执行会因 #reader 尚不存在而拿不到元素。故等 DOM 就绪后再初始化。 */
-function initReader(){
-  const mask = $('#readerMask'), panel = $('#reader'), body = $('#readerBody'),
-        sub = $('#readerSub'), note = $('#readerNote'), refreshBtn = $('#readerRefresh');
-  if(!panel) return;
-
-  let timer = null, cooldownTimer = null, watchTimer = null,
-      current = null, lastFetchAt = 0, inflight = false;
-  const POLL_MS = 20000;          // 轮询间隔（与后端 15s 限频配合）
-  const MIN_TRIGGER_GAP = 16000;  // 用户手动刷新最小间隔
-  const SLOW_MS = 25000;          // 单次读取超过此时长即视为异常，提示用户
-
-  const stopAll = ()=>{
-    clearInterval(timer); timer=null;
-    clearTimeout(cooldownTimer); cooldownTimer=null;
-    clearTimeout(watchTimer); watchTimer=null;
-  };
-
-  function closeReader(){
-    stopAll();
-    panel.hidden = true; mask.hidden = true;
-    document.body.style.overflow = '';
-    current = null; inflight = false;
-    if(refreshBtn) refreshBtn.disabled = false;
+/* ---------- 启动 ---------- */
+(async () => {
+  $('#recGrid').innerHTML = Array.from({ length: 4 }, () => '<div class="skel"></div>').join('');
+  $('#ctys').innerHTML = Array.from({ length: 8 }, () => '<div class="skel" style="height:96px"></div>').join('');
+  try {
+    DATA = await loadData();
+    CTYS = countriesOf(DATA);
+    renderStats();
+    renderCountries();
+    buildRec();
+    renderRec(false);
+    renderSpare();
+  } catch (err) {
+    $('#hstats').innerHTML = '<div class="hstat"><div class="n">—</div><div class="l">数据加载失败</div></div>';
+    $('#ctys').innerHTML = '';
+    $('#recGrid').innerHTML =
+      `<div class="state" style="grid-column:1/-1"><div class="ic">⚠️</div><h3>数据加载失败</h3>
+       <p>${esc(err.message)}</p><button class="btn btn-primary" id="retry">重试</button></div>`;
+    const rb = $('#retry');
+    if (rb) rb.onclick = () => location.reload();
   }
-
-  function setNote(t){ note.textContent = t; }
-
-  function esc(s){ return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-  /* 合规提示常驻：任何状态下（加载中/空态/报错/成功）都要能看到出处说明，
-     所以统一走 setBody() 写入，自动带上 tip，避免被innerHTML 覆盖后消失。 */
-  const TIP = '<div class="reader-tip">内容来自第三方公开页面，本站仅做渲染展示；'+
-    '号码为公共共享号，验证码有效性以原站与接收方为准。</div>';
-  function setBody(html){ body.innerHTML = TIP + html; }
-
-  function renderMessages(d){
-    if(!d.messages || !d.messages.length){
-      return '<div class="reader-empty"><b>暂无短信</b>'+
-        '该号码当前没有公开短信。<br>公共号码收信不保证，可稍后刷新或换个号码试试。</div>';
-    }
-    return d.messages.map(m=>{
-      const otp = m.otp
-        ? '<div class="msg-otp"><span class="otp-val">'+esc(m.otp)+'</span>'+
-          '<button class="otp-cp" type="button" data-otp="'+esc(m.otp)+'">复制验证码</button>'+
-          '<span class="otp-tag">疑似验证码（自动识别，请自行核对）</span></div>'
-        : '';
-      return '<article class="msg">'+
-        '<div class="msg-top">'+
-          (m.sender?'<span class="msg-from">'+esc(m.sender)+'</span>':'')+
-          (m.when?'<span class="msg-time">'+esc(m.when)+'</span>':'')+
-        '</div>'+
-        '<div class="msg-body">'+esc(m.body)+'</div>'+ otp +
-      '</article>';
-    }).join('');
-  }
-
-  function bindCopy(){
-    body.querySelectorAll('.otp-cp').forEach(b=>{
-      b.onclick = async ()=>{
-        const v = b.dataset.otp, old = b.textContent;
-        try{ await navigator.clipboard.writeText(v); b.textContent='已复制 ✓'; }
-        catch(e){ b.textContent='复制失败'; }
-        setTimeout(()=>{ b.textContent=old; }, 1500);
-      };
-    });
-  }
-
-  async function fetchOnce(){
-    // 防重入：轮询 + 手动点击可能撞在一起，之前会打出并发请求并互相覆盖 DOM
-    if(!current || inflight) return;
-    inflight = true;
-    if(refreshBtn) refreshBtn.disabled = true;
-    body.setAttribute('aria-busy','true');
-    const t0 = performance.now();
-
-    // 慢请求兜底：源站偶发卡住时给出明确交代，而不是让用户盯着一句「读取中…」
-    clearTimeout(watchTimer);
-    watchTimer = setTimeout(()=>{
-      if(inflight && current) setNote('源站响应较慢，仍在等待…');
-    }, SLOW_MS);
-
-    try{
-      const r = await fetch('/api/sms?slug='+encodeURIComponent(current.slug)+
-                            '&phone='+encodeURIComponent(current.phone),
-                            {cache:'no-store', signal: AbortSignal.timeout(45000)});
-      const d = await r.json().catch(()=>({error:'返回格式异常'}));
-
-      if(r.status === 429){
-        const wait = (d.retryAfter||Math.ceil((POLL_MS-1500)/1000));
-        setNote('请求过于频繁，'+wait+' 秒后自动重试');
-        setBody('<div class="reader-empty"><b>请稍候</b>为避免给源站造成压力，'+
-          '同一号码 '+Math.round(15000/1000)+' 秒内只查询一次。</div>');
-        clearTimeout(cooldownTimer);
-        cooldownTimer = setTimeout(fetchOnce, wait*1000);
-        return;
-      }
-      if(!r.ok){
-        setNote('读取失败');
-        setBody('<div class="reader-err">读取失败：'+esc(d.error||('HTTP '+r.status))+
-          '<br>面板会自动重试，也可点下方「刷新短信」立即再试。</div>');
-        return;
-      }
-
-      lastFetchAt = Date.now();
-      const secs = ((performance.now()-t0)/1000).toFixed(1);
-      setBody(renderMessages(d));
-      bindCopy();
-      setNote(d.count ? (d.count+' 条 · '+secs+'s'+(d.cached?' · 缓存':'')+' · 每 20s 自动刷新')
-                      : ('暂无短信 · '+secs+'s · 每 20s 自动刷新'));
-    }catch(e){
-      // 主动超时取消也会走到这里，给出可区分的文案
-      const timedOut = e.name === 'TimeoutError';
-      setNote(timedOut ? '读取超时' : '网络错误');
-      setBody('<div class="reader-err">'+(timedOut?'读取超时':'网络错误')+'：'+esc(timedOut?'':(e.message||e.name))+
-        '<br>面板每 20 秒自动重试，也可点下方「刷新短信」立即再试。</div>');
-    }finally{
-      clearTimeout(watchTimer); watchTimer = null;
-      body.removeAttribute('aria-busy');
-      if(refreshBtn) refreshBtn.disabled = false;
-      inflight = false;
-    }
-  }
-
-  function openReader(slug, phone, phoneLabel, countryLabel){
-    stopAll();
-    current = { slug, phone };
-    lastFetchAt = 0; inflight = false;
-    panel.hidden = false; mask.hidden = false;
-    document.body.style.overflow = 'hidden';
-    sub.textContent = (phoneLabel||phone) + ' · ' + (countryLabel||'');
-    setBody('<div class="reader-load"><span class="spin"></span>正在读取公开页面…</div>');
-    setNote('读取中…');
-    fetchOnce();
-    // 首次间隔避开后端限频窗口，之后每 20s 自动轮询
-    cooldownTimer = setTimeout(()=>{
-      timer = setInterval(()=>{
-        if(Date.now() - lastFetchAt >= MIN_TRIGGER_GAP) fetchOnce();
-      }, POLL_MS);
-    }, MIN_TRIGGER_GAP);
-  }
-
-  $('#readerClose').onclick = closeReader;
-  mask.onclick = closeReader;
-  if(refreshBtn) refreshBtn.onclick = ()=>fetchOnce();
-  document.addEventListener('keydown', e=>{
-    if(e.key==='Escape' && !panel.hidden) closeReader();
-  });
-
-  // 卡片按钮（事件委托，兼容筛选/搜索后的重渲染）
-  document.addEventListener('click', e=>{
-    const b = e.target.closest('.inline-read');
-    if(!b) return;
-    e.preventDefault();
-    e.stopPropagation();
-    const card = b.closest('.card');
-    const phoneEl = card ? card.querySelector('.card-phone') : null;
-    const countryEl = card ? card.querySelector('.card-country') : null;
-    openReader(b.dataset.slug, b.dataset.phone,
-      phoneEl ? phoneEl.textContent.replace(/\s+/g,' ').trim() : b.dataset.phone,
-      countryEl ? countryEl.textContent.trim() : '');
-  });
-}
-if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initReader);
-else initReader();
-
-load();
 })();
 </script>
-<div class="reader-mask" id="readerMask" hidden></div>
-<section class="reader" id="reader" hidden aria-modal="true" role="dialog" aria-labelledby="readerTitle">
-  <div class="reader-head">
-    <div>
-      <h2 id="readerTitle">短信内容</h2>
-      <div class="reader-sub" id="readerSub">—</div>
-    </div>
-    <button class="reader-x" id="readerClose" type="button" aria-label="关闭">✕</button>
-  </div>
-  <div class="reader-body" id="readerBody">
-    <div class="reader-tip">内容来自第三方公开页面，本站仅做渲染展示。验证码请以原站为准。</div>
-  </div>
-  <div class="reader-foot">
-    <span class="reader-note" id="readerNote">—</span>
-    <button class="reader-refresh" id="readerRefresh" type="button">刷新短信</button>
-  </div>
-</section>
-
 </body>
 </html>
