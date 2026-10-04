@@ -6,7 +6,7 @@
 <title>使用说明 · SMS Hub</title>
 <meta name="description" content="SMS Hub 使用说明：如何查找和查看公开临时号码、数据口径说明、状态定义、常见问题与免责声明。">
 <link rel="canonical" href="https://sms.jinzhai.icu/guide.html">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23080B12'/%3E%3Crect x='20' y='12' width='24' height='40' rx='4' fill='none' stroke='%235B8CFF' stroke-width='3.5'/%3E%3Cline x1='27' y1='8' x2='37' y2='8' stroke='%235B8CFF' stroke-width='3.5' stroke-linecap='round'/%3E%3Cpath d='M26 28h12M26 36h8' stroke='%2334D6B6' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
 <style>
 :root{
   --bg:#080B12;--surface:#10151F;--surface-raised:#151B27;--primary:#5B8CFF;
@@ -25,7 +25,7 @@ a{color:inherit;text-decoration:none}
 :focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px}
 header{height:72px;display:flex;align-items:center;border-bottom:1px solid var(--border);position:relative}
 .logo{display:flex;align-items:center;gap:10px}
-.logo svg{width:32px;height:32px;flex:none}
+.logo img{height:38px;width:auto;display:block;flex:none}
 .logo b{font-size:16px;font-weight:600;display:block}
 .logo small{font-size:11.5px;color:var(--text-muted);display:block;line-height:1.2}
 .nav{margin-left:auto;display:flex;gap:28px;font-size:14px}
@@ -121,13 +121,8 @@ footer a{color:var(--primary)}
 <header>
   <div class="wrap" style="display:flex;align-items:center;height:100%">
     <a class="logo" href="/">
-      <svg viewBox="0 0 64 64" aria-hidden="true">
-        <rect x="20" y="12" width="24" height="40" rx="4" fill="none" stroke="#5B8CFF" stroke-width="3.5"/>
-        <line x1="27" y1="8" x2="37" y2="8" stroke="#5B8CFF" stroke-width="3.5" stroke-linecap="round"/>
-        <path d="M26 28h12M26 36h8" stroke="#34D6B6" stroke-width="3" stroke-linecap="round"/>
-      </svg>
-      <span><b>SMS Hub</b><small>全球公开号码聚合</small></span>
-    </a>
+        <img src="/assets/brand/logo.svg" alt="SMS Hub · 全球公开号码聚合" width="154" height="38">
+      </a>
     <button class="btn-menu" id="menuBtn" aria-label="打开菜单" aria-expanded="false"><span></span></button>
     <nav class="nav" id="nav">
       <a href="/">全部号码</a>

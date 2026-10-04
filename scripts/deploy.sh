@@ -29,6 +29,10 @@ scp -i /tmp/fjny.pem -o StrictHostKeyChecking=no web/robots.txt     ubuntu@170.1
 scp -i /tmp/fjny.pem -o StrictHostKeyChecking=no web/data/numbers.json ubuntu@170.106.38.62:/tmp/v2_numbers.json
 scp -i /tmp/fjny.pem -o StrictHostKeyChecking=no scrapers/collect.py   ubuntu@170.106.38.62:/tmp/v2_collect.py
 
+# 官方素材包（brand/backgrounds/icons/sources）整体打包上传
+tar -C web -czf /tmp/v2_assets.tgz assets
+scp -i /tmp/fjny.pem -o StrictHostKeyChecking=no /tmp/v2_assets.tgz ubuntu@170.106.38.62:/tmp/v2_assets.tgz
+
 ssh -i /tmp/fjny.pem -o StrictHostKeyChecking=no ubuntu@170.106.38.62 "
 sudo cp /tmp/v2_index.html   /opt/sms-hub/web/index.html
 sudo cp /tmp/v2_guide.html   /opt/sms-hub/web/guide.html
@@ -38,10 +42,11 @@ sudo cp /tmp/v2_robots.txt   /opt/sms-hub/web/robots.txt
 sudo mkdir -p /opt/sms-hub/web/data
 sudo cp /tmp/v2_numbers.json /opt/sms-hub/web/data/numbers.json
 sudo cp /tmp/v2_collect.py   /opt/sms-hub/scrapers/collect.py
+sudo tar -C /opt/sms-hub/web -xzf /tmp/v2_assets.tgz
 sudo chown -R ubuntu:ubuntu /opt/sms-hub
 echo '--- 线上自检 ---'
-for u in / /guide.html /sources.html /sitemap.xml /robots.txt /data/numbers.json; do
-  printf '  %-22s -> %s\n' \"\$u\" \"\$(curl -sS -o /dev/null -w '%{http_code}' https://sms.jinzhai.icu\$u)\"
+for u in / /guide.html /sources.html /sitemap.xml /robots.txt /data/numbers.json /assets/brand/logo.svg /assets/backgrounds/world-map-bg.svg /assets/sources/quackr.svg; do
+  printf '  %-46s -> %s\n' \"\$u\" \"\$(curl -sS -o /dev/null -w '%{http_code}' https://sms.jinzhai.icu\$u)\"
 done
 "
 echo "部署完成"

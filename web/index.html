@@ -10,7 +10,7 @@
 <meta property="og:description" content="聚合公开 SMS 平台的临时号码索引，按国家、来源查找。">
 <meta property="og:url" content="https://sms.jinzhai.icu/">
 <meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23080B12'/%3E%3Crect x='20' y='12' width='24' height='40' rx='4' fill='none' stroke='%235B8CFF' stroke-width='3.5'/%3E%3Cline x1='27' y1='8' x2='37' y2='8' stroke='%235B8CFF' stroke-width='3.5' stroke-linecap='round'/%3E%3Cpath d='M26 28h12M26 36h8' stroke='%2334D6B6' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
 <style>
 /* ============ 设计 token（方案第 3.1 节） ============ */
 :root{
@@ -55,7 +55,7 @@ button,input,select{font:inherit;color:inherit}
 /* ============ Header ============ */
 header{height:72px;display:flex;align-items:center;border-bottom:1px solid var(--border);position:relative}
 .logo{display:flex;align-items:center;gap:10px}
-.logo svg{width:32px;height:32px;flex:none}
+.logo img{height:38px;width:auto;display:block;flex:none}
 .logo b{font-size:16px;font-weight:600;letter-spacing:.2px;display:block}
 .logo small{font-size:11.5px;color:var(--text-muted);display:block;line-height:1.2}
 .nav{margin-left:auto;display:flex;gap:28px;font-size:14px}
@@ -72,16 +72,18 @@ header{height:72px;display:flex;align-items:center;border-bottom:1px solid var(-
 /* ============ Hero ============ */
 .hero{padding:48px 0 24px;text-align:center;position:relative}
 .hero::before{
-  content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
-  background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),
-                   linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
-  background-size:48px 48px;
-  -webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.9),transparent 75%);
-  mask-image:linear-gradient(180deg,rgba(0,0,0,.9),transparent 75%);
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.85;
+  /* 官方素材：世界地图点阵 + 极淡网格 */
+  background-image:url('/assets/backgrounds/world-map-bg.svg'),
+                   url('/assets/backgrounds/grid-overlay.svg');
+  background-repeat:no-repeat,repeat;
+  background-position:center top,0 0;
+  background-size:1200px 420px,160px 160px;
+  -webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.95),transparent 80%);
+  mask-image:linear-gradient(180deg,rgba(0,0,0,.95),transparent 80%);
 }
 .hero>*{position:relative}
 h1{font-size:52px;line-height:1.2;font-weight:700;letter-spacing:-.5px}
-h1 em{font-style:normal;color:var(--primary)}
 .sub{color:var(--text-muted);font-size:16px;margin-top:14px}
 .searchbox{display:flex;gap:10px;max-width:680px;margin:28px auto 0}
 .searchbox>div{flex:1;position:relative}
@@ -91,7 +93,8 @@ h1 em{font-style:normal;color:var(--primary)}
 }
 .searchbox input::placeholder{color:#64748B}
 .searchbox input:focus{border-color:var(--primary);outline:none;box-shadow:0 0 0 3px rgba(91,140,255,.18)}
-.searchbox .ico{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:15px}
+.searchbox .ico{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text-muted)}
+.searchbox .ico img{display:block}
 .searchbox .clr{position:absolute;right:8px;top:50%;transform:translateY(-50%);
   width:32px;height:32px;border:0;background:none;color:var(--text-muted);cursor:pointer;
   border-radius:6px;font-size:17px;display:none}
@@ -107,7 +110,7 @@ h1 em{font-style:normal;color:var(--primary)}
 /* ============ 统计条 ============ */
 .stats{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-top:22px;font-size:14px;color:var(--text-muted)}
 .stats b{color:var(--text);font-weight:600}
-.stats .dot{color:var(--success);font-size:11px;margin-right:4px}
+.stats .dot{width:12px;height:12px;vertical-align:-1.5px;margin-right:4px}
 .stats .sep{color:#334155}
 
 /* ============ 提醒条 ============ */
@@ -136,6 +139,7 @@ section{margin-bottom:48px}
 .ctry:hover{border-color:rgba(91,140,255,.5);background:var(--surface-raised)}
 .ctry[aria-pressed="true"]{border-color:var(--primary);background:rgba(91,140,255,.12)}
 .ctry .fl{font-size:19px;line-height:1;flex:none}
+.fl-img{width:21px;height:16px;border-radius:2px;object-fit:cover;flex:none;display:block;background:#1E293B}
 .ctry .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ctry .ct{color:var(--text-muted);font-size:13px;font-variant-numeric:tabular-nums}
 
@@ -150,11 +154,11 @@ section{margin-bottom:48px}
 .bar select:hover,.bar .btn:hover{border-color:rgba(91,140,255,.5)}
 .bar .spacer{flex:1}
 .bar .btn{display:inline-flex;align-items:center;gap:7px}
+.bar .btn img{display:block}
 .bar .btn.primary{background:var(--primary);border-color:var(--primary);color:#080B12;font-weight:600}
 .bar .btn.primary:hover{filter:brightness(1.1)}
 .bar .btn:disabled{opacity:.55;cursor:not-allowed}
-.bar .btn .spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(0,0,0,.3);
-  border-top-color:#080B12;border-radius:50%;animation:sp .7s linear infinite}
+.spin{animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .only-mobile{display:none}
 
@@ -176,9 +180,11 @@ section{margin-bottom:48px}
 .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .card-country{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text)}
 .card-country .fl{font-size:20px;line-height:1}
-.badge{font-size:12px;padding:3px 8px;border-radius:var(--r-tag);white-space:nowrap}
-.badge.recent{background:rgba(52,214,182,.14);color:var(--accent)}
-.badge.unknown{background:rgba(148,163,184,.14);color:var(--unknown)}
+.badge{font-size:12px;padding:3px 8px;border-radius:var(--r-tag);white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.badge img{width:12px;height:12px;flex:none}
+/* 设计图 C01：近期有短信 = 琥珀警示色，状态未知 = 灰 */
+.badge.recent{background:rgba(245,158,11,.13);color:var(--warning);border:1px solid rgba(245,158,11,.25)}
+.badge.unknown{background:rgba(148,163,184,.12);color:var(--unknown);border:1px solid rgba(148,163,184,.22)}
 .card-phone{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .card-phone .num{font-size:22px;font-weight:600;letter-spacing:.2px;word-break:break-all}
 .copy{
@@ -188,29 +194,34 @@ section{margin-bottom:48px}
 }
 .copy:hover{border-color:var(--accent);color:var(--accent)}
 .card-src{font-size:13px;color:var(--text-muted)}
-.card-meta{font-size:13px;color:var(--text-muted);display:flex;flex-direction:column;gap:3px}
+/* 设计图 C01：短信数与活跃记录单行展示 */
+.card-meta{font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden}
+.card-meta .sep{color:#334155}
 .card-meta .na{color:#64748B}
 .card-foot{margin-top:auto;padding-top:13px;border-top:1px solid var(--border);
   display:flex;align-items:center;justify-content:space-between;gap:10px}
 .card-foot time{font-size:12.5px;color:var(--text-muted)}
+/* 设计图 C01：主操作为蓝色文字链接，非实心按钮 */
 .go{
-  display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:8px;
-  background:var(--primary);color:#080B12;font-size:13.5px;font-weight:600;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:5px;padding:10px 6px;border-radius:8px;min-height:44px;
+  color:var(--primary);font-size:13.5px;font-weight:500;white-space:nowrap;
 }
-.go:hover{filter:brightness(1.1)}
+.go:hover{color:#8FB0FF}
 
 /* ============ 数据源状态 ============ */
 .srcs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .src{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:18px}
 .src-head{display:flex;align-items:center;gap:10px;margin-bottom:11px}
-.src-head .ic{width:30px;height:30px;border-radius:8px;background:rgba(91,140,255,.14);
-  display:grid;place-items:center;font-size:15px;flex:none}
+.src-head .ic{width:32px;height:32px;flex:none}
+.src-head .ic img{width:100%;height:100%;display:block;border-radius:8px}
 .src-head b{font-size:15px;font-weight:600}
 .src-head .st{margin-left:auto;font-size:12.5px;display:flex;align-items:center;gap:6px}
 .st.ok{color:var(--success)}
 .st.fail{color:#EF4444}
 .src .n{font-size:13px;color:var(--text-muted);margin-bottom:4px}
-.src .t{font-size:12.5px;color:#64748B}
+/* 设计图 C02：数量与上次成功同步同一行两端对齐 */
+.src .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--text-muted)}
+.src .row .t{font-size:12.5px;color:#64748B}
 
 /* ============ 状态页 ============ */
 .state{padding:56px 24px;text-align:center;color:var(--text-muted)}
@@ -288,7 +299,7 @@ footer{border-top:1px solid var(--border);padding:32px 0 48px}
   .card{min-height:0}
   /* 移动端操作目标不小于 44px（方案第 5 节） */
   .copy{width:44px;height:44px}
-  .go{padding:12px 14px;min-height:44px}
+  .go{padding:12px 8px;min-height:44px}
   .ctry{min-height:44px}
   .only-desk{display:none!important}
   .only-mobile{display:inline-flex}
@@ -310,14 +321,9 @@ footer{border-top:1px solid var(--border);padding:32px 0 48px}
 <body>
 
 <header>
-  <div class="wrap" style="display:flex;align-items:center;height:100%">
+  <div class="wrap" style="display:flex;align-items:center;height:100%;width:100%">
     <a class="logo" href="/">
-      <svg viewBox="0 0 64 64" aria-hidden="true">
-        <rect x="20" y="12" width="24" height="40" rx="4" fill="none" stroke="#5B8CFF" stroke-width="3.5"/>
-        <line x1="27" y1="8" x2="37" y2="8" stroke="#5B8CFF" stroke-width="3.5" stroke-linecap="round"/>
-        <path d="M26 28h12M26 36h8" stroke="#34D6B6" stroke-width="3" stroke-linecap="round"/>
-      </svg>
-      <span><b>SMS Hub</b><small>全球公开号码聚合</small></span>
+      <img src="/assets/brand/logo.svg" alt="SMS Hub · 全球公开号码聚合" width="154" height="38">
     </a>
     <button class="btn-menu" id="menuBtn" aria-label="打开菜单" aria-expanded="false"><span></span></button>
     <nav class="nav" id="nav">
@@ -331,11 +337,11 @@ footer{border-top:1px solid var(--border);padding:32px 0 48px}
 <main>
   <div class="wrap">
     <div class="hero">
-      <h1>全球公开临时号码，<em>一站查找</em></h1>
+      <h1>全球公开临时号码，一站查找</h1>
       <p class="sub">聚合公开 SMS 平台，按国家、来源和活跃记录快速查找</p>
       <form class="searchbox" id="searchForm" role="search">
         <div id="searchWrap">
-          <span class="ico" aria-hidden="true">🔍</span>
+          <span class="ico" aria-hidden="true"><img src="/assets/icons/search.svg" width="18" height="18" alt=""></span>
           <label class="sr" for="q">搜索国家、区号、号码或平台</label>
           <input id="q" type="search" placeholder="搜索国家、区号、号码或平台" autocomplete="off">
           <button class="clr" type="button" id="clrBtn" aria-label="清除搜索">×</button>
@@ -346,9 +352,9 @@ footer{border-top:1px solid var(--border);padding:32px 0 48px}
     </div>
 
     <div class="notice">
-      <span aria-hidden="true">ⓘ</span>
+      <img src="/assets/icons/warning.svg" width="18" height="18" alt="" aria-hidden="true">
       <span class="txt">公共号码的短信可能被任何人查看，请勿用于银行、支付、邮箱等敏感账户。</span>
-      <a href="/guide.html">使用说明 →</a>
+      <a href="/guide.html">使用说明 ↗</a>
     </div>
 
     <section id="countries-sec">
@@ -369,14 +375,14 @@ footer{border-top:1px solid var(--border);padding:32px 0 48px}
           <option value="recent_activity">有短信记录</option>
           <option value="unknown">状态未知</option>
         </select>
-        <select id="f-sort" class="only-desk" aria-label="排序方式">
+        <button class="btn primary only-mobile" id="openSheet"><img src="/assets/icons/filter.svg" width="15" height="15" alt="">筛选</button>
+        <span class="spacer"></span>
+        <select id="f-sort" aria-label="排序方式">
           <option value="recent">最近更新</option>
           <option value="sms">短信数量</option>
           <option value="country">按国家</option>
         </select>
-        <button class="btn primary only-mobile" id="openSheet">⚙ 筛选</button>
-        <span class="spacer"></span>
-        <button class="btn only-desk" id="refresh">↻ 刷新</button>
+        <button class="btn only-desk" id="refresh"><img src="/assets/icons/refresh.svg" width="15" height="15" alt="">刷新</button>
       </div>
 
       <div class="chips" id="chips"></div>
@@ -395,13 +401,8 @@ footer{border-top:1px solid var(--border);padding:32px 0 48px}
   <div class="wrap">
     <div class="foot">
       <div class="foot-brand">
-        <a class="logo" href="/">
-          <svg viewBox="0 0 64 64" aria-hidden="true">
-            <rect x="20" y="12" width="24" height="40" rx="4" fill="none" stroke="#5B8CFF" stroke-width="3.5"/>
-            <line x1="27" y1="8" x2="37" y2="8" stroke="#5B8CFF" stroke-width="3.5" stroke-linecap="round"/>
-            <path d="M26 28h12M26 36h8" stroke="#34D6B6" stroke-width="3" stroke-linecap="round"/>
-          </svg>
-          <span><b>SMS Hub</b><small>全球公开号码聚合</small></span>
+        <a class="logo" href="/" aria-label="SMS Hub 首页">
+          <img src="/assets/brand/logo.svg" alt="SMS Hub · 全球公开号码聚合" width="138" height="34">
         </a>
         <p>号码信息来自公开第三方平台，短信在原站查看。</p>
       </div>
@@ -462,6 +463,24 @@ const F = { country:'', source:'', status:'', sort:'recent' };
 const esc = s => String(s??'').replace(/[&<>"']/g, c =>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const shorten = s => s && s.length>26 ? s.slice(0,26)+'…' : s;
+
+/* 设计图：彩色小国旗。Windows 不渲染国旗 emoji，改用 21x16 图片；
+   加载失败时隐藏图片，国家名文字始终在场（方案第 5 节要求） */
+const flagImg = cc => '<img class="fl-img" src="https://flagcdn.com/w40/'+String(cc||'').toLowerCase()+'.png"'+
+  ' width="21" height="16" alt="" loading="lazy" onerror="this.style.display=\'none\'">';
+
+/* 设计图 C01：号码按国际惯例分组展示，如 +1 202 555 0188；复制仍是完整 E.164 */
+function fmtPhone(phone, callingCode){
+  const bare = String(phone).replace(/\D/g,'');
+  const cc = String(callingCode||'').replace(/\D/g,'');
+  const rest = cc && bare.startsWith(cc) && bare.length > cc.length ? bare.slice(cc.length) : bare;
+  if(!rest) return '+' + (cc || bare);
+  let chunks = rest.match(/.{1,3}/g) || [];
+  if(chunks.length > 1 && chunks[chunks.length-1].length === 1){
+    const last = chunks.pop(); chunks[chunks.length-1] += last;
+  }
+  return '+' + cc + ' ' + chunks.join(' ');
+}
 
 function relTime(iso){
   if(!iso) return null;
@@ -537,7 +556,7 @@ function buildFilters(){
   $('#countries').innerHTML = cs.slice(0,6).map(c=>{
     const n = nums.filter(x=>x.countryCode===c.countryCode).length;
     return '<button class="ctry" data-c="'+c.countryCode+'" aria-pressed="false">'+
-      '<span class="fl" aria-hidden="true">'+c.flag+'</span>'+
+      flagImg(c.countryCode)+
       '<span class="nm">'+esc(c.countryNameZh)+'</span><span class="ct">'+n+'</span></button>';
   }).join('');
   $('#countries').querySelectorAll('.ctry').forEach(b=>{
@@ -586,9 +605,12 @@ function render(){
     '<span><b>'+(t.uniquePhones??nums.length)+'</b> 收录号码</span><span class="sep">·</span>'+
     '<span><b>'+(t.countries??0)+'</b> 国家</span><span class="sep">·</span>'+
     '<span><b>'+(t.sources??0)+'</b> 数据源</span><span class="sep">·</span>'+
-    '<span><span class="dot">●</span>'+(lastSync?'最近同步 '+lastSync:'最近同步 —')+'</span>';
+    '<span><img class="dot" src="/assets/icons/status-online.svg" alt="" width="12" height="12">'+'<span>'+(lastSync?lastSync+'同步':'同步 —')+'</span></span>';
 
-  $('#matchCnt').textContent = list.length + ' 个匹配号码';
+  /* 设计图：未筛选显示「N 个收录号码」，筛选后显示「N 个匹配号码」 */
+  $('#matchCnt').textContent = list.length === nums.length
+    ? list.length + ' 个收录号码'
+    : list.length + ' 个匹配号码';
   $('#footNote').textContent = (DATA.scheduleNote||'')+'｜本站仅聚合号码索引，短信内容在原站查看，本站不存储。';
 
   $('#countries').querySelectorAll('.ctry').forEach(b=>{
@@ -629,21 +651,32 @@ function render(){
   box.innerHTML='';
 
   grid.innerHTML = list.map(n=>{
-    const badge = n.availability==='recent_activity'
-      ? '<span class="badge recent">近期有短信</span>'
-      : '<span class="badge unknown">状态未知</span>';
-    const sms = n.messageCount!=null
-      ? n.messageCount.toLocaleString()+' 条短信'
-      : '<span class="na">短信记录未提供</span>';
-    const ev = n.statusEvidence
-      ? '<span class="na" title="'+esc(n.statusEvidence)+'">'+esc(shorten(n.statusEvidence))+'</span>' : '';
+    /* 设计图 C01：状态标签在右上角，证据写入 tooltip，不占版面 */
+    const isRecent = n.availability==='recent_activity';
+    const badge = isRecent
+      ? '<span class="badge recent" title="'+esc(n.statusEvidence||'原站提供了短信记录')+'">'+
+        '<img src="/assets/icons/status-recent.svg" alt="">近期有短信</span>'
+      : '<span class="badge unknown" title="'+esc(n.statusEvidence||'原站未提供可核实的活跃证据')+'">'+
+        '<img src="/assets/icons/status-unknown.svg" alt="">状态未知</span>';
+    const shown = fmtPhone(n.phone, n.callingCode);
+    /* 设计图 C01：短信数与最近短信时间同一行；缺失显示「未提供」，不编造 */
+    const parts = [];
+    parts.push('<span>'+(n.messageCount!=null ? n.messageCount.toLocaleString()+' 条短信'
+                                              : '<span class="na">短信数未提供</span>')+'</span>');
+    if(n.lastMessageAt){
+      const lm = relTime(n.lastMessageAt);
+      parts.push('<span>'+(lm ? '最近短信 '+lm : '<span class="na">最近短信未提供</span>')+'</span>');
+    }else{
+      parts.push('<span class="na">活跃记录未提供</span>');
+    }
+    const meta = parts.join('<span class="sep">·</span>');
     const rel = relTime(n.collectedAt);
     return '<article class="card">'+
-      '<div class="card-top"><div class="card-country"><span class="fl" aria-hidden="true">'+n.flag+'</span>'+esc(n.countryNameZh)+'</div>'+badge+'</div>'+
-      '<div class="card-phone"><span class="num mono">'+esc(n.phone)+'</span>'+
-        '<button class="copy" data-p="'+esc(n.phone)+'" aria-label="复制号码 '+esc(n.phone)+'" title="复制号码">⧉</button></div>'+
+      '<div class="card-top"><div class="card-country">'+flagImg(n.countryCode)+esc(n.countryNameZh)+'</div>'+badge+'</div>'+
+      '<div class="card-phone"><span class="num mono" title="'+esc(n.phone)+'">'+esc(shown)+'</span>'+
+        '<button class="copy" data-p="'+esc(n.phone)+'" aria-label="复制完整号码 '+esc(n.phone)+'" title="复制完整号码">⧉</button></div>'+
       '<div class="card-src">'+esc(n.sourceName)+'</div>'+
-      '<div class="card-meta"><span>'+sms+'</span>'+ev+'</div>'+
+      '<div class="card-meta">'+meta+'</div>'+
       '<div class="card-foot"><time datetime="'+esc(n.collectedAt)+'" title="'+esc(absTime(n.collectedAt))+'">'+(rel?rel+'收录':'—')+'</time>'+
         '<a class="go" href="'+esc(n.sourceUrl)+'" target="_blank" rel="noopener noreferrer">查看原站短信 ↗</a></div>'+
     '</article>';
@@ -662,15 +695,23 @@ function render(){
 
 function renderSources(){
   const box=$('#srcs'); if(!box) return;
+  /* 官方素材：各数据源识别图形，缺失时回退数据库图标 */
+  const SRC_ICON = {
+    'receive-sms-online': '/assets/sources/receive-sms-online.svg',
+    'quackr': '/assets/sources/quackr.svg',
+    'wetalk': '/assets/sources/wetalk.svg',
+  };
   box.innerHTML = (DATA.sources||[]).map(s=>{
+    /* 设计图 C02：同步状态只描述采集链路，不代表号码一定可收短信 */
     const st = s.ok ? '<span class="st ok">● 同步正常</span>' : '<span class="st fail">● 本次同步失败</span>';
-    const line = s.ok
-      ? '上次成功同步 '+(relTime(DATA.generatedAt)||'—')
+    const sync = s.ok
+      ? '上次成功同步 ' + (relTime(DATA.generatedAt)||'—')
       : esc(s.error||'采集失败，已保留上次快照');
-    return '<div class="src"><div class="src-head"><span class="ic" aria-hidden="true">🗄️</span>'+
+    const icon = SRC_ICON[s.sourceId] || '/assets/icons/database.svg';
+    return '<div class="src"><div class="src-head"><span class="ic"><img src="'+icon+'" alt="" width="32" height="32"></span>'+
       '<b>'+esc(s.sourceName)+'</b>'+st+'</div>'+
-      '<div class="n">'+s.count+' 个号码</div><div class="t">'+line+'</div></div>';
-  }).join('') || '<div class="src"><div class="n">暂无来源记录</div></div>';
+      '<div class="row"><span>'+s.count+' 个号码</span><span class="t">'+sync+'</span></div></div>';
+  }).join('') || '<div class="src"><div class="row"><span>暂无来源记录</span></div></div>';
 }
 
 /* ---------- 事件 ---------- */
@@ -687,9 +728,10 @@ $('#f-status').onchange  = e=>{ F.status=e.target.value; render(); };
 $('#f-sort').onchange    = e=>{ F.sort=e.target.value; render(); };
 
 $('#refresh').onclick = async e=>{
-  const b=e.currentTarget; b.disabled=true; b.innerHTML='<span class="spin"></span>同步中';
+  const b=e.currentTarget; b.disabled=true;
+  b.innerHTML='<img class="spin" src="/assets/icons/refresh.svg" width="15" height="15" alt="">同步中';
   CACHE = DATA; await load();
-  b.disabled=false; b.innerHTML='↻ 刷新';
+  b.disabled=false; b.innerHTML='<img src="/assets/icons/refresh.svg" width="15" height="15" alt="">刷新';
 };
 
 const sheet=$('#sheet'), mask=$('#mask');

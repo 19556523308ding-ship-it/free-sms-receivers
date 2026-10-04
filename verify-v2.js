@@ -177,6 +177,40 @@ const VIEWPORTS = [
   });
   console.log(`  号码=${link.phone} 外链=${link.href.slice(0, 52)}... target=${link.target} rel=${link.rel} ${link.target === '_blank' && link.rel.includes('noopener') ? '✅' : '❌'}`);
 
+  // ---- 设计图一致性检查 ----
+  const fid = await page.evaluate(() => {
+    const card = document.querySelector('.card');
+    const go = card.querySelector('.go');
+    const badge = card.querySelector('.badge');
+    const bs = getComputedStyle(badge);
+    const gs = getComputedStyle(go);
+    const phones = [...document.querySelectorAll('.card .num')].map(x => x.textContent.trim());
+    return {
+      goBg: gs.backgroundColor,
+      goBgTransparent: gs.backgroundColor === 'rgba(0, 0, 0, 0)' || gs.backgroundColor === 'transparent',
+      goColor: gs.color,
+      badgeText: badge.textContent.trim(),
+      badgeColor: bs.color,
+      phoneSample: phones.slice(0, 3),
+      phoneGrouped: phones.filter(p => /^\+\d[\d ]* \d+/.test(p)).length,
+      phoneTotal: phones.length,
+      stats: document.getElementById('stats').textContent.replace(/\s+/g, ' ').trim(),
+      matchCnt: document.getElementById('matchCnt').textContent,
+      h1Color: getComputedStyle(document.querySelector('h1')).color,
+      srcRow: document.querySelector('.src .row') ? document.querySelector('.src .row').textContent.replace(/\s+/g, ' ').trim() : null,
+    };
+  });
+  console.log('\n=== 设计图一致性 ===');
+  console.log('  ' + JSON.stringify(fid, null, 0));
+  const fidIssues = [];
+  if (!fid.goBgTransparent) fidIssues.push('「查看原站短信」应为文字链接，当前有背景色 ' + fid.goBg);
+  if (!/245, 158, 11/.test(fid.badgeColor)) fidIssues.push('「近期有短信」徽章应为琥珀色，当前 ' + fid.badgeColor);
+  if (fid.phoneGrouped < fid.phoneTotal * 0.9) fidIssues.push('号码未分组：' + fid.phoneGrouped + '/' + fid.phoneTotal);
+  if (!fid.stats.includes('同步')) fidIssues.push('统计条缺同步时间');
+  if (!fid.srcRow) fidIssues.push('数据源卡片缺数量/同步时间同一行');
+  console.log('  ' + (fidIssues.length ? '⚠️ ' + fidIssues.join('; ') : '✅ 与设计图一致'));
+  fidIssues.forEach(i => problems.push('设计一致性: ' + i));
+
   // 号码是否完整（无掩码）
   const masked = await page.evaluate(() => {
     return [...document.querySelectorAll('.card .num')].filter(x => /\*{2,}|\.{3,}/.test(x.textContent)).length;
