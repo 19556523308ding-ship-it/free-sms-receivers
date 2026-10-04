@@ -1,0 +1,5 @@
+node_modules/
+*.log
+shot-*.png
+.playwright-cli/
+__pycache__/
