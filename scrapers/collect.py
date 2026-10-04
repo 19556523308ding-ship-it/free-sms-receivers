@@ -350,23 +350,47 @@ def scrape_wetalk(now):
 def _iso_from_cc(digits):
     """按数字区号前缀猜国家（源站很多只在 URL 里给区号，不给国家名）。"""
     d = re.sub(r"\D", "", digits or "")
+    if not d:
+        return None, None
+
+    # 北美 NANP（+1）优先按「区号-号段」细分：
+    # 源站给的是 +1 + 10 位（如 17873011181 共 11 位），而通用表里
+    # ("1","US",11) 要求 12 位，等长判断必然失配 → 之前 16 条全落成 XX。
+    # 这里改用「区号后3 位」做 NANP 归属判定（标准做法）。
+    if d.startswith("1") and len(d) == 11:
+        nanp = d[1:4]
+        if nanp in ("787", "939"):          # 波多黎各
+            return "PR", "1"
+        if nanp in ("670",):               # 北马里亚纳群岛
+            return "MP", "1"
+        if nanp in ("242",):               # 巴哈马
+            return "BS", "1"
+        return "US", "1"
+
     table = [
-        ("1", "US", 11),      # 北美 NANP：+1 + 10 位
         ("44", "GB", 10), ("49", "DE", 11), ("33", "FR", 9), ("34", "ES", 9),
         ("31", "NL", 9), ("32", "BE", 9), ("43", "AT", 10), ("41", "CH", 9),
         ("46", "SE", 9), ("45", "DK", 8), ("47", "NO", 8), ("358", "FI", 10),
         ("48", "PL", 9), ("351", "PT", 9), ("30", "GR", 10), ("353", "IE", 9),
+        ("40", "RO", 9), ("421", "SK", 9), ("420", "CZ", 9), ("380", "UA", 9),
         ("61", "AU", 9), ("64", "NZ", 8), ("81", "JP", 10), ("82", "KR", 10),
         ("65", "SG", 8), ("60", "MY", 9), ("66", "TH", 9), ("63", "PH", 10),
         ("62", "ID", 10), ("84", "VN", 9), ("91", "IN", 10), ("86", "CN", 11),
-        ("7", "RU", 10), ("380", "UA", 9), ("375", "BY", 9), ("995", "GE", 9),
+        ("7", "RU", 10), ("375", "BY", 9), ("995", "GE", 9),
         ("55", "BR", 10), ("52", "MX", 10), ("54", "AR", 10), ("56", "CL", 9),
         ("57", "CO", 10), ("51", "PE", 9), ("27", "ZA", 9), ("20", "EG", 10),
-        ("234", "NG", 10), ("254", "KE", 9), ("91", "IN", 10), ("880", "BD", 10),
+        ("234", "NG", 10), ("254", "KE", 9), ("880", "BD", 10),
         ("852", "HK", 8), ("886", "TW", 9), ("853", "MO", 8), ("670", "TL", 8),
     ]
     for cc, iso, nsn in table:
         if d.startswith(cc) and len(d) == len(cc) + nsn:
+            return iso, cc
+
+    # 退一步：只看区号前缀，不再要求后续位数完全匹配。
+    # 全球各国 NSN 长度不一（有的国家同一区号下有多种长度），
+    # 强等长会漏掉大量真实号码。命中即用，最多只信前4 位以上的明确区号。
+    for cc, iso, nsn in table:
+        if len(cc) >= 3 and d.startswith(cc) and len(d) > len(cc):
             return iso, cc
     return None, None
 
@@ -419,12 +443,17 @@ def _record_by_cc(digits, *, source_id, source_name, source_home, detail_url,
 
 def scrape_freephonenum(now):
     """
-    freephonenum.com/numbers —— 实测 624 个号码链接，URL 形如 /be/receive-sms/{digits}，
-    国家码在路径段（be/nl/de/...），比号码段更可靠。
+    freephonenum.com —— 实测 624 个号码链接，URL 形如 {国家段}/receive-sms/{digits}。
+
+    两个实测坑（2026-10-05 复核）：
+    1. `/numbers` 已 302 重定向到 `/receive-sms`，抓 /numbers 也能拿到内容
+       （fetch 跟随重定向），但直接抓 /receive-sms 更稳，少一跳。
+    2. 国家段**不只有2 字母**：实测有 `pr`（波多黎各）、`po`（秘鲁）等 3 字母码。
+       原正则 `([a-z]{2})` 会把这些整段漏掉 → 对应号码全落成 XX。
     正文页有 Google reCAPTCHA，故只取号码，不取正文。
     """
     home = "https://freephonenum.com"
-    url = f"{home}/numbers"
+    url = f"{home}/receive-sms"
     html = fetch(url)
     out, seen = [], set()
 
@@ -437,9 +466,13 @@ def scrape_freephonenum(now):
                "jp": "JP", "kr": "KR", "sg": "SG", "hk": "HK", "tw": "TW", "cn": "CN",
                "my": "MY", "th": "TH", "ph": "PH", "id": "ID", "vn": "VN", "tr": "TR",
                "il": "IL", "ae": "AE", "sa": "SA", "za": "ZA", "ng": "NG", "ke": "KE",
-               "ar": "AR", "cl": "CL", "co": "CO", "pe": "PE", "is": "IS", "lu": "LU"}
+               "ar": "AR", "cl": "CL", "co": "CO", "pe": "PE", "is": "IS", "lu": "LU",
+               # 3 字母码（实测存在，原实现漏掉）
+               "pr": "PR", "po": "PE", "do": "DO", "gt": "GT", "cr": "CR",
+               "pa": "PA", "jm": "JM", "tt": "TT", "bz": "BZ", "ht": "HT"}
 
-    for m in re.finditer(r'href="(/([a-z]{2})/receive-sms/(\d{9,15}))"', html):
+    # 国家段允许 2-3 字母（实测存在 pr/po 等 3 字母码）
+    for m in re.finditer(r'href="(/([a-z]{2,3})/receive-sms/(\d{9,15}))"', html):
         href, slug, digits = m.group(1), m.group(2), m.group(3)
         if digits in seen:
             continue
