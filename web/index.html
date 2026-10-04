@@ -3,329 +3,734 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>接码号码聚合 · 免费临时手机号导航</title>
-<meta name="description" content="聚合 receive-sms-online、quackr、WeTalk 等平台公开可用的免费临时接码号码，含国家归属、短信数量与在线状态，一键跳转到原站查看验证码。">
+<title>SMS Hub · 全球公开临时号码聚合</title>
+<meta name="description" content="聚合多个公开 SMS 平台的临时号码索引，按国家、来源和短信记录查找，跳转原站查看短信。不存储短信内容。">
 <link rel="canonical" href="https://sms.jinzhai.icu/">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f8cff'/%3E%3Crect x='19' y='10' width='26' height='44' rx='4' fill='none' stroke='white' stroke-width='3.5'/%3E%3Cline x1='27' y1='7' x2='37' y2='7' stroke='white' stroke-width='3.5' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='32' r='3' fill='%2338d6c4'/%3E%3Cpath d='M26 40h12' stroke='%2338d6c4' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta property="og:title" content="SMS Hub · 全球公开临时号码聚合">
+<meta property="og:description" content="聚合公开 SMS 平台的临时号码索引，按国家、来源查找。">
+<meta property="og:url" content="https://sms.jinzhai.icu/">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23080B12'/%3E%3Crect x='20' y='12' width='24' height='40' rx='4' fill='none' stroke='%235B8CFF' stroke-width='3.5'/%3E%3Cline x1='27' y1='8' x2='37' y2='8' stroke='%235B8CFF' stroke-width='3.5' stroke-linecap='round'/%3E%3Cpath d='M26 28h12M26 36h8' stroke='%2334D6B6' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
+/* ============ 设计 token（方案第 3.1 节） ============ */
 :root{
-  --bg:#0b1020; --panel:#121a33; --panel2:#182348;
-  --card:#151d38; --line:#253056;
-  --txt:#e8ecf8; --dim:#93a0c4; --dim2:#6b789c;
-  --acc:#4f8cff; --acc2:#38d6c4; --warn:#ffb020;
-  --r:14px;
+  --bg:#080B12;
+  --surface:#10151F;
+  --surface-raised:#151B27;
+  --primary:#5B8CFF;
+  --accent:#34D6B6;
+  --text:#F8FAFC;
+  --text-muted:#94A3B8;
+  --border:rgba(255,255,255,.08);
+  --success:#22C55E;
+  --warning:#F59E0B;
+  --unknown:#94A3B8;
+  --notice-bg:#17140B;
+
+  --r-card:14px;
+  --r-ctrl:10px;
+  --r-tag:6px;
+
+  --maxw:1200px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
 body{
-  background:var(--bg); color:var(--txt);
-  font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;
-  line-height:1.6; -webkit-font-smoothing:antialiased;
+  background:var(--bg);color:var(--text);
+  font-family:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
 }
+body::before{
+  content:"";position:fixed;inset:0 0 auto 0;height:420px;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 900px 320px at 50% -60px,rgba(91,140,255,.16),transparent 70%);
+}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px;position:relative;z-index:1}
 a{color:inherit;text-decoration:none}
-.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+button,input,select{font:inherit;color:inherit}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* ---------- header ---------- */
-header{
-  border-bottom:1px solid var(--line);
-  background:linear-gradient(180deg,rgba(79,140,255,.10),transparent);
-  padding:38px 0 30px;
+/* ============ Header ============ */
+header{height:72px;display:flex;align-items:center;border-bottom:1px solid var(--border);position:relative}
+.logo{display:flex;align-items:center;gap:10px}
+.logo svg{width:32px;height:32px;flex:none}
+.logo b{font-size:16px;font-weight:600;letter-spacing:.2px;display:block}
+.logo small{font-size:11.5px;color:var(--text-muted);display:block;line-height:1.2}
+.nav{margin-left:auto;display:flex;gap:28px;font-size:14px}
+.nav a{color:var(--text-muted);transition:color .15s}
+.nav a:hover{color:var(--text)}
+.btn-menu{display:none;margin-left:auto;background:none;border:0;width:44px;height:44px;
+  align-items:center;justify-content:center;cursor:pointer;border-radius:var(--r-ctrl)}
+.btn-menu span,.btn-menu span::before,.btn-menu span::after{
+  display:block;width:18px;height:1.5px;background:var(--text);border-radius:2px}
+.btn-menu span{position:relative}
+.btn-menu span::before{content:"";position:absolute;top:-6px}
+.btn-menu span::after{content:"";position:absolute;top:6px}
+
+/* ============ Hero ============ */
+.hero{padding:48px 0 24px;text-align:center;position:relative}
+.hero::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
+  background-size:48px 48px;
+  -webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.9),transparent 75%);
+  mask-image:linear-gradient(180deg,rgba(0,0,0,.9),transparent 75%);
 }
-.brand{display:flex;align-items:center;gap:13px;margin-bottom:12px}
-.logo{
-  width:46px;height:46px;border-radius:12px;flex:none;
-  background:linear-gradient(135deg,var(--acc),var(--acc2));
-  display:grid;place-items:center;font-size:22px;
-  box-shadow:0 6px 20px rgba(79,140,255,.35);
+.hero>*{position:relative}
+h1{font-size:52px;line-height:1.2;font-weight:700;letter-spacing:-.5px}
+h1 em{font-style:normal;color:var(--primary)}
+.sub{color:var(--text-muted);font-size:16px;margin-top:14px}
+.searchbox{display:flex;gap:10px;max-width:680px;margin:28px auto 0}
+.searchbox>div{flex:1;position:relative}
+.searchbox input{
+  width:100%;height:56px;padding:0 44px 0 46px;border-radius:var(--r-ctrl);
+  background:var(--surface);border:1px solid var(--border);font-size:15px;
 }
-h1{font-size:26px;font-weight:700;letter-spacing:.3px}
-h1 small{display:block;font-size:12px;font-weight:400;color:var(--dim2);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
-.lead{color:var(--dim);max-width:760px;font-size:14.5px}
+.searchbox input::placeholder{color:#64748B}
+.searchbox input:focus{border-color:var(--primary);outline:none;box-shadow:0 0 0 3px rgba(91,140,255,.18)}
+.searchbox .ico{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:15px}
+.searchbox .clr{position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  width:32px;height:32px;border:0;background:none;color:var(--text-muted);cursor:pointer;
+  border-radius:6px;font-size:17px;display:none}
+.searchbox .clr:hover{color:var(--text);background:var(--surface-raised)}
+.searchbox.has .clr{display:block}
+.btn-primary{
+  height:56px;padding:0 28px;border:0;border-radius:var(--r-ctrl);cursor:pointer;
+  background:var(--primary);color:#080B12;font-weight:600;font-size:15px;white-space:nowrap;
+}
+.btn-primary:hover{filter:brightness(1.1)}
+.btn-primary:disabled{opacity:.55;cursor:not-allowed}
 
-/* ---------- stats ---------- */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:26px 0}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px 17px}
-.stat b{display:block;font-size:26px;font-weight:700;color:var(--acc2);line-height:1.2}
-.stat span{font-size:12.5px;color:var(--dim2)}
+/* ============ 统计条 ============ */
+.stats{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-top:22px;font-size:14px;color:var(--text-muted)}
+.stats b{color:var(--text);font-weight:600}
+.stats .dot{color:var(--success);font-size:11px;margin-right:4px}
+.stats .sep{color:#334155}
 
-/* ---------- notice ---------- */
+/* ============ 提醒条 ============ */
 .notice{
-  display:flex;gap:11px;align-items:flex-start;
-  background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.28);
-  border-radius:var(--r);padding:13px 16px;margin-bottom:22px;font-size:13.5px;color:#ffd699;
+  display:flex;align-items:center;gap:12px;margin:24px 0;
+  background:var(--notice-bg);border:1px solid rgba(245,158,11,.28);
+  border-radius:var(--r-card);padding:14px 18px;font-size:14px;color:#FCD34D;
 }
-.notice b{color:var(--warn)}
+.notice .txt{flex:1}
+.notice a{color:var(--primary);font-weight:500;white-space:nowrap}
 
-/* ---------- controls ---------- */
-.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
-.search{flex:1;min-width:230px;position:relative}
-.search input{
-  width:100%;padding:11px 14px 11px 38px;border-radius:11px;
-  background:var(--card);border:1px solid var(--line);color:var(--txt);
-  font-size:14px;outline:none;transition:.18s;
-}
-.search input:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(79,140,255,.15)}
-.search::before{content:"🔍";position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.6}
-select{
-  padding:11px 13px;border-radius:11px;background:var(--card);
-  border:1px solid var(--line);color:var(--txt);font-size:14px;outline:none;cursor:pointer;
-}
-select:focus{border-color:var(--acc)}
-.btn{
-  padding:11px 16px;border-radius:11px;border:1px solid var(--line);
-  background:var(--card);color:var(--txt);font-size:14px;cursor:pointer;transition:.18s;
-}
-.btn:hover{border-color:var(--acc);color:var(--acc)}
-.btn.primary{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
-.btn.primary:hover{filter:brightness(1.1);color:#fff}
+/* ============ 版块通用 ============ */
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px}
+.sec-head h2,.list-head h2{font-size:23px;font-weight:600}
+.sec-head a{font-size:14px;color:var(--text-muted)}
+.sec-head a:hover{color:var(--primary)}
+section{margin-bottom:48px}
 
-.chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:24px}
-.chip{
-  padding:6px 13px;border-radius:999px;background:var(--card);
-  border:1px solid var(--line);font-size:13px;cursor:pointer;
-  color:var(--dim);transition:.16s;user-select:none;
+/* ============ 热门国家 ============ */
+.countries{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.ctry{
+  display:flex;align-items:center;gap:8px;padding:12px 14px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-ctrl);
+  cursor:pointer;font-size:14px;transition:.15s;text-align:left;color:var(--text);
 }
-.chip:hover{border-color:var(--acc);color:var(--txt)}
-.chip.on{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+.ctry:hover{border-color:rgba(91,140,255,.5);background:var(--surface-raised)}
+.ctry[aria-pressed="true"]{border-color:var(--primary);background:rgba(91,140,255,.12)}
+.ctry .fl{font-size:19px;line-height:1;flex:none}
+.ctry .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ctry .ct{color:var(--text-muted);font-size:13px;font-variant-numeric:tabular-nums}
 
-/* ---------- grid ---------- */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:13px;margin-bottom:20px}
-.num{
-  background:var(--card);border:1px solid var(--line);border-radius:var(--r);
-  padding:16px 17px;transition:.18s;display:flex;flex-direction:column;gap:11px;
+/* ============ 筛选栏 ============ */
+.list-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.list-head .cnt{color:var(--text-muted);font-size:14px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.bar select,.bar .btn{
+  height:44px;padding:0 14px;border-radius:var(--r-ctrl);
+  background:var(--surface);border:1px solid var(--border);font-size:14px;cursor:pointer;
 }
-.num:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
-.num-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.flag{font-size:26px;line-height:1}
-.num-val{font-size:17.5px;font-weight:700;letter-spacing:.4px;font-family:ui-monospace,Menlo,Consolas,monospace;word-break:break-all}
-.num-meta{display:flex;gap:7px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--dim2)}
-.tag{padding:3px 9px;border-radius:6px;background:rgba(79,140,255,.13);color:#a8c6ff;font-size:11.5px}
-.tag.ok{background:rgba(56,214,196,.13);color:var(--acc2)}
-.num-foot{display:flex;justify-content:space-between;align-items:center;padding-top:11px;border-top:1px solid var(--line)}
-.cnt{font-size:12px;color:var(--dim2)}
-.copy{background:none;border:1px solid var(--line);color:var(--dim);padding:5px 11px;border-radius:8px;font-size:12px;cursor:pointer;transition:.16s}
-.copy:hover{border-color:var(--acc2);color:var(--acc2)}
+.bar select:hover,.bar .btn:hover{border-color:rgba(91,140,255,.5)}
+.bar .spacer{flex:1}
+.bar .btn{display:inline-flex;align-items:center;gap:7px}
+.bar .btn.primary{background:var(--primary);border-color:var(--primary);color:#080B12;font-weight:600}
+.bar .btn.primary:hover{filter:brightness(1.1)}
+.bar .btn:disabled{opacity:.55;cursor:not-allowed}
+.bar .btn .spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(0,0,0,.3);
+  border-top-color:#080B12;border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.only-mobile{display:none}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border-radius:var(--r-tag);
+  background:rgba(91,140,255,.13);border:1px solid rgba(91,140,255,.3);
+  font-size:13px;color:#A8C6FF}
+.chip button{background:none;border:0;color:inherit;cursor:pointer;font-size:15px;line-height:1;padding:0 2px}
+.chip button:hover{color:#fff}
+
+/* ============ 号码卡片 ============ */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);
+  padding:18px;display:flex;flex-direction:column;gap:11px;
+  transition:border-color .15s,background .15s,transform .15s;min-height:224px;
+}
+.card:hover{border-color:rgba(91,140,255,.45);background:var(--surface-raised);transform:translateY(-2px)}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.card-country{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text)}
+.card-country .fl{font-size:20px;line-height:1}
+.badge{font-size:12px;padding:3px 8px;border-radius:var(--r-tag);white-space:nowrap}
+.badge.recent{background:rgba(52,214,182,.14);color:var(--accent)}
+.badge.unknown{background:rgba(148,163,184,.14);color:var(--unknown)}
+.card-phone{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.card-phone .num{font-size:22px;font-weight:600;letter-spacing:.2px;word-break:break-all}
+.copy{
+  width:32px;height:32px;flex:none;border:1px solid var(--border);border-radius:8px;
+  background:none;cursor:pointer;color:var(--text-muted);
+  display:grid;place-items:center;transition:.15s;
+}
+.copy:hover{border-color:var(--accent);color:var(--accent)}
+.card-src{font-size:13px;color:var(--text-muted)}
+.card-meta{font-size:13px;color:var(--text-muted);display:flex;flex-direction:column;gap:3px}
+.card-meta .na{color:#64748B}
+.card-foot{margin-top:auto;padding-top:13px;border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:10px}
+.card-foot time{font-size:12.5px;color:var(--text-muted)}
 .go{
-  display:block;text-align:center;padding:9px;border-radius:9px;
-  background:linear-gradient(135deg,var(--acc),#3b6fe0);color:#fff;
-  font-size:13.5px;font-weight:600;transition:.16s;
+  display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:8px;
+  background:var(--primary);color:#080B12;font-size:13.5px;font-weight:600;white-space:nowrap;
 }
-.go:hover{filter:brightness(1.12)}
+.go:hover{filter:brightness(1.1)}
 
-.empty{text-align:center;padding:56px 20px;color:var(--dim2)}
-.empty div{font-size:42px;margin-bottom:12px}
+/* ============ 数据源状态 ============ */
+.srcs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.src{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:18px}
+.src-head{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.src-head .ic{width:30px;height:30px;border-radius:8px;background:rgba(91,140,255,.14);
+  display:grid;place-items:center;font-size:15px;flex:none}
+.src-head b{font-size:15px;font-weight:600}
+.src-head .st{margin-left:auto;font-size:12.5px;display:flex;align-items:center;gap:6px}
+.st.ok{color:var(--success)}
+.st.fail{color:#EF4444}
+.src .n{font-size:13px;color:var(--text-muted);margin-bottom:4px}
+.src .t{font-size:12.5px;color:#64748B}
 
-footer{border-top:1px solid var(--line);margin-top:44px;padding:26px 0 34px;color:var(--dim2);font-size:12.5px}
-footer p{margin:5px 0}
-footer a{color:var(--acc)}
+/* ============ 状态页 ============ */
+.state{padding:56px 24px;text-align:center;color:var(--text-muted)}
+.state .ic{font-size:38px;margin-bottom:14px}
+.state h3{font-size:17px;color:var(--text);margin-bottom:8px;font-weight:600}
+.state p{font-size:14px;margin-bottom:16px}
+.skel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);
+  height:224px;position:relative;overflow:hidden}
+.skel::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.045),transparent);
+  animation:sh 1.4s infinite}
+@keyframes sh{100%{transform:translateX(100%)}}
 
-@media(max-width:640px){
-  .stats{grid-template-columns:repeat(2,1fr)}
-  h1{font-size:21px}
+/* ============ Footer ============ */
+footer{border-top:1px solid var(--border);padding:32px 0 48px}
+.foot{display:flex;gap:48px;flex-wrap:wrap;justify-content:space-between}
+.foot-brand{max-width:280px}
+.foot-brand p{font-size:13px;color:var(--text-muted);margin-top:11px}
+.foot-cols{display:flex;gap:64px;flex-wrap:wrap}
+.foot-col h4{font-size:13px;font-weight:600;margin-bottom:12px}
+.foot-col a{display:block;font-size:13.5px;color:var(--text-muted);margin-bottom:9px}
+.foot-col a:hover{color:var(--primary)}
+.foot-bot{margin-top:32px;padding-top:16px;border-top:1px solid var(--border);
+  font-size:12.5px;color:#64748B;display:flex;gap:24px;flex-wrap:wrap;justify-content:space-between}
+
+/* ============ 移动端筛选面板 ============ */
+.sheet-mask{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:60;display:none}
+.sheet-mask.on{display:block}
+.sheet{
+  position:fixed;left:0;right:0;bottom:0;z-index:61;background:var(--surface-raised);
+  border-radius:16px 16px 0 0;border-top:1px solid var(--border);
+  padding:8px 20px calc(20px + env(safe-area-inset-bottom));
+  transform:translateY(100%);transition:transform .22s;max-height:85vh;overflow-y:auto;
+}
+.sheet.on{transform:translateY(0)}
+.sheet .grab{width:38px;height:4px;border-radius:2px;background:#334155;margin:0 auto 16px}
+.sheet h3{font-size:17px;margin-bottom:16px}
+.sheet label{display:block;font-size:13px;color:var(--text-muted);margin:14px 0 7px}
+.sheet select{width:100%;height:46px;padding:0 14px;border-radius:var(--r-ctrl);
+  background:var(--surface);border:1px solid var(--border)}
+.sheet-actions{display:flex;gap:10px;margin-top:22px}
+.sheet-actions button{flex:1;height:48px;border-radius:var(--r-ctrl);font-size:15px;cursor:pointer;border:1px solid var(--border)}
+.sheet-actions .cancel{background:none;color:var(--text)}
+.sheet-actions .apply{background:var(--primary);border-color:var(--primary);color:#080B12;font-weight:600}
+
+/* ============ 响应式（方案 3.3） ============ */
+@media(max-width:1100px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .countries{grid-template-columns:repeat(4,1fr)}
+  h1{font-size:42px}
+}
+@media(max-width:767px){
+  .wrap{padding:0 16px}
+  header{height:60px}
+  .nav{display:none}
+  .btn-menu{display:flex}
+  .nav.open{
+    display:flex;position:absolute;top:60px;left:0;right:0;flex-direction:column;gap:0;
+    background:var(--surface);border-bottom:1px solid var(--border);padding:8px 0;z-index:50;
+  }
+  .nav.open a{padding:14px 16px}
+  h1{font-size:32px;line-height:1.25;letter-spacing:-.3px}
+  .sub{font-size:14.5px;margin-top:10px}
+  .hero{padding:32px 0 16px}
+  .searchbox{flex-direction:column;margin-top:20px}
+  .searchbox input,.searchbox .btn-primary{height:52px}
+  .stats{gap:8px 16px;margin-top:18px;font-size:13.5px;justify-content:flex-start}
+  .stats .sep{display:none}
+  .notice{flex-direction:column;align-items:flex-start;gap:9px;padding:13px 15px;font-size:13.5px}
+  .countries{display:flex;overflow-x:auto;gap:8px;padding:0 16px 8px;margin:0 -16px}
+  .countries::-webkit-scrollbar{display:none}
+  .ctry{flex:none;min-width:118px}
   .grid{grid-template-columns:1fr}
-  .controls{flex-direction:column;align-items:stretch}
-  select,.btn{width:100%}
+  .srcs{grid-template-columns:1fr}
+  .card{min-height:0}
+  /* 移动端操作目标不小于 44px（方案第 5 节） */
+  .copy{width:44px;height:44px}
+  .go{padding:12px 14px;min-height:44px}
+  .ctry{min-height:44px}
+  .only-desk{display:none!important}
+  .only-mobile{display:inline-flex}
+  .foot{gap:24px}
+  .foot-cols{gap:32px}
+}
+@media(max-width:360px){
+  h1{font-size:27px}
+  .ctry{min-width:108px;padding:10px 12px;font-size:13px}
+  .card-phone .num{font-size:19px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important}
+  .card:hover{transform:none}
 }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="wrap">
-    <div class="brand">
-      <div class="logo">📱</div>
-      <h1>接码号码聚合<small>Free SMS Receiver Aggregator</small></h1>
-    </div>
-    <p class="lead">
-      聚合 <b>Receive-SMS-Online</b>、<b>Quackr</b>、<b>WeTalk</b> 三个平台公开展示的免费临时手机号，
-      标注国家归属、短信累计量与在线状态，点击即可跳转到原站查看收到的验证码。
-    </p>
-
-    <div class="stats">
-      <div class="stat"><b id="s-total">–</b><span>可用号码</span></div>
-      <div class="stat"><b id="s-country">–</b><span>覆盖国家</span></div>
-      <div class="stat"><b id="s-source">–</b><span>数据源</span></div>
-      <div class="stat"><b id="s-time">–</b><span>最近更新</span></div>
-    </div>
+  <div class="wrap" style="display:flex;align-items:center;height:100%">
+    <a class="logo" href="/">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <rect x="20" y="12" width="24" height="40" rx="4" fill="none" stroke="#5B8CFF" stroke-width="3.5"/>
+        <line x1="27" y1="8" x2="37" y2="8" stroke="#5B8CFF" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M26 28h12M26 36h8" stroke="#34D6B6" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <span><b>SMS Hub</b><small>全球公开号码聚合</small></span>
+    </a>
+    <button class="btn-menu" id="menuBtn" aria-label="打开菜单" aria-expanded="false"><span></span></button>
+    <nav class="nav" id="nav">
+      <a href="/#numbers">全部号码</a>
+      <a href="/#sources">数据源</a>
+      <a href="/guide.html">使用说明</a>
+    </nav>
   </div>
 </header>
 
-<main class="wrap">
-  <div class="notice">
-    <span>⚠️</span>
-    <div>
-      <b>使用提示：</b>公共号码的短信对所有人可见，<b>请勿用于重要账号</b>，涉及资金或隐私的场景请用付费独享号码。
-      部分平台需在其官网注册登录后才能查看短信正文，本站不代为登录、不绕过任何验证机制。
+<main>
+  <div class="wrap">
+    <div class="hero">
+      <h1>全球公开临时号码，<em>一站查找</em></h1>
+      <p class="sub">聚合公开 SMS 平台，按国家、来源和活跃记录快速查找</p>
+      <form class="searchbox" id="searchForm" role="search">
+        <div id="searchWrap">
+          <span class="ico" aria-hidden="true">🔍</span>
+          <label class="sr" for="q">搜索国家、区号、号码或平台</label>
+          <input id="q" type="search" placeholder="搜索国家、区号、号码或平台" autocomplete="off">
+          <button class="clr" type="button" id="clrBtn" aria-label="清除搜索">×</button>
+        </div>
+        <button class="btn-primary" type="submit">搜索</button>
+      </form>
+      <div class="stats" id="stats"></div>
     </div>
-  </div>
 
-  <div class="controls">
-    <div class="search"><input id="q" placeholder="搜索号码、国家或平台…" autocomplete="off"></div>
-    <select id="f-country"><option value="">全部国家</option></select>
-    <select id="f-platform"><option value="">全部平台</option></select>
-    <select id="f-sort">
-      <option value="hot">按热度排序</option>
-      <option value="country">按国家排序</option>
-      <option value="new">号码数量</option>
-    </select>
-    <button class="btn primary" id="refresh">刷新数据</button>
-  </div>
+    <div class="notice">
+      <span aria-hidden="true">ⓘ</span>
+      <span class="txt">公共号码的短信可能被任何人查看，请勿用于银行、支付、邮箱等敏感账户。</span>
+      <a href="/guide.html">使用说明 →</a>
+    </div>
 
-  <div class="chips" id="chips"></div>
+    <section id="countries-sec">
+      <div class="sec-head"><h2>热门国家</h2><a href="/guide.html#countries">全部国家</a></div>
+      <div class="countries" id="countries"></div>
+    </section>
 
-  <div class="grid" id="grid"></div>
-  <div class="empty" id="empty" style="display:none">
-    <div>🔍</div>没有匹配的号码，换个关键词试试
+    <section id="numbers">
+      <div class="list-head">
+        <h2>全部号码</h2><span class="cnt" id="matchCnt"></span>
+      </div>
+
+      <div class="bar">
+        <select id="f-country" class="only-desk" aria-label="按国家筛选"></select>
+        <select id="f-source" class="only-desk" aria-label="按来源筛选"></select>
+        <select id="f-status" class="only-desk" aria-label="按状态筛选">
+          <option value="">全部状态</option>
+          <option value="recent_activity">有短信记录</option>
+          <option value="unknown">状态未知</option>
+        </select>
+        <select id="f-sort" class="only-desk" aria-label="排序方式">
+          <option value="recent">最近更新</option>
+          <option value="sms">短信数量</option>
+          <option value="country">按国家</option>
+        </select>
+        <button class="btn primary only-mobile" id="openSheet">⚙ 筛选</button>
+        <span class="spacer"></span>
+        <button class="btn only-desk" id="refresh">↻ 刷新</button>
+      </div>
+
+      <div class="chips" id="chips"></div>
+      <div class="grid" id="grid"></div>
+      <div id="stateBox"></div>
+    </section>
+
+    <section id="sources">
+      <div class="sec-head"><h2>数据源状态</h2><a href="/sources.html">查看详情</a></div>
+      <div class="srcs" id="srcs"></div>
+    </section>
   </div>
 </main>
 
 <footer>
   <div class="wrap">
-    <p>数据每30 分钟自动刷新一次，来源为各平台公开列表页。</p>
-    <p>本站仅做号码元数据聚合与导流，不存储、不转发、不破解任何短信内容。</p>
-    <p>© 2026 丁东政 · <a href="https://news.jinzhai.icu">新闻早知道</a></p>
+    <div class="foot">
+      <div class="foot-brand">
+        <a class="logo" href="/">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <rect x="20" y="12" width="24" height="40" rx="4" fill="none" stroke="#5B8CFF" stroke-width="3.5"/>
+            <line x1="27" y1="8" x2="37" y2="8" stroke="#5B8CFF" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M26 28h12M26 36h8" stroke="#34D6B6" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <span><b>SMS Hub</b><small>全球公开号码聚合</small></span>
+        </a>
+        <p>号码信息来自公开第三方平台，短信在原站查看。</p>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-col">
+          <h4>产品</h4>
+          <a href="/#numbers">全部号码</a>
+          <a href="/#countries-sec">国家</a>
+          <a href="/#sources">数据源</a>
+        </div>
+        <div class="foot-col">
+          <h4>说明</h4>
+          <a href="/guide.html">使用说明</a>
+          <a href="/sources.html">数据来源</a>
+          <a href="/guide.html#privacy">隐私与免责</a>
+        </div>
+        <div class="foot-col">
+          <h4>其他项目</h4>
+          <a href="https://news.jinzhai.icu">新闻早知道</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <span id="footNote">—</span>
+      <span>© 2026 SMS Hub</span>
+    </div>
   </div>
 </footer>
 
-<script>
-let DATA = null;
+<div class="sheet-mask" id="mask"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="grab"></div>
+  <h3 id="sheetTitle">筛选</h3>
+  <label for="s-country">国家</label>
+  <select id="s-country"></select>
+  <label for="s-source">来源</label>
+  <select id="s-source"></select>
+  <label for="s-status">状态</label>
+  <select id="s-status">
+    <option value="">全部状态</option>
+    <option value="recent_activity">有短信记录</option>
+    <option value="unknown">状态未知</option>
+  </select>
+  <div class="sheet-actions">
+    <button class="cancel" id="sheetClear">清除</button>
+    <button class="apply" id="sheetApply">应用</button>
+  </div>
+</div>
 
-async function load(){
-  const btn = document.getElementById('refresh');
-  btn.textContent = '加载中…'; btn.disabled = true;
-  try{
-    const r = await fetch('data/numbers.json?t=' + Date.now());
-    if(!r.ok) throw new Error('HTTP ' + r.status);
-    DATA = await r.json();
-    render();
-  }catch(e){
-    document.getElementById('grid').innerHTML =
-      '<div class="empty"><div>⚠️</div>数据加载失败：' + e.message + '</div>';
-  }
-  btn.textContent = '刷新数据'; btn.disabled = false;
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s);
+const DATA_URL = 'data/numbers.json';
+let DATA = null, CACHE = null;
+const F = { country:'', source:'', status:'', sort:'recent' };
+
+const esc = s => String(s??'').replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shorten = s => s && s.length>26 ? s.slice(0,26)+'…' : s;
+
+function relTime(iso){
+  if(!iso) return null;
+  const t = new Date(iso).getTime();
+  if(isNaN(t)) return null;
+  const s = Math.floor((Date.now()-t)/1000);
+  if(s<60) return '刚刚';
+  if(s<3600) return Math.floor(s/60)+' 分钟前';
+  if(s<86400) return Math.floor(s/3600)+' 小时前';
+  return Math.floor(s/86400)+' 天前';
+}
+function absTime(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  if(isNaN(d)) return '';
+  return d.toLocaleString('zh-CN',{hour12:false})+' ('+Intl.DateTimeFormat().resolvedOptions().timeZone+')';
 }
 
-function fmtTime(iso){
+async function load(){
+  $('#grid').innerHTML = Array.from({length:6},()=>'<div class="skel"></div>').join('');
+  $('#stats').innerHTML = '<span>载入中…</span>';
+  $('#matchCnt').textContent = '';
+  $('#stateBox').innerHTML = '';
+  const eb = $('#errBanner'); if(eb) eb.remove();
   try{
-    const d = new Date(iso);
-    return d.toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
-  }catch{ return '—' }
+    const r = await fetch(DATA_URL + '?t=' + Date.now(), {cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if(!j || !Array.isArray(j.numbers)) throw new Error('数据格式异常');
+    DATA = CACHE = j;
+    buildFilters(); render();
+  }catch(e){
+    if(CACHE){
+      DATA = CACHE; buildFilters(); render(); banner('更新失败，当前为上次同步数据', true);
+    }else{
+      $('#grid').innerHTML = '';
+      $('#stats').innerHTML = '<span>—</span>';
+      $('#stateBox').innerHTML =
+        '<div class="state"><div class="ic">⚠️</div><h3>数据加载失败</h3><p>'+esc(e.message)+
+        '</p><button class="btn-primary" id="retryBtn">重试</button></div>';
+      $('#retryBtn').onclick = ()=>load();
+      $('#srcs').innerHTML=''; $('#countries').innerHTML='';
+    }
+  }
+}
+
+function banner(text, retry){
+  let el = $('#errBanner');
+  if(!el){
+    el = document.createElement('div');
+    el.id='errBanner';
+    el.style.cssText='padding:14px 18px;display:flex;gap:12px;align-items:center;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-radius:14px;margin-bottom:16px;font-size:14px';
+    $('#numbers').insertBefore(el, $('#chips'));
+  }
+  el.innerHTML = '<span style="font-size:18px">⚠️</span><span style="flex:1;color:#FCA5A5">'+esc(text)+'</span>'+
+    (retry?'<button class="btn" style="height:36px;padding:0 14px;border-radius:8px;background:var(--surface);border:1px solid var(--border);cursor:pointer">重试</button>':'');
+  const b = el.querySelector('button'); if(b) b.onclick = ()=>load();
+}
+
+function buildFilters(){
+  const nums = DATA.numbers;
+  const cs = [...new Map(nums.map(n=>[n.countryCode,n])).values()]
+    .sort((a,b)=> nums.filter(x=>x.countryCode===b.countryCode).length - nums.filter(x=>x.countryCode===a.countryCode).length);
+  const ss = [...new Set(nums.map(n=>n.sourceId))];
+  const opt = (arr,cur,label) =>
+    '<option value="">'+label+'</option>'+arr.map(x=>'<option value="'+x.v+'"'+(x.v===cur?' selected':'')+'>'+esc(x.t)+'</option>').join('');
+
+  $('#f-country').innerHTML = opt(cs.map(c=>({v:c.countryCode,t:c.flag+' '+c.countryNameZh})), F.country,'全部国家');
+  $('#f-source').innerHTML  = opt(ss.map(s=>({v:s,t:nums.find(n=>n.sourceId===s).sourceName})), F.source,'全部来源');
+  $('#s-country').innerHTML = $('#f-country').innerHTML;
+  $('#s-source').innerHTML  = $('#f-source').innerHTML;
+
+  $('#countries').innerHTML = cs.slice(0,6).map(c=>{
+    const n = nums.filter(x=>x.countryCode===c.countryCode).length;
+    return '<button class="ctry" data-c="'+c.countryCode+'" aria-pressed="false">'+
+      '<span class="fl" aria-hidden="true">'+c.flag+'</span>'+
+      '<span class="nm">'+esc(c.countryNameZh)+'</span><span class="ct">'+n+'</span></button>';
+  }).join('');
+  $('#countries').querySelectorAll('.ctry').forEach(b=>{
+    b.onclick = ()=>{
+      F.country = (F.country===b.dataset.c) ? '' : b.dataset.c;
+      render();
+    };
+  });
+}
+
+const countryName = c => (DATA.numbers.find(n=>n.countryCode===c)||{}).countryNameZh || c;
+const sourceName  = s => (DATA.numbers.find(n=>n.sourceId===s)||{}).sourceName || s;
+
+function apply(){
+  const q = $('#q').value.trim().toLowerCase();
+  let list = DATA.numbers.slice();
+  if(F.country) list = list.filter(n=>n.countryCode===F.country);
+  if(F.source)  list = list.filter(n=>n.sourceId===F.source);
+  if(F.status)  list = list.filter(n=>n.availability===F.status);
+  if(q){
+    const digits = q.replace(/[\s()\-]/g,'');
+    //纯数字且长度>=3 时优先当作区号/号码前缀匹配，避免被号码中间的数字误伤
+    const isNumeric = /^\+?\d{3,}$/.test(q.replace(/[\s()\-]/g,''));
+    list = list.filter(n=>{
+      if(isNumeric){
+        const bare = n.phone.replace(/\D/g,'');
+        return bare.startsWith(digits) || n.callingCode===digits;
+      }
+      const hay = [n.phone, n.countryNameZh, n.countryNameEn,
+                   n.countryCode, n.callingCode, n.sourceName].join(' ').toLowerCase();
+      return hay.includes(q) || (digits.length>2 && n.phone.replace(/\D/g,'').includes(digits));
+    });
+  }
+  if(F.sort==='sms')        list.sort((a,b)=>(b.messageCount||0)-(a.messageCount||0));
+  else if(F.sort==='country')list.sort((a,b)=>a.countryNameZh.localeCompare(b.countryNameZh,'zh')||a.phone.localeCompare(b.phone));
+  else list.sort((a,b)=>new Date(b.collectedAt)-new Date(a.collectedAt));
+  return list;
 }
 
 function render(){
   if(!DATA) return;
-  const nums = DATA.numbers || [];
-  const countries = [...new Set(nums.map(n=>n.country))].sort();
-  const platforms = [...new Set(nums.map(n=>n.platform))].sort();
+  const list = apply(), nums = DATA.numbers, t = DATA.totals||{};
+  const lastSync = relTime(DATA.generatedAt);
 
-  // 统计
-  const hot = nums.filter(n=>n.messages).reduce((s,n)=>s+n.messages,0);
-  document.getElementById('s-total').textContent = nums.length;
-  document.getElementById('s-country').textContent = countries.length;
-  document.getElementById('s-source').textContent = (DATA.sources||[]).filter(s=>s.ok).length;
-  document.getElementById('s-time').textContent = fmtTime(DATA.generated_at);
+  $('#stats').innerHTML =
+    '<span><b>'+(t.uniquePhones??nums.length)+'</b> 收录号码</span><span class="sep">·</span>'+
+    '<span><b>'+(t.countries??0)+'</b> 国家</span><span class="sep">·</span>'+
+    '<span><b>'+(t.sources??0)+'</b> 数据源</span><span class="sep">·</span>'+
+    '<span><span class="dot">●</span>'+(lastSync?'最近同步 '+lastSync:'最近同步 —')+'</span>';
 
-  // 下拉
-  fill('f-country', countries, n=>n);
-  fill('f-platform', platforms, n=>n);
+  $('#matchCnt').textContent = list.length + ' 个匹配号码';
+  $('#footNote').textContent = (DATA.scheduleNote||'')+'｜本站仅聚合号码索引，短信内容在原站查看，本站不存储。';
 
-  // 国家快捷 chips
-  const chips = document.getElementById('chips');
-  chips.innerHTML = '<div class="chip on" data-c="">全部</div>' +
-    countries.map(c=>{
-      const f = nums.find(n=>n.country===c);
-      return `<div class="chip" data-c="${c}">${f.flag} ${c} <span style="opacity:.6">${nums.filter(n=>n.country===c).length}</span></div>`;
-    }).join('');
-  chips.querySelectorAll('.chip').forEach(el=>{
-    el.onclick = ()=>{
-      chips.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
-      el.classList.add('on');
-      document.getElementById('f-country').value = el.dataset.c;
-      draw();
+  $('#countries').querySelectorAll('.ctry').forEach(b=>{
+    b.setAttribute('aria-pressed', String(b.dataset.c===F.country));
+  });
+  $('#f-country').value=F.country; $('#f-source').value=F.source; $('#f-status').value=F.status;
+
+  const chips=[];
+  if(F.country) chips.push(['country','国家：'+countryName(F.country)]);
+  if(F.source)  chips.push(['source','来源：'+sourceName(F.source)]);
+  if(F.status)  chips.push(['status','状态：'+(F.status==='recent_activity'?'有短信记录':'状态未知')]);
+  $('#chips').innerHTML = chips.map(([k,t2])=>
+    '<span class="chip">'+esc(t2)+'<button data-k="'+k+'" aria-label="移除筛选">×</button></span>').join('');
+  $('#chips').querySelectorAll('button').forEach(b=>{
+    b.onclick = ()=>{ F[b.dataset.k]=''; if(b.dataset.k==='status') $('#s-status').value=''; render(); };
+  });
+
+  const grid = $('#grid'), box = $('#stateBox');
+  if(!nums.length){
+    grid.innerHTML='';
+    box.innerHTML='<div class="state"><div class="ic">📭</div><h3>暂未收录号码</h3>'+
+      '<p>数据源暂时没有可用记录，请稍后再试或查看来源状态。</p></div>';
+    return;
+  }
+  if(!list.length){
+    grid.innerHTML='';
+    const cond=[F.country?countryName(F.country):null, sourceName(F.source),
+      F.status?(F.status==='recent_activity'?'有短信记录':'状态未知'):null,
+      $('#q').value.trim()?'搜索「'+$('#q').value.trim()+'」':null].filter(Boolean).join(' · ');
+    box.innerHTML='<div class="state"><div class="ic">🔍</div><h3>没有匹配的号码</h3>'+
+      '<p>当前条件：'+esc(cond||'无')+'</p><button class="btn-primary" id="resetAll">清除筛选</button></div>';
+    $('#resetAll').onclick = ()=>{
+      $('#q').value=''; $('#searchWrap').classList.remove('has');
+      F.country=F.source=F.status=''; F.sort='recent'; $('#f-sort').value='recent'; render();
     };
-  });
+    return;
+  }
+  box.innerHTML='';
 
-  draw();
-}
-
-function fill(id, arr, key){
-  const s = document.getElementById(id);
-  const cur = s.value;
-  s.innerHTML = '<option value="">' + s.options[0].text + '</option>' +
-    arr.map(a=>`<option value="${a}">${a}</option>`).join('');
-  s.value = cur;
-}
-
-function draw(){
-  if(!DATA) return;
-  const q = document.getElementById('q').value.trim().toLowerCase();
-  const fc = document.getElementById('f-country').value;
-  const fp = document.getElementById('f-platform').value;
-  const sort = document.getElementById('f-sort').value;
-
-  let list = DATA.numbers.filter(n=>{
-    if(fc && n.country !== fc) return false;
-    if(fp && n.platform !== fp) return false;
-    if(q){
-      const hay = (n.number + ' ' + n.country + ' ' + n.platform + ' ' + (n.flag||'')).toLowerCase();
-      if(!hay.includes(q)) return false;
-    }
-    return true;
-  });
-
-  list.sort((a,b)=>{
-    if(sort==='country') return a.country.localeCompare(b.country,'zh') || a.number.localeCompare(b.number);
-    if(sort==='new')   return (b.messages||0) - (a.messages||0);
-    // hot：有短信数的优先且多的在前
-    const am = a.messages||0, bm = b.messages||0;
-    if(am && bm) return bm - am;
-    if(am) return -1;
-    if(bm) return 1;
-    return a.country.localeCompare(b.country,'zh');
-  });
-
-  const grid = document.getElementById('grid');
-  document.getElementById('empty').style.display = list.length ? 'none' : 'block';
   grid.innerHTML = list.map(n=>{
-    const online = n.online === true
-      ? '<span class="tag ok">● 在线</span>'
-      : (n.online === false ? '<span class="tag">○ 离线</span>' : '');
-    const cnt = n.messages != null ? `📨 累计 ${n.messages.toLocaleString()} 条` : '短信数未知';
-    return `<div class="num">
-      <div class="num-top">
-        <div>
-          <div class="flag">${n.flag||'🏳️'}</div>
-          <div class="num-val">${n.number}</div>
-        </div>
-        <button class="copy" data-n="${n.number}">复制</button>
-      </div>
-      <div class="num-meta">
-        <span class="tag">${n.country}</span>
-        <span class="tag">${n.platform}</span>
-        ${online}
-      </div>
-      <div class="num-foot">
-        <span class="cnt">${cnt}</span>
-      </div>
-      <a class="go" href="${n.detail_url}" target="_blank" rel="noopener noreferrer nofollow">去 ${n.platform} 查看短信 →</a>
-    </div>`;
+    const badge = n.availability==='recent_activity'
+      ? '<span class="badge recent">近期有短信</span>'
+      : '<span class="badge unknown">状态未知</span>';
+    const sms = n.messageCount!=null
+      ? n.messageCount.toLocaleString()+' 条短信'
+      : '<span class="na">短信记录未提供</span>';
+    const ev = n.statusEvidence
+      ? '<span class="na" title="'+esc(n.statusEvidence)+'">'+esc(shorten(n.statusEvidence))+'</span>' : '';
+    const rel = relTime(n.collectedAt);
+    return '<article class="card">'+
+      '<div class="card-top"><div class="card-country"><span class="fl" aria-hidden="true">'+n.flag+'</span>'+esc(n.countryNameZh)+'</div>'+badge+'</div>'+
+      '<div class="card-phone"><span class="num mono">'+esc(n.phone)+'</span>'+
+        '<button class="copy" data-p="'+esc(n.phone)+'" aria-label="复制号码 '+esc(n.phone)+'" title="复制号码">⧉</button></div>'+
+      '<div class="card-src">'+esc(n.sourceName)+'</div>'+
+      '<div class="card-meta"><span>'+sms+'</span>'+ev+'</div>'+
+      '<div class="card-foot"><time datetime="'+esc(n.collectedAt)+'" title="'+esc(absTime(n.collectedAt))+'">'+(rel?rel+'收录':'—')+'</time>'+
+        '<a class="go" href="'+esc(n.sourceUrl)+'" target="_blank" rel="noopener noreferrer">查看原站短信 ↗</a></div>'+
+    '</article>';
   }).join('');
 
   grid.querySelectorAll('.copy').forEach(b=>{
     b.onclick = async ()=>{
-      const num = b.dataset.n;
-      try{ await navigator.clipboard.writeText(num); }catch{ /*降级*/ }
-      const old = b.textContent; b.textContent = '已复制 ✓';
-      setTimeout(()=>b.textContent = old, 1400);
+      const old=b.textContent;
+      try{ await navigator.clipboard.writeText(b.dataset.p); b.textContent='✓'; }
+      catch(e){ b.textContent='✕'; b.title='复制失败，请手动选择号码'; }
+      setTimeout(()=>b.textContent=old,1500);
     };
+  });
+  renderSources();
+}
+
+function renderSources(){
+  const box=$('#srcs'); if(!box) return;
+  box.innerHTML = (DATA.sources||[]).map(s=>{
+    const st = s.ok ? '<span class="st ok">● 同步正常</span>' : '<span class="st fail">● 本次同步失败</span>';
+    const line = s.ok
+      ? '上次成功同步 '+(relTime(DATA.generatedAt)||'—')
+      : esc(s.error||'采集失败，已保留上次快照');
+    return '<div class="src"><div class="src-head"><span class="ic" aria-hidden="true">🗄️</span>'+
+      '<b>'+esc(s.sourceName)+'</b>'+st+'</div>'+
+      '<div class="n">'+s.count+' 个号码</div><div class="t">'+line+'</div></div>';
+  }).join('') || '<div class="src"><div class="n">暂无来源记录</div></div>';
+}
+
+/* ---------- 事件 ---------- */
+let tm;
+$('#q').addEventListener('input', e=>{
+  $('#searchWrap').classList.toggle('has', !!e.target.value);
+  clearTimeout(tm); tm = setTimeout(render, 250);
+});
+$('#searchForm').addEventListener('submit', e=>{ e.preventDefault(); clearTimeout(tm); render(); });
+$('#clrBtn').onclick = ()=>{ $('#q').value=''; $('#searchWrap').classList.remove('has'); render(); $('#q').focus(); };
+$('#f-country').onchange = e=>{ F.country=e.target.value; render(); };
+$('#f-source').onchange  = e=>{ F.source=e.target.value; render(); };
+$('#f-status').onchange  = e=>{ F.status=e.target.value; render(); };
+$('#f-sort').onchange    = e=>{ F.sort=e.target.value; render(); };
+
+$('#refresh').onclick = async e=>{
+  const b=e.currentTarget; b.disabled=true; b.innerHTML='<span class="spin"></span>同步中';
+  CACHE = DATA; await load();
+  b.disabled=false; b.innerHTML='↻ 刷新';
+};
+
+const sheet=$('#sheet'), mask=$('#mask');
+let lastFocus=null;
+function openSheet(){
+  lastFocus=document.activeElement;
+  $('#s-country').value=F.country; $('#s-source').value=F.source; $('#s-status').value=F.status;
+  sheet.classList.add('on'); mask.classList.add('on'); $('#sheetApply').focus();
+}
+function closeSheet(){
+  sheet.classList.remove('on'); mask.classList.remove('on');
+  if(lastFocus) lastFocus.focus();
+}
+$('#openSheet').onclick = openSheet;
+mask.onclick = closeSheet;
+$('#sheetApply').onclick = ()=>{
+  F.country=$('#s-country').value; F.source=$('#s-source').value; F.status=$('#s-status').value;
+  closeSheet(); render();
+};
+$('#sheetClear').onclick = ()=>{ $('#s-country').value=''; $('#s-source').value=''; $('#s-status').value=''; };
+
+const toggleMenu = on => {
+  $('#nav').classList.toggle('open', on);
+  $('#menuBtn').setAttribute('aria-expanded', String(on));
+};
+$('#menuBtn').onclick = ()=> toggleMenu(!$('#nav').classList.contains('open'));
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){
+    if(sheet.classList.contains('on')) closeSheet();
+    if($('#nav').classList.contains('open')) toggleMenu(false);
+  }
+});
+
+if(matchMedia('(max-width:767px)').matches){
+  $('#searchForm').addEventListener('submit', ()=>{
+    setTimeout(()=>$('#numbers').scrollIntoView({behavior:'smooth',block:'start'}),60);
   });
 }
 
-['q','f-country','f-platform','f-sort'].forEach(id=>{
-  const el = document.getElementById(id);
-  el.addEventListener(id==='q' ? 'input' : 'change', draw);
-});
-document.getElementById('refresh').onclick = load;
 load();
+})();
 </script>
 </body>
 </html>

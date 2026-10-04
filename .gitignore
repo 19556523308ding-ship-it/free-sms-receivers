@@ -3,3 +3,6 @@ node_modules/
 shot-*.png
 .playwright-cli/
 __pycache__/
+v2-*.png
+shot-online*.png
+pg-*.png

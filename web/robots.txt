@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /*?country=
+Disallow: /*?source=
+Disallow: /*?sort=
+
+Sitemap: https://sms.jinzhai.icu/sitemap.xml

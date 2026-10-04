@@ -1,7 +1,7 @@
 /** 线上站点真实浏览器验证 */
 const puppeteer = require('puppeteer-core');
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
-const URL = 'https://sms.jinzhai.icu/';
+const URL = process.env.TARGET || 'https://sms.jinzhai.icu/';
 
 (async () => {
   const browser = await puppeteer.launch({
@@ -24,10 +24,10 @@ const URL = 'https://sms.jinzhai.icu/';
     country: document.getElementById('s-country')?.textContent,
     source: document.getElementById('s-source')?.textContent,
     time: document.getElementById('s-time')?.textContent,
-    cards: document.querySelectorAll('.num').length,
+    cards: document.querySelectorAll('.card').length,
     chips: document.querySelectorAll('#chips .chip').length,
-    firstNum: document.querySelector('.num .num-val')?.textContent,
-    firstLink: document.querySelector('.num .go')?.href,
+    firstNum: document.querySelector('.card .num')?.textContent,
+    firstLink: document.querySelector('.card .go')?.href,
     https: location.protocol,
   }));
   console.log('=== 线上实测 ===');
@@ -38,13 +38,13 @@ const URL = 'https://sms.jinzhai.icu/';
   // 交互复测
   await page.type('#q', '美国');
   await new Promise(r => setTimeout(r, 500));
-  console.log('搜索"美国" ->', await page.evaluate(() => document.querySelectorAll('.num').length), '张');
+  console.log('搜索"美国" ->', await page.evaluate(() => document.querySelectorAll('.card').length), '张');
 
   await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
   await page.reload({ waitUntil: 'networkidle0' });
   await new Promise(r => setTimeout(r, 1200));
   const mob = await page.evaluate(() => ({
-    cards: document.querySelectorAll('.num').length,
+    cards: document.querySelectorAll('.card').length,
     overflow: document.documentElement.scrollWidth > window.innerWidth + 1,
   }));
   console.log('移动端 390px ->', JSON.stringify(mob));
