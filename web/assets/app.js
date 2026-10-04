@@ -274,7 +274,7 @@ export function renderChrome(active = '') {
     hd.innerHTML =
       `<div class="hd-in">
         <button class="burger" id="burger" aria-label="菜单" aria-expanded="false">☰</button>
-        <a class="brand" href="index.html"><img class="brand-logo" src="assets/brand/logo.svg" alt="SMS Hub 免费在线接码" width="140" height="32"></a>
+        <a class="brand" href="index.html"><img class="brand-logo" src="assets/brand/logo.svg" alt="SMS Hub 免费在线接码" width="280" height="64"></a>
         <nav class="nav" id="nav" aria-label="主导航">
           ${nav.map(([h, t, k]) => `<a href="${h}"${k === active ? ' aria-current="page"' : ''}>${t}</a>`).join('')}
         </nav>
@@ -324,7 +324,7 @@ export function renderFooter() {
   if (!ft) return;
   ft.innerHTML = `<div class="ft-in">
     <div class="ft-brand">
-      <img src="assets/brand/logo.svg" alt="SMS Hub" width="132" height="30">
+      <img src="assets/brand/logo.svg" alt="SMS Hub" width="264" height="60">
       <p style="margin:10px 0 0;color:var(--text-muted);font-size:13px;line-height:1.6">
         公共号码收到的短信任何人都可能看到，请勿用于银行、支付、邮箱或其他敏感账户。
       </p>
