@@ -95,7 +95,10 @@ META = {
 }
 
 IMAGE = f"{SITE}/assets/brand/logo.svg"
-OG_IMAGE = f"{SITE}/assets/backgrounds/hero-visual.svg"
+# og:image 必须是位图：Facebook / X / 微信等均不渲染 SVG。
+# 由 tools/gen-og.js 从 hero 素材 + logo 合成 1200x630 PNG。
+OG_IMAGE = f"{SITE}/assets/backgrounds/og-cover.png"
+OG_W, OG_H = 1200, 630
 
 
 def build_head_block(key, m):
@@ -114,12 +117,15 @@ def build_head_block(key, m):
 <meta property="og:title" content="{m['og_title']}">
 <meta property="og:description" content="{m['og_desc']}">
 <meta property="og:image" content="{OG_IMAGE}">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="420">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="{OG_W}">
+<meta property="og:image:height" content="{OG_H}">
+<meta property="og:image:alt" content="SMS Hub 免费在线接码 · 接收短信验证码">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{m['og_title']}">
 <meta name="twitter:description" content="{m['og_desc']}">
 <meta name="twitter:image" content="{OG_IMAGE}">
+<meta name="twitter:image:alt" content="SMS Hub 免费在线接码 · 接收短信验证码">
 <!--/seo:block-->'''
 
 
@@ -473,10 +479,15 @@ def gen_country_pages(data):
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
 <meta property="og:image" content="{OG_IMAGE}">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="{OG_W}">
+<meta property="og:image:height" content="{OG_H}">
+<meta property="og:image:alt" content="{name_zh}免费接码 · SMS Hub">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{title}">
 <meta name="twitter:description" content="{desc}">
 <meta name="twitter:image" content="{OG_IMAGE}">
+<meta name="twitter:image:alt" content="{name_zh}免费接码 · SMS Hub">
 <!--/seo:block-->
 {jsonld(bc)}
 {jsonld(il) if il else ''}'''
