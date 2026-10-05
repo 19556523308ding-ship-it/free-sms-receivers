@@ -8,7 +8,7 @@ Disallow: /*?q=
 Disallow: /*?sort=
 Disallow: /*?source=
 
-# 大站爬虫放慢（本站数据每小时更新）
+# Large crawlers: slow down (data refreshes hourly)
 User-agent: AhrefsBot
 Crawl-delay: 10
 User-agent: SemrushBot

@@ -1,15 +1,26 @@
 /* SMS Hub 2.0 — 共享数据层与工具
    零构建：原生 ES 模块，多页复用。
-   对外不暴露来源 / alsoOn / 来源数（§1 内外分离）。 */
+   对外不暴露来源 / alsoOn / 来源数（§1 内外分离）。
+   文案一律走 i18n 字典（中/英共用一套渲染代码）。 */
+
+import {
+  t, LANG, IS_EN, LANG_PREFIX, altLangUrl, switchLang, lastLang,
+  countryName, num,
+} from './i18n.js';
+
+export { t, LANG, IS_EN, LANG_PREFIX, altLangUrl, switchLang, countryName, num };
 
 /* ---------- 站点根路径 ----------
    本文件固定在 /assets/app.js，因此从 import.meta.url 往上退两级就是站点根。
-   这样无论页面在 / 还是 /country/us 下，资源与数据路径都能正确解析，
+   这样无论页面在 / 、/en/ 还是 /country/us 下，资源与数据路径都能正确解析，
    不需要每个页面手写 <base> 或改一堆相对路径。 */
 const _MOD = new URL(import.meta.url);
 export const ROOT = _MOD.pathname.replace(/\/assets\/[^/]*$/, '/') || '/';
 /** 把站点根相对路径（如 'data/numbers.json'）拼成绝对路径 */
 export const abs = p => ROOT + String(p).replace(/^\/+/, '');
+
+/** 页面路径（带语言前缀）：用于站内跳转，保证英文版停留在 /en/ 下 */
+export const page = p => LANG_PREFIX + '/' + String(p || '').replace(/^\/+/, '');
 
 export const DATA_URL = abs('data/numbers.json');
 
@@ -17,16 +28,16 @@ export const DATA_URL = abs('data/numbers.json');
 export const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-/* §10 状态模型：可用 / 较少使用 / 暂未验证 */
+/* §10 状态模型：可用 / 较少使用 / 暂未验证（按语言取字典） */
 export const STATUS_LABEL = {
-  available: '可用',
-  low_usage: '较少使用',
-  unverified: '暂未验证',
+  get available() { return t('status.available'); },
+  get low_usage() { return t('status.low_usage'); },
+  get unverified() { return t('status.unverified'); },
 };
 export const STATUS_DESC = {
-  available: '可正常接收',
-  low_usage: '活跃度较低',
-  unverified: '暂无近期短信',
+  get available() { return t('status.desc.available'); },
+  get low_usage() { return t('status.desc.low_usage'); },
+  get unverified() { return t('status.desc.unverified'); },
 };
 
 /* 彩色国旗（Windows 不渲染国旗 emoji，用图片；失败则隐藏，文字始终在场） */
@@ -50,14 +61,13 @@ export function fmtPhone(phone, callingCode) {
 
 export function relTime(iso) {
   if (!iso) return null;
-  const t = new Date(iso).getTime();
-  if (isNaN(t)) return null;
-  const s = Math.floor((Date.now() - t) / 1000);
-  if (s < 0) return '刚刚';
-  if (s < 60) return '刚刚';
-  if (s < 3600) return Math.floor(s / 60) + ' 分钟前';
-  if (s < 86400) return Math.floor(s / 3600) + ' 小时前';
-  return Math.floor(s / 86400) + ' 天前';
+  const t0 = new Date(iso).getTime();
+  if (isNaN(t0)) return null;
+  const s = Math.floor((Date.now() - t0) / 1000);
+  if (s < 60) return t('time.justNow');
+  if (s < 3600) return Math.floor(s / 60) + t('time.minutesAgo');
+  if (s < 86400) return Math.floor(s / 3600) + t('time.hoursAgo');
+  return Math.floor(s / 86400) + t('time.daysAgo');
 }
 
 /* ---------- 数据加载 ---------- */
@@ -68,7 +78,7 @@ export async function loadData({ force = false } = {}) {
   const r = await fetch(DATA_URL + '?t=' + (force ? Date.now() : ''), { cache: force ? 'no-store' : 'default' });
   if (!r.ok) throw new Error('HTTP ' + r.status);
   const j = await r.json();
-  if (!j || !Array.isArray(j.numbers)) throw new Error('数据格式异常');
+  if (!j || !Array.isArray(j.numbers)) throw new Error(t('common.dataError'));
   _cache = j;
   return j;
 }
@@ -179,26 +189,26 @@ export function countriesOf(data) {
 /* ---------- 状态徽标 HTML ---------- */
 export function statusHtml(n) {
   const st = n.status || 'unverified';
-  return `<span class="st st-${esc(st)}">${esc(STATUS_LABEL[st] || '暂未验证')}</span>`;
+  return `<span class="st st-${esc(st)}">${esc(STATUS_LABEL[st] || t('status.unverified'))}</span>`;
 }
 
 /** 状态副文案：优先真实短信时间，其次活跃时间；无则说明未知，不编造 */
 export function statusLine(n) {
-  const t = n.lastSmsAt || n.lastMessageAt;
-  if (t) {
-    const r = relTime(t);
-    if (r) return (n.status === 'available' ? '收到短信 ' : '最近活跃 ') + r;
+  const ts = n.lastSmsAt || n.lastMessageAt;
+  if (ts) {
+    const r = relTime(ts);
+    if (r) return (n.status === 'available' ? t('line.gotSms') : t('line.recentActive')) + r;
   }
-  if (n.status === 'available') return '近期有短信记录';
-  if (n.status === 'low_usage') return '暂无近期活跃记录';
-  return '暂无近期短信';
+  if (n.status === 'available') return t('line.hasSmsRecord');
+  if (n.status === 'low_usage') return t('line.noRecentActive');
+  return t('line.noRecentSms');
 }
 
 /* 短信量：只显示真实数字，缺则说明未提供 */
 export function smsLine(n) {
   const v = n.smsToday ?? n.messageCount;
-  if (v == null) return `<span class="na">短信数未提供</span>`;
-  return `今日 ${Number(v).toLocaleString()} 条`;
+  if (v == null) return `<span class="na">${esc(t('line.smsCountNA'))}</span>`;
+  return esc(t('line.todayCount', { n: num(v) }));
 }
 
 /* ---------- 剪贴板 ---------- */
@@ -273,31 +283,34 @@ export async function fillIcons(root = document) {
 
 export function renderChrome(active = '') {
   const nav = [
-    ['', '首页', 'home'],
-    ['numbers', '号码', 'numbers'],
-    ['guide', '使用指南', 'guide'],
-    ['faq', '常见问题', 'faq'],
+    ['', 'nav.home', 'home'],
+    ['numbers', 'nav.numbers', 'numbers'],
+    ['guide', 'nav.guide', 'guide'],
+    ['faq', 'nav.faq', 'faq'],
   ];
+  const other = IS_EN ? 'zh' : 'en';
   const hd = document.getElementById('hd');
   if (hd) {
     hd.innerHTML =
       `<div class="hd-in">
-        <button class="burger" id="burger" aria-label="菜单" aria-expanded="false">☰</button>
-        <a class="brand" href="${abs('')}"><img class="brand-logo" src="${abs('assets/brand/logo.svg')}" alt="SMS Hub 免费在线接码" width="280" height="64"></a>
-        <nav class="nav" id="nav" aria-label="主导航">
-          ${nav.map(([h, t, k]) => `<a href="${abs(h)}"${k === active ? ' aria-current="page"' : ''}>${t}</a>`).join('')}
+        <button class="burger" id="burger" aria-label="${esc(t('nav.menu'))}" aria-expanded="false">☰</button>
+        <a class="brand" href="${page('')}"><img class="brand-logo" src="${abs('assets/brand/logo.svg')}" alt="${esc(t('site.title'))}" width="280" height="64"></a>
+        <nav class="nav" id="nav" aria-label="${esc(t('nav.mainNav'))}">
+          ${nav.map(([h, k, a]) => `<a href="${page(h)}"${a === active ? ' aria-current="page"' : ''}>${esc(t(k))}</a>`).join('')}
         </nav>
         <div class="hd-act">
-          <a class="hd-search" href="${abs('numbers')}" data-icon="search">搜索国家或区号</a>
-          <a class="btn btn-primary btn-sm" href="${abs('numbers')}">选号码</a>
-          <button class="icon-btn" id="hdRefresh" title="刷新数据" aria-label="刷新数据" data-icon="refresh"></button>
+          <a class="hd-search" href="${page('numbers')}" data-icon="search">${esc(t('nav.searchPlaceholder'))}</a>
+          <a class="btn btn-primary btn-sm" href="${page('numbers')}">${esc(t('nav.pickNumber'))}</a>
+          <button class="lang-sw" id="langSw" type="button" title="${esc(t('nav.langSwitch'))}"
+                  aria-label="${esc(t('nav.langSwitch'))}" data-alt="${esc(altLangUrl(other))}">${esc(t('nav.langOther'))}</button>
+          <button class="icon-btn" id="hdRefresh" title="${esc(t('nav.refresh'))}" aria-label="${esc(t('nav.refresh'))}" data-icon="refresh"></button>
         </div>
       </div>`;
     // 用真实图标替换占位
     (async () => {
       const map = await icons(['search', 'refresh']);
       const s = hd.querySelector('[data-icon="search"]');
-      if (s && map.search) s.innerHTML = `${map.search}<span>搜索国家或区号</span>`;
+      if (s && map.search) s.innerHTML = `${map.search}<span>${esc(t('nav.searchPlaceholder'))}</span>`;
       const rf = hd.querySelector('#hdRefresh');
       if (rf && map.refresh) rf.innerHTML = map.refresh.replace('<svg ', '<svg width="17" height="17" ');
     })();
@@ -307,6 +320,9 @@ export function renderChrome(active = '') {
       const on = n.classList.toggle('open');
       b.setAttribute('aria-expanded', String(on));
     };
+    // 语言切换：跳转到当前页面的对应语言版本，并记住选择
+    const ls = hd.querySelector('#langSw');
+    if (ls) ls.onclick = () => switchLang(other);
     const rf = hd.querySelector('#hdRefresh');
     rf.onclick = async () => {
       rf.disabled = true;
@@ -314,15 +330,16 @@ export function renderChrome(active = '') {
       try {
         await loadData({ force: true });
         location.reload();
-      } catch (e) { toast('刷新失败，请稍后重试', 'err'); rf.disabled = false; rf.textContent = '↻'; }
+      } catch (e) { toast(t('common.refreshFailed'), 'err'); rf.disabled = false; rf.textContent = '↻'; }
     };
   }
 
   const bn = document.getElementById('bnav');
   if (bn) {
+    bn.setAttribute('aria-label', t('nav.bottomNav'));
     bn.innerHTML = `<div class="bnav-in">
-      ${[['', '首页', '⌂', 'home'], ['numbers', '号码', '▦', 'numbers'], ['guide', '指南', '◎', 'guide']]
-        .map(([h, t, i, k]) => `<a href="${abs(h)}"${k === active ? ' aria-current="page"' : ''}><span class="i">${i}</span>${t}</a>`).join('')}
+      ${[['', 'nav.home', '⌂', 'home'], ['numbers', 'nav.numbers', '▦', 'numbers'], ['guide', 'nav.guideShort', '◎', 'guide']]
+        .map(([h, k, i, a]) => `<a href="${page(h)}"${a === active ? ' aria-current="page"' : ''}><span class="i">${i}</span>${esc(t(k))}</a>`).join('')}
     </div>`;
   }
 }
@@ -333,16 +350,16 @@ export function renderFooter() {
   if (!ft) return;
   ft.innerHTML = `<div class="ft-in">
     <div class="ft-brand">
-      <img src="${abs('assets/brand/logo.svg')}" alt="SMS Hub" width="264" height="60">
+      <img src="${abs('assets/brand/logo.svg')}" alt="${esc(t('site.name'))}" width="264" height="60">
       <p style="margin:10px 0 0;color:var(--text-muted);font-size:13px;line-height:1.6">
-        公共号码收到的短信任何人都可能看到，请勿用于银行、支付、邮箱或其他敏感账户。
+        ${esc(t('home.safety'))}
       </p>
     </div>
     <div class="ft-links">
-      <a href="${abs('')}">首页</a>
-      <a href="${abs('numbers')}">全部号码</a>
-      <a href="${abs('guide')}">使用指南</a>
-      <a href="${abs('faq')}">常见问题</a>
+      <a href="${page('')}">${esc(t('nav.home'))}</a>
+      <a href="${page('numbers')}">${esc(t('common.allNumbers'))}</a>
+      <a href="${page('guide')}">${esc(t('nav.guide'))}</a>
+      <a href="${page('faq')}">${esc(t('nav.faq'))}</a>
     </div>
   </div>`;
 }
@@ -367,9 +384,9 @@ export function bindCopyButtons(root = document) {
         if (back) b.innerHTML = back;
         else b.textContent = '⧉';
       }, 1500);
-      toast('号码已复制：' + v);
+      toast(t('common.copied', { phone: v }));
     } else {
-      toast('复制失败，请手动选择号码', 'err');
+      toast(t('common.copyFailed'), 'err');
     }
   });
 }

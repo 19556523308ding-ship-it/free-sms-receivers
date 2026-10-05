@@ -21,27 +21,44 @@ SIMPLE = {"/numbers": "/numbers.html", "/guide": "/guide.html",
           "/faq": "/faq.html", "/admin": "/admin.html"}
 
 
+def _strip_en(p):
+    """英文版 /en/xxx -> (/en, /xxx)；非英文 -> ('', p)"""
+    if p == "/en" or p == "/en/":
+        return "/en", "/"
+    if p.startswith("/en/"):
+        return "/en", p[3:]
+    return "", p
+
+
 class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *a, **kw):
         super().__init__(*a, directory=ROOT, **kw)
 
+    def _resolve(self, p, q):
+        """把干净 URL 映射成实际文件路径（支持 /en/ 前缀）。"""
+        prefix, rest = _strip_en(p)
+        sub = os.path.join(ROOT, prefix.lstrip("/")) if prefix else ROOT
+
+        if rest in SIMPLE:
+            return prefix + SIMPLE[rest] + (("?" + q) if q else "")
+        if rest == "/":
+            return prefix + "/index.html"
+        if rest.startswith("/country/"):
+            seg = rest[len("/country/"):].strip("/")
+            if seg and "/" not in seg:
+                # 英文版优先取 /en/country/<iso>.html，回落 /en/country.html?c=
+                static = os.path.join(sub, "country", seg.lower() + ".html")
+                if os.path.isfile(static):
+                    return f"{prefix}/country/{seg.lower()}.html"
+                return f"{prefix}/country.html?c=" + urllib.parse.quote(seg)
+        if rest.startswith("/number/"):
+            nid = rest[len("/number/"):]
+            return f"{prefix}/number.html?id=" + urllib.parse.quote(nid)
+        return self.path
+
     def do_GET(self):
         parts = urllib.parse.urlsplit(self.path)
-        p, q = parts.path, parts.query
-
-        # 1) 无扩展名页面 -> 补 .html
-        if p in SIMPLE:
-            self.path = SIMPLE[p] + (("?" + q) if q else "")
-        elif p == "/":
-            self.path = "/index.html"
-        elif p.startswith("/country/"):
-            seg = p[len("/country/"):].strip("/")
-            if seg and "/" not in seg:
-                static = os.path.join(ROOT, "country", seg.lower() + ".html")
-                if os.path.isfile(static):
-                    self.path = f"/country/{seg.lower()}.html"
-                else:
-                    self.path = "/country.html?c=" + urllib.parse.quote(seg)
+        self.path = self._resolve(parts.path, parts.query)
         super().do_GET()
 
     def log_message(self, *a):

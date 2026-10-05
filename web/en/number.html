@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>在线接收短信 - 查看短信验证码 | SMS Hub</title>
-<meta name="description" content="在线接收短信并查看验证码：在站内实时等待该临时号码收到的公开短信，系统自动识别验证码、一键复制即可完成账号验证，全程无需注册，短信每 15 秒自动刷新。">
+<title>Receive SMS Online — Read Verification Codes | SMS Hub</title>
+<meta name="description" content="Receive SMS online and read the verification code: this page waits in real time for public SMS sent to the temporary number, detects the code automatically and copies it in one tap. No signup, refreshed every 15 seconds.">
 <meta name="theme-color" content="#070B12">
-<link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="assets/brand/favicon.svg">
-<link rel="stylesheet" href="assets/app.css">
+<link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/brand/favicon.svg">
+<link rel="stylesheet" href="/assets/app.css">
 <style>
 .np{padding:22px 0 0}
 .crumb{font-size:13px;color:var(--text-dim);margin-bottom:14px}
@@ -120,8 +120,8 @@
   .ib-head{flex-direction:column;align-items:stretch}
 }
 </style>
-<!--seo:block-->
-<link rel="canonical" href="https://sms.jinzhai.icu/number">
+<!--en:block-->
+<link rel="canonical" href="https://sms.jinzhai.icu/en/number">
 <link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/number">
 <link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/number">
 <link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/number">
@@ -129,22 +129,22 @@
 <meta name="robots" content="index,follow">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SMS Hub">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:url" content="https://sms.jinzhai.icu/number">
-<meta property="og:title" content="在线接收短信，查看短信验证码 | SMS Hub">
-<meta property="og:description" content="实时刷新短信、自动识别验证码，一键复制完成验证。">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://sms.jinzhai.icu/en/number">
+<meta property="og:title" content="Receive SMS Online — Read Verification Codes | SMS Hub">
+<meta property="og:description" content="Live SMS refresh, automatic code detection, one-tap copy.">
 <meta property="og:image" content="https://sms.jinzhai.icu/assets/backgrounds/og-cover.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="SMS Hub 免费在线接码 · 接收短信验证码">
+<meta property="og:image:alt" content="SMS Hub — free temporary numbers for SMS verification">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="在线接收短信，查看短信验证码 | SMS Hub">
-<meta name="twitter:description" content="实时刷新短信、自动识别验证码，一键复制完成验证。">
+<meta name="twitter:title" content="Receive SMS Online — Read Verification Codes | SMS Hub">
+<meta name="twitter:description" content="Live SMS refresh, automatic code detection, one-tap copy.">
 <meta name="twitter:image" content="https://sms.jinzhai.icu/assets/backgrounds/og-cover.png">
-<meta name="twitter:image:alt" content="SMS Hub 免费在线接码 · 接收短信验证码">
-<!--/seo:block-->
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://sms.jinzhai.icu/"},{"@type":"ListItem","position":2,"name":"在线接收短信，查看短信验证码","item":"https://sms.jinzhai.icu/number"}]}</script>
+<meta name="twitter:image:alt" content="SMS Hub — free temporary numbers for SMS verification">
+<!--/en:block-->
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sms.jinzhai.icu/en/"},{"@type":"ListItem","position":2,"name":"Receive SMS online","item":"https://sms.jinzhai.icu/en/number"}]}</script>
 </head>
 <body>
 <header class="hd" id="hd"></header>
@@ -160,37 +160,37 @@
     </h1>
     <div id="nhStatus" class="nhead-status"></div>
     <div class="nhead-acts">
-      <button class="btn btn-primary" id="cpNum" type="button"><span data-ic="copy"></span><span data-i18n="number.flowCopy">复制号码</span></button>
-      <button class="btn" id="switchNum" type="button" data-i18n="number.switchSameCountry">换一个同国家号码</button>
-      <button class="btn" id="allNum" type="button"><span data-i18n="common.allNumbers">全部号码</span> <span data-ic="arrow-right"></span></button>
+      <button class="btn btn-primary" id="cpNum" type="button"><span data-ic="copy"></span><span data-i18n="number.flowCopy">Copy number</span></button>
+      <button class="btn" id="switchNum" type="button" data-i18n="number.switchSameCountry">Try another number</button>
+      <button class="btn" id="allNum" type="button"><span data-i18n="common.allNumbers">All numbers</span> <span data-ic="arrow-right"></span></button>
     </div>
     <div class="nmeta" id="nmeta"></div>
   </section>
 
   <!-- 流程条 (§15) -->
   <div class="flow" id="flow" aria-label="使用流程">
-    <div class="fstep on" data-k="copy"><span class="d">1</span><span data-i18n="number.flowCopy">复制号码</span></div>
+    <div class="fstep on" data-k="copy"><span class="d">1</span><span data-i18n="number.flowCopy">Copy number</span></div>
     <div class="fline"></div>
-    <div class="fstep" data-k="fill"><span class="d">2</span><span data-i18n="number.flowFill">填写到目标服务</span></div>
+    <div class="fstep" data-k="fill"><span class="d">2</span><span data-i18n="number.flowFill">Paste into target site</span></div>
     <div class="fline"></div>
-    <div class="fstep" data-k="wait"><span class="d">3</span><span data-i18n="number.flowWait">等待新短信</span></div>
+    <div class="fstep" data-k="wait"><span class="d">3</span><span data-i18n="number.flowWait">Wait for the SMS</span></div>
   </div>
 
   <!-- 等待状态 (§17 / §22) -->
   <div class="wait" id="wait" role="status" aria-live="polite">
     <span class="pulse"></span>
-    <div class="t"><b id="waitT" data-i18n="number.readyTitle">准备就绪</b><span id="waitS" data-i18n="number.readyHint">点击「复制号码」后本页会自动等待新短信</span></div>
-    <button class="btn btn-sm" id="manualRefresh" type="button" data-i18n="common.manualRefresh">手动刷新</button>
+    <div class="t"><b id="waitT" data-i18n="number.readyTitle">Ready</b><span id="waitS" data-i18n="number.readyHint">After you tap “Copy number”, this page waits for new SMS automatically</span></div>
+    <button class="btn btn-sm" id="manualRefresh" type="button" data-i18n="common.manualRefresh">Refresh now</button>
   </div>
 
   <!-- 收件箱 (§21) -->
   <section>
     <div class="ib-head">
       <div class="tabs ib-tabs" id="ibTabs" role="tablist" aria-label="短信范围">
-        <button class="tab" id="tabSession" role="tab" aria-selected="true" type="button"><span data-i18n="number.tabSession">本次使用后</span> <span class="ct" id="ctSession">0</span></button>
-        <button class="tab" id="tabAll" role="tab" aria-selected="false" type="button"><span data-i18n="number.tabAll">所有短信</span> <span class="ct" id="ctAll">0</span></button>
+        <button class="tab" id="tabSession" role="tab" aria-selected="true" type="button"><span data-i18n="number.tabSession">This session</span> <span class="ct" id="ctSession">0</span></button>
+        <button class="tab" id="tabAll" role="tab" aria-selected="false" type="button"><span data-i18n="number.tabAll">All messages</span> <span class="ct" id="ctAll">0</span></button>
       </div>
-      <span style="font-size:12.5px;color:var(--text-dim)" id="ibNote" data-i18n="number.autoCheck15">每 15 秒自动检查</span>
+      <span style="font-size:12.5px;color:var(--text-dim)" id="ibNote" data-i18n="number.autoCheck15">Auto-checks every 15s</span>
     </div>
     <div class="msgs" id="msgs"></div>
     <div id="msgState"></div>
@@ -201,8 +201,8 @@
 <nav class="bnav" id="bnav" aria-label="底部导航"></nav>
 
 <div class="sticky-bar" id="sticky">
-  <button class="btn btn-primary" id="stCopy" type="button"><span data-ic="copy"></span><span data-i18n="number.flowCopy">复制号码</span></button>
-  <button class="btn" id="stRefresh" type="button" data-i18n="number.refreshSms">刷新短信</button>
+  <button class="btn btn-primary" id="stCopy" type="button"><span data-ic="copy"></span><span data-i18n="number.flowCopy">Copy number</span></button>
+  <button class="btn" id="stRefresh" type="button" data-i18n="number.refreshSms">Refresh SMS</button>
 </div>
 
 <script type="module">
@@ -210,7 +210,7 @@ import {
   loadData, countriesOf, mainPool, rank, esc, flagImg, fmtPhone, statusHtml,
   STATUS_LABEL, relTime, copy, toast, renderChrome, renderFooter, fillIcons,
   t, page, IS_EN, num, countryName, abs
-} from './assets/app.js';
+} from '/assets/app.js';
 
 renderChrome('numbers');
 renderFooter();
@@ -222,7 +222,7 @@ function applyStaticI18n() {
   const fl = document.getElementById('flow'); if (fl) fl.setAttribute('aria-label', t('number.flowAria'));
   const ib = document.getElementById('ibTabs'); if (ib) ib.setAttribute('aria-label', t('number.ibScope'));
   const bn = document.querySelector('.bnav'); if (bn) bn.setAttribute('aria-label', t('nav.bottomNav'));
-  document.querySelectorAll('a[href="numbers.html"], a[href="index.html"]').forEach(a => {
+  document.querySelectorAll('a[href="/en/numbers"], a[href="/en/"]').forEach(a => {
     a.href = a.getAttribute('href') === 'index.html' ? page('') : page('numbers');
   });
 }

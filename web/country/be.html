@@ -147,13 +147,13 @@
 
   <div class="cp-bar">
     <div class="tabs" id="tabs" role="tablist" aria-label="按状态筛选">
-      <button class="tab" data-s="" role="tab" aria-selected="true">全部 <span class="ct" id="ctAll">0</span></button>
-      <button class="tab" data-s="available" role="tab" aria-selected="false">可用 <span class="ct" id="ctA">0</span></button>
-      <button class="tab" data-s="low_usage" role="tab" aria-selected="false">较少使用 <span class="ct" id="ctL">0</span></button>
-      <button class="tab" data-s="unverified" role="tab" aria-selected="false">暂未验证 <span class="ct" id="ctU">0</span></button>
+      <button class="tab" data-s="" role="tab" aria-selected="true"><span data-i18n="country.tabAll">全部</span> <span class="ct" id="ctAll">0</span></button>
+      <button class="tab" data-s="available" role="tab" aria-selected="false"><span data-i18n="status.available">可用</span> <span class="ct" id="ctA">0</span></button>
+      <button class="tab" data-s="low_usage" role="tab" aria-selected="false"><span data-i18n="status.low_usage">较少使用</span> <span class="ct" id="ctL">0</span></button>
+      <button class="tab" data-s="unverified" role="tab" aria-selected="false"><span data-i18n="status.unverified">暂未验证</span> <span class="ct" id="ctU">0</span></button>
     </div>
     <div class="grow"></div>
-    <button class="btn btn-sm" id="pickBtn" type="button">🎲 帮我选一个</button>
+    <button class="btn btn-sm" id="pickBtn" type="button">🎲 <span data-i18n="common.pickForMeShort">帮我选一个</span></button>
   </div>
 
   <div class="numgrid" id="grid"></div>
@@ -161,7 +161,7 @@
   <div id="stateBox"></div>
 
   <section class="other" id="other">
-    <h2>其他国家和地区</h2>
+    <h2 data-i18n="common.otherCountries">其他国家和地区</h2>
     <div class="ochips" id="ochips"></div>
   </section>
 </main>
@@ -172,13 +172,22 @@
 <script type="module">
 import {
   loadData, countriesOf, mainPool, sparePool, rank, esc, flagImg, fmtPhone, statusHtml,
-  statusLine, smsLine, copy, toast, renderChrome, renderFooter, bindCopyButtons, fillIcons
+  statusLine, smsLine, copy, toast, renderChrome, renderFooter, bindCopyButtons, fillIcons,
+  t, page, IS_EN, num, countryName
 } from '/assets/app.js';
 
 renderChrome('numbers');
 renderFooter();
 bindCopyButtons();
 fillIcons();
+applyStaticI18n();
+
+function applyStaticI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  const tb = document.getElementById('tabs'); if (tb) tb.setAttribute('aria-label', t('country.filterAria'));
+  const pb = document.getElementById('pickBtn'); if (pb) pb.setAttribute('aria-label', t('country.pickForMeAria'));
+  const bn = document.querySelector('.bnav'); if (bn) bn.setAttribute('aria-label', t('nav.bottomNav'));
+}
 
 const $ = s => document.querySelector(s);
 const PAGE = 60;
@@ -191,15 +200,16 @@ let DATA = null, CTYS = [], C = null, LIST = [], SHOWN = PAGE, STATUS = '';
 function renderHead() {
   const direct = C.directInbox;
   const active = C.active > 0 ? C.active : direct;
+  const nm = esc(countryName(C));
   $('#cpHead').innerHTML = `
-    <h2 class="cp-live">${flagImg(C.iso)}<span>${esc(C.nameZh)}号码实时状态</span></h2>
-    <p>选择一个${esc(C.nameZh)}临时号码，免费在线接收公开短信验证码。无需注册，复制即可使用。</p>
+    <h2 class="cp-live">${flagImg(C.iso)}<span>${esc(t('country.liveTitle', { name: countryName(C) }))}</span></h2>
+    <p>${esc(t('country.liveSub', { name: countryName(C) }))}</p>
     <div class="cp-stat">
-      <div class="s"><div class="n ac">${direct}</div><div class="l">个可直接收短信</div></div>
-      <div class="s"><div class="n">${active}</div><div class="l">个当前较活跃</div></div>
-      <div class="s"><div class="n">${C.total}</div><div class="l">个号码总数</div></div>
+      <div class="s"><div class="n ac">${num(direct)}</div><div class="l">${esc(t('country.statDirect'))}</div></div>
+      <div class="s"><div class="n">${num(active)}</div><div class="l">${esc(t('country.statActive'))}</div></div>
+      <div class="s"><div class="n">${num(C.total)}</div><div class="l">${esc(t('country.statTotal'))}</div></div>
     </div>`;
-  document.title = `${C.nameZh}免费接码 - ${C.total} 个${C.nameZh}临时号码在线接收短信 | SMS Hub`;
+  document.title = t('country.title', { name: countryName(C), n: num(C.total) });
 }
 
 function renderList() {
@@ -215,8 +225,8 @@ function renderList() {
   if (!list.length) {
     $('#grid').innerHTML = '';
     $('#moreBox').innerHTML = '';
-    $('#stateBox').innerHTML = `<div class="state"><div class="ic">📭</div><h3>该分类下暂无可展示的号码</h3>
-      <p>换个状态分类看看，或返回全部号码。</p></div>`;
+    $('#stateBox').innerHTML = `<div class="state"><div class="ic">📭</div><h3>${esc(t('country.empty'))}</h3>
+      <p>${esc(t('country.emptyHint'))}</p></div>`;
     return;
   }
   $('#stateBox').innerHTML = '';
@@ -225,27 +235,27 @@ function renderList() {
     const direct = n.directInbox;
     return `<article class="ncard">
       <div class="ncard-top">
-        <div class="ncard-ctry">${flagImg(n.countryCode)}<span class="nm">${esc(n.countryNameZh)}</span></div>
-        ${direct ? statusHtml(n) : '<span class="st st-unverified">仅跳原站</span>'}
+        <div class="ncard-ctry">${flagImg(n.countryCode)}<span class="nm">${esc(countryName(n))}</span></div>
+        ${direct ? statusHtml(n) : `<span class="st st-unverified">${esc(t('numbers.jumpOnly'))}</span>`}
       </div>
       <div class="ncard-phone">
         <span class="val mono" title="${esc(n.phone)}">${esc(shown)}</span>
-        <button class="cp" data-phone="${esc(n.phone)}" data-ic="copy" aria-label="复制号码 ${esc(n.phone)}" title="复制号码"></button>
+        <button class="cp" data-phone="${esc(n.phone)}" data-ic="copy" aria-label="${esc(t('common.copyNumber'))} ${esc(n.phone)}" title="${esc(t('common.copyNumber'))}"></button>
       </div>
       <div class="ncard-meta">
-        <span>${direct ? esc(statusLine(n)) : '站内暂不支持查看'}</span><span class="sep">·</span><span>${smsLine(n)}</span>
+        <span>${direct ? esc(statusLine(n)) : esc(t('numbers.notReadableHere'))}</span><span class="sep">·</span><span>${smsLine(n)}</span>
       </div>
       <div class="ncard-foot">
         ${direct
-          ? `<a class="btn btn-primary btn-sm" href="number.html?id=${encodeURIComponent(n.id)}">使用此号码 <span data-ic="arrow-right"></span></a>`
-          : `<a class="btn btn-sm" href="${esc(n.sourceUrl)}" target="_blank" rel="noopener nofollow">前往原站查看 ↗</a>`}
+          ? `<a class="btn btn-primary btn-sm" href="${page('number')}?id=${encodeURIComponent(n.id)}">${esc(t('common.useNumber'))} <span data-ic="arrow-right"></span></a>`
+          : `<a class="btn btn-sm" href="${esc(n.sourceUrl)}" target="_blank" rel="noopener nofollow">${esc(t('numbers.goSource'))}</a>`}
       </div>
     </article>`;
   }).join('');
   fillIcons($('#grid'));
   $('#moreBox').innerHTML = list.length > SHOWN
-    ? `<button class="btn" id="moreBtn">加载更多（还有 ${list.length - SHOWN} 个）</button>`
-    : `<span style="font-size:13px;color:var(--text-dim)">已显示全部 ${list.length} 个号码</span>`;
+    ? `<button class="btn" id="moreBtn">${esc(t('numbers.loadMore', { n: num(list.length - SHOWN) }))}</button>`
+    : `<span style="font-size:13px;color:var(--text-dim)">${esc(t('numbers.allShown', { n: num(list.length) }))}</span>`;
   const mb = $('#moreBtn');
   if (mb) mb.onclick = () => { SHOWN += PAGE; renderList(); };
 }
@@ -257,8 +267,8 @@ function renderOther() {
     .sort((a, b) => b.total - a.total).slice(0, 8);
   const all = others.concat(spareOnly);
   $('#ochips').innerHTML = all.map(c =>
-    `<a class="ochip" href="country.html?c=${encodeURIComponent(c.iso)}${c.directInbox ? '' : '&pool=spare'}">${flagImg(c.iso)}<span>${esc(c.nameZh)}</span><span class="c">${c.directInbox || c.total}</span></a>`).join('')
-    || '<span style="color:var(--text-dim);font-size:13px">暂无其他国家</span>';
+    `<a class="ochip" href="${page('country')}?c=${encodeURIComponent(c.iso)}${c.directInbox ? '' : '&pool=spare'}">${flagImg(c.iso)}<span>${esc(countryName(c))}</span><span class="c">${c.directInbox || c.total}</span></a>`).join('')
+    || `<span style="color:var(--text-dim);font-size:13px">${esc(t('country.noOthers'))}</span>`;
 }
 
 /* ---------- 事件 ---------- */
@@ -273,11 +283,11 @@ $('#tabs').querySelectorAll('.tab').forEach(b => {
 
 $('#pickBtn').onclick = async () => {
   const pool = rank(LIST);
-  if (!pool.length) return toast('该国家暂无可选号码', 'err');
+  if (!pool.length) return toast(t('common.noNumberInCountry'), 'err');
   const n = pool[Math.floor(Math.random() * Math.min(12, pool.length))];
   const ok = await copy(n.phone);
-  toast(ok ? `已选好并复制：${n.phone}` : `已选好号码：${n.phone}`);
-  setTimeout(() => location.href = 'number.html?id=' + encodeURIComponent(n.id) + '&picked=1', 520);
+  toast(ok ? t('common.pickedCopied', { phone: n.phone }) : t('common.picked', { phone: n.phone }));
+  setTimeout(() => location.href = page('number') + '?id=' + encodeURIComponent(n.id) + '&picked=1', 520);
 };
 
 /* ---------- 启动 ---------- */
@@ -289,11 +299,11 @@ $('#pickBtn').onclick = async () => {
     C = CTYS.find(c => c.iso === ISO);
     if (!C) {
       const alt = CTYS.filter(c => c.directInbox > 0)[0];
-      $('#cpHead').innerHTML = `<h2 class="cp-live">未找到该国家</h2><p>请从下方选择其他国家。</p>`;
+      $('#cpHead').innerHTML = `<h2 class="cp-live">${esc(t('country.notFound'))}</h2><p>${esc(t('country.notFoundHint'))}</p>`;
       $('#tabs').hidden = true; $('#pickBtn').hidden = true;
       $('#grid').innerHTML = '';
       renderOther();
-      if (alt) setTimeout(() => location.replace('country.html?c=' + alt.iso), 1600);
+      if (alt) setTimeout(() => location.replace(page('country') + '?c=' + alt.iso), 1600);
       return;
     }
     const all = DATA.numbers.filter(n => n.countryCode === ISO);
@@ -304,8 +314,8 @@ $('#pickBtn').onclick = async () => {
     renderOther();
   } catch (err) {
     $('#grid').innerHTML = '';
-    $('#stateBox').innerHTML = `<div class="state"><img class="state-art" src="/assets/empty/empty-error.svg" alt="" width="150" height="120"><h3>数据加载失败</h3>
-      <p>${esc(err.message)}</p><button class="btn btn-primary" id="retry">重试</button></div>`;
+    $('#stateBox').innerHTML = `<div class="state"><img class="state-art" src="/assets/empty/empty-error.svg" alt="" width="150" height="120"><h3>${esc(t('common.loadFailed'))}</h3>
+      <p>${esc(err.message)}</p><button class="btn btn-primary" id="retry">${esc(t('common.retry'))}</button></div>`;
     const rb = $('#retry'); if (rb) rb.onclick = () => location.reload();
   }
 })();

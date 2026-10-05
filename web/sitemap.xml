@@ -1,162 +1,396 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://sms.jinzhai.icu/</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/"/>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://sms.jinzhai.icu/en/</loc>
+    <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/"/>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/numbers</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/numbers"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/numbers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/numbers"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/numbers"/>
+    <changefreq>hourly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://sms.jinzhai.icu/en/numbers</loc>
+    <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/numbers"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/numbers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/numbers"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/numbers"/>
     <changefreq>hourly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/guide</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/guide"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/guide"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/guide"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/guide"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sms.jinzhai.icu/en/guide</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/guide"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/guide"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/guide"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/guide"/>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/faq</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/faq"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/faq"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/faq"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/faq"/>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://sms.jinzhai.icu/en/faq</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/faq"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/faq"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/faq"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/faq"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sms.jinzhai.icu/en/country/us</loc>
+    <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/us"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/us"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/us"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/us"/>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://sms.jinzhai.icu/country/us</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/us"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/us"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/us"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/us"/>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sms.jinzhai.icu/en/country/gb</loc>
+    <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/gb"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/gb"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/gb"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/gb"/>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/gb</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/gb"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/gb"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/gb"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/gb"/>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/ua</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/ua"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/ua"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/ua"/>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://sms.jinzhai.icu/en/country/ca</loc>
+    <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/ca"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/ca"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/ca"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/ca"/>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://sms.jinzhai.icu/country/ca</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/ca"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/ca"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/ca"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/ca"/>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sms.jinzhai.icu/en/country/se</loc>
+    <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/se"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/se"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/se"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/se"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/se</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/se"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/se"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/se"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/se"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/be</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/be"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/be"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/be"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/fi</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/fi"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/fi"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/fi"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/pl</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/pl"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/pl"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/pl"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/pr</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/pr"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/pr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/pr"/>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sms.jinzhai.icu/en/country/nl</loc>
+    <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/nl"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/nl"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/nl"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/nl"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/nl</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/nl"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/nl"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/nl"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/nl"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/es</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/es"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/es"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/ro</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/ro"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/ro"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/ro"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/bg</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/bg"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/bg"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/bg"/>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sms.jinzhai.icu/en/country/in</loc>
+    <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/in"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/in"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/in"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/in"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/in</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/in"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/in"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/in"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/in"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/id</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/id"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/id"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/id"/>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sms.jinzhai.icu/en/country/de</loc>
+    <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/de"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/de"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/de"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/de"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/de</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/de"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/de"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/de"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/de"/>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sms.jinzhai.icu/en/country/fr</loc>
+    <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/fr"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/fr"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/fr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/fr"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/fr</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/fr"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/fr"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/fr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/fr"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/ru</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/ru"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/ru"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/ru"/>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sms.jinzhai.icu/en/country/za</loc>
+    <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/za"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/za"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/za"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/za"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/za</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/za"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/za"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/za"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/za"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/at</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/at"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/at"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/at"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/br</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/br"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/br"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/br"/>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sms.jinzhai.icu/en/country/au</loc>
+    <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/au"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/au"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/au"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/au"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/au</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/au"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/au"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sms.jinzhai.icu/en/country/au"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/au"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sms.jinzhai.icu/country/pe</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/country/pe"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/country/pe"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/country/pe"/>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>

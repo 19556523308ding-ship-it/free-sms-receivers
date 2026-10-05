@@ -108,7 +108,42 @@ COUNTRY_ISO = {
     "IS": ("冰岛", "🇮🇸", "354"),
     "LU": ("卢森堡", "🇱🇺", "352"),
     "CN": ("中国", "🇨🇳", "86"),
+    "PR": ("波多黎各", "🇵🇷", "1"),
+    "DO": ("多米尼加", "🇩🇴", "1"),
+    "GT": ("危地马拉", "🇬🇹", "502"),
+    "CR": ("哥斯达黎加", "🇨🇷", "506"),
+    "MP": ("北马里亚纳群岛", "🇲🇵", "1"),
+    "BS": ("巴哈马", "🇧🇸", "1"),
 }
+
+# ISO 两字母 -> 英文名（供英文版站点与 nameEn 字段使用）
+COUNTRY_EN = {
+    "US": "United States", "GB": "United Kingdom", "CA": "Canada",
+    "AU": "Australia", "DE": "Germany", "FR": "France", "FI": "Finland",
+    "SE": "Sweden", "NL": "Netherlands", "PL": "Poland", "ES": "Spain",
+    "IN": "India", "RU": "Russia", "BR": "Brazil", "HK": "Hong Kong, China",
+    "SG": "Singapore", "BE": "Belgium", "IT": "Italy", "AT": "Austria",
+    "CH": "Switzerland", "DK": "Denmark", "NO": "Norway", "PT": "Portugal",
+    "IE": "Ireland", "GR": "Greece", "NZ": "New Zealand", "JP": "Japan",
+    "KR": "South Korea", "MY": "Malaysia", "TH": "Thailand",
+    "PH": "Philippines", "ID": "Indonesia", "VN": "Vietnam",
+    "UA": "Ukraine", "BY": "Belarus", "GE": "Georgia", "MX": "Mexico",
+    "AR": "Argentina", "CL": "Chile", "CO": "Colombia", "PE": "Peru",
+    "ZA": "South Africa", "EG": "Egypt", "NG": "Nigeria", "KE": "Kenya",
+    "BD": "Bangladesh", "TW": "Taiwan, China", "MO": "Macao, China",
+    "TL": "Timor-Leste", "BG": "Bulgaria", "CZ": "Czechia",
+    "RO": "Romania", "HU": "Hungary", "SK": "Slovakia", "SI": "Slovenia",
+    "EE": "Estonia", "LV": "Latvia", "LT": "Lithuania", "TR": "Türkiye",
+    "IL": "Israel", "AE": "United Arab Emirates", "SA": "Saudi Arabia",
+    "IS": "Iceland", "LU": "Luxembourg", "CN": "China",
+    "PR": "Puerto Rico", "DO": "Dominican Republic", "GT": "Guatemala",
+    "CR": "Costa Rica", "MP": "Northern Mariana Islands", "BS": "Bahamas",
+}
+
+# 星号：英文名兜底 —— 表外的 ISO 直接用 ISO 码本身，避免出现空值
+def country_en(iso):
+    return COUNTRY_EN.get(iso) or iso
+
 
 # 源站国家名/URL slug -> ISO 两字母
 NAME_TO_ISO = {
@@ -870,7 +905,7 @@ def run():
         c = by_country.setdefault(iso, {
             "iso": iso,
             "nameZh": r.get("countryNameZh"),
-            "nameEn": r.get("countryNameEn"),
+            "nameEn": r.get("countryNameEn") or country_en(iso),
             "flag": r.get("flag"),
             "callingCode": r.get("callingCode"),
             "total": 0, "directInbox": 0, "active": 0,

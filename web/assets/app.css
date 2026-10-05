@@ -92,6 +92,16 @@ img{max-width:100%}
 .icon-btn svg{width:17px;height:17px}
 .icon-btn svg path,.icon-btn svg circle,.icon-btn svg rect,.icon-btn svg ellipse{stroke:currentColor}
 
+/* 语言切换器（中 / EN） */
+.lang-sw{
+  height:38px;padding:0 13px;flex:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-btn);
+  color:var(--text-muted);font-size:13px;font-weight:700;letter-spacing:.02em;
+  transition:color .15s,border-color .15s,background .15s;
+}
+.lang-sw:hover{color:var(--text);border-color:var(--border-strong);background:var(--surface-2)}
+
 /* ---------- Buttons (§43) ---------- */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
@@ -262,6 +272,10 @@ select.sel:focus{outline:0;border-color:var(--primary)}
   .hd-act{gap:8px}
   .wrap{padding:0 16px}
   .hd-in{padding:0 16px;gap:12px}
+  /* 375px 一行要放下「汉堡 + logo + 选号码 + 语言 + 刷新」，
+     语言切换器收到最小宽度，避免把页头撑出横向滚动 */
+  .lang-sw{height:34px;padding:0 9px;font-size:12px}
+  .hd-act .btn-sm{display:none}
   .nav{
     display:none;position:absolute;top:var(--header-h);left:0;right:0;
     flex-direction:column;align-items:stretch;gap:2px;padding:10px 16px 16px;
