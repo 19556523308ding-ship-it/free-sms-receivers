@@ -335,29 +335,36 @@ async function shot(page, name) {
     }
 
     /* ================= 国家页 /country ================= */
-    console.log('\n== 国家页 /country ==');
-    for (const [k, vp] of Object.entries({ d1440: VIEWPORTS.d1440, m390: VIEWPORTS.m390 })) {
-      const { page, errs, badUrls } = await goto(browser, BASE + '/country.html?c=US', vp);
-      const of = await overflow(page);
-      of > 1 ? bad(`国家页无横向溢出 @${k}`, `溢出 ${of}px`) : ok(`国家页无横向溢出 @${k}`);
-      const info = await page.evaluate(() => ({
-        h1: (document.querySelector('.cp-head h1') || {}).innerText || '',
-        stats: document.querySelectorAll('.cp-stat .s').length,
-        tabs: [...document.querySelectorAll('#tabs .tab')].map(e => e.innerText.replace(/\s+/g, ' ')),
-        cards: document.querySelectorAll('#grid .ncard').length,
-        other: document.querySelectorAll('#ochips .ochip').length,
-      }));
-      /美国免费接码号码/.test(info.h1) ? ok(`国家页 H1 @${k}`, info.h1) : bad(`国家页 H1 @${k}`, info.h1);
-      if (k === 'd1440') {
-        info.stats === 3 ? ok('国家页统计 3 项') : bad('国家页统计项数', String(info.stats));
-        info.tabs.length === 4 ? ok('状态 Tabs 4 项（§13）', info.tabs.join(' / ')) : bad('状态 Tabs 异常', info.tabs.join(' / '));
-        info.cards >= 20 ? ok('国家页号码卡', String(info.cards)) : bad('国家页卡片少', String(info.cards));
-        info.other >= 3 ? ok('其他国家入口', String(info.other)) : warn('其他国家入口少');
-        await shot(page, 'country-d1440');
-      }
-      checkErrs(errs, badUrls, `国家页`, k, bad, ok);
-      await page.close();
+  console.log('\n== 国家页 /country ==');
+  for (const [k, vp] of Object.entries({ d1440: VIEWPORTS.d1440, m390: VIEWPORTS.m390 })) {
+    // 走干净 URL（与线上 nginx 一致），让静态预渲染页生效
+    const { page, errs, badUrls } = await goto(browser, BASE + '/country/us', vp);
+    const of = await overflow(page);
+    of > 1 ? bad(`国家页无横向溢出 @${k}`, `溢出 ${of}px`) : ok(`国家页无横向溢出 @${k}`);
+    const info = await page.evaluate(() => ({
+      // 页面唯一 H1 由静态预渲染块提供（SEO 要求正文进源码）
+      h1: (document.querySelector('h1') || {}).innerText || '',
+      h1count: document.querySelectorAll('h1').length,
+      live: (document.querySelector('.cp-head .cp-live') || {}).innerText || '',
+      stats: document.querySelectorAll('.cp-stat .s').length,
+      tabs: [...document.querySelectorAll('#tabs .tab')].map(e => e.innerText.replace(/\s+/g, ' ')),
+      cards: document.querySelectorAll('#grid .ncard').length,
+      other: document.querySelectorAll('#ochips .ochip').length,
+      staticNums: document.querySelectorAll('.cstatic .sp-num').length,
+    }));
+    /美国免费接码号码/.test(info.h1) ? ok(`国家页 H1 @${k}`, info.h1) : bad(`国家页 H1 @${k}`, info.h1);
+    info.h1count === 1 ? ok(`国家页 H1 唯一 @${k}`) : bad(`国家页 H1 重复 @${k}`, `${info.h1count} 个`);
+    info.staticNums >= 20 ? ok(`静态号码列表含 ${info.staticNums} 条（SEO 预渲染）`) : bad('静态号码列表过少', String(info.staticNums));
+    if (k === 'd1440') {
+      info.stats === 3 ? ok('国家页统计 3 项') : bad('国家页统计项数', String(info.stats));
+      info.tabs.length === 4 ? ok('状态 Tabs 4 项（§13）', info.tabs.join(' / ')) : bad('状态 Tabs 异常', info.tabs.join(' / '));
+      info.cards >= 20 ? ok('国家页号码卡', String(info.cards)) : bad('国家页卡片少', String(info.cards));
+      info.other >= 3 ? ok('其他国家入口', String(info.other)) : warn('其他国家入口少');
+      await shot(page, 'country-d1440');
     }
+    checkErrs(errs, badUrls, `国家页`, k, bad, ok);
+    await page.close();
+  }
 
     /* ================= 后台 /admin ================= */
     console.log('\n== 后台 /admin ==');

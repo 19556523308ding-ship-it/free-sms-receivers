@@ -1,7 +1,17 @@
 User-agent: *
 Allow: /
-Disallow: /*?country=
-Disallow: /*?source=
+Disallow: /admin
+Disallow: /admin.html
+Disallow: /*?c=
+Disallow: /*?id=
+Disallow: /*?q=
 Disallow: /*?sort=
+Disallow: /*?source=
+
+# 大站爬虫放慢（本站数据每小时更新）
+User-agent: AhrefsBot
+Crawl-delay: 10
+User-agent: SemrushBot
+Crawl-delay: 10
 
 Sitemap: https://sms.jinzhai.icu/sitemap.xml

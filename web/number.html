@@ -3,10 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>接收短信 - 在线查看验证码 | SMS Hub</title>
-<meta name="description" content="在站内等待并查看该号码收到的公开短信验证码，自动刷新，一键复制。">
+<title>在线接收短信 - 查看短信验证码 | SMS Hub</title>
+<meta name="description" content="在线接收短信并查看验证码：在站内实时等待该临时号码收到的公开短信，系统自动识别验证码、一键复制即可完成账号验证，全程无需注册，短信每 15 秒自动刷新。">
 <meta name="theme-color" content="#070B12">
-<meta name="robots" content="noindex,follow">
 <link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/brand/favicon.svg">
 <link rel="stylesheet" href="assets/app.css">
@@ -18,9 +17,12 @@
 
 /* ---------- 号码头 (§14) ---------- */
 .nhead{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:22px 24px;margin-bottom:20px}
-.nhead-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.nhead .lbl{font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:8px;margin-bottom:9px;font-weight:600}
+/* H1 包住「国家号码」标签 + 电话号，保证每页恰好 1 个 H1（SEO） */
+.nhead-h1{margin:0;display:flex;flex-direction:column;gap:9px;font-weight:400;font-size:inherit;letter-spacing:normal}
+.nhead .lbl{font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:8px;font-weight:600}
 .nhead .pn{font-size:31px;font-weight:800;letter-spacing:-.02em;word-break:break-all;line-height:1.15}
+.nhead-status{margin-top:11px}
+.nhead-acts{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
 .nhead-acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
 .nmeta{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px;padding-top:18px;border-top:1px solid var(--border)}
 .nmeta .m .k{font-size:12.5px;color:var(--text-dim);margin-bottom:3px}
@@ -118,6 +120,27 @@
   .ib-head{flex-direction:column;align-items:stretch}
 }
 </style>
+<!--seo:block-->
+<link rel="canonical" href="https://sms.jinzhai.icu/number">
+<link rel="alternate" hreflang="zh-CN" href="https://sms.jinzhai.icu/number">
+<link rel="alternate" hreflang="zh-Hans" href="https://sms.jinzhai.icu/number">
+<link rel="alternate" hreflang="x-default" href="https://sms.jinzhai.icu/number">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SMS Hub">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:url" content="https://sms.jinzhai.icu/number">
+<meta property="og:title" content="在线接收短信，查看短信验证码 | SMS Hub">
+<meta property="og:description" content="实时刷新短信、自动识别验证码，一键复制完成验证。">
+<meta property="og:image" content="https://sms.jinzhai.icu/assets/backgrounds/hero-visual.svg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="420">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="在线接收短信，查看短信验证码 | SMS Hub">
+<meta name="twitter:description" content="实时刷新短信、自动识别验证码，一键复制完成验证。">
+<meta name="twitter:image" content="https://sms.jinzhai.icu/assets/backgrounds/hero-visual.svg">
+<!--/seo:block-->
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://sms.jinzhai.icu/"},{"@type":"ListItem","position":2,"name":"在线接收短信，查看短信验证码","item":"https://sms.jinzhai.icu/number"}]}</script>
 </head>
 <body>
 <header class="hd" id="hd"></header>
@@ -127,13 +150,11 @@
 
   <!-- 号码头 -->
   <section class="nhead" id="nhead" aria-live="polite">
-    <div class="nhead-top">
-      <div>
-        <div class="lbl" id="nhLbl">—</div>
-        <div class="pn mono" id="nhPhone">—</div>
-      </div>
-      <div id="nhStatus"></div>
-    </div>
+    <h1 class="nhead-h1">
+      <span class="lbl" id="nhLbl">—</span>
+      <span class="pn mono" id="nhPhone">—</span>
+    </h1>
+    <div id="nhStatus" class="nhead-status"></div>
     <div class="nhead-acts">
       <button class="btn btn-primary" id="cpNum" type="button"><span data-ic="copy"></span>复制号码</button>
       <button class="btn" id="switchNum" type="button">换一个同国家号码</button>

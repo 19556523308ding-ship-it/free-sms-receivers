@@ -11,8 +11,8 @@ SCP="scp -i $KEY -o StrictHostKeyChecking=no"
 
 echo "[1/4] 打包前端..."
 tar -C web -czf /tmp/smshub-web.tgz \
-  index.html numbers.html number.html country.html admin.html guide.html faq.html \
-  sitemap.xml robots.txt favicon.ico assets data
+  index.html numbers.html number.html country.html admin.html guide.html faq.html 404.html \
+  sitemap.xml robots.txt favicon.ico assets data country
 ls -lh /tmp/smshub-web.tgz
 
 echo "[2/4] 上传..."
@@ -37,11 +37,17 @@ echo "--- nginx reloaded ---"
 echo "[4/4] 线上自检..."
 $SSH "$HOST" '
 for u in / /index.html /numbers /numbers.html /number.html /country.html /admin.html /guide.html /faq.html \
-         /assets/app.css /assets/app.js /assets/brand/favicon.svg /favicon.ico /data/numbers.json /sitemap.xml /robots.txt; do
+         /assets/app.css /assets/app.js /assets/brand/favicon.svg /favicon.ico /data/numbers.json /sitemap.xml /robots.txt /404.html; do
   printf "  %-32s -> %s\n" "$u" "$(curl -sS -o /dev/null -w "%{http_code}" https://sms.jinzhai.icu$u)"
 done
 echo "--- 干净 URL 检查 ---"
 curl -sS -o /dev/null -w "  /numbers      -> %{http_code}\n" https://sms.jinzhai.icu/numbers
-curl -sS -o /dev/null -w "  /country/us   -> %{http_code}\n" https://sms.jinzhai.icu/country/us
+echo "--- SEO 静态国家页（必须 200 且源码含 H1）---"
+for iso in us gb ua de; do
+  CODE=$(curl -sS -o /tmp/cp_$iso.html -w "%{http_code}" https://sms.jinzhai.icu/country/$iso)
+  H1=$(grep -o "<h1>[^<]*</h1>" /tmp/cp_$iso.html | head -1)
+  SZ=$(wc -c < /tmp/cp_$iso.html)
+  printf "  /country/%-3s -> %s  size=%sB  %s\n" "$iso" "$CODE" "$SZ" "$H1"
+done
 '
 echo "部署完成"

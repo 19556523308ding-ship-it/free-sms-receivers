@@ -2,7 +2,16 @@
    零构建：原生 ES 模块，多页复用。
    对外不暴露来源 / alsoOn / 来源数（§1 内外分离）。 */
 
-export const DATA_URL = 'data/numbers.json';
+/* ---------- 站点根路径 ----------
+   本文件固定在 /assets/app.js，因此从 import.meta.url 往上退两级就是站点根。
+   这样无论页面在 / 还是 /country/us 下，资源与数据路径都能正确解析，
+   不需要每个页面手写 <base> 或改一堆相对路径。 */
+const _MOD = new URL(import.meta.url);
+export const ROOT = _MOD.pathname.replace(/\/assets\/[^/]*$/, '/') || '/';
+/** 把站点根相对路径（如 'data/numbers.json'）拼成绝对路径 */
+export const abs = p => ROOT + String(p).replace(/^\/+/, '');
+
+export const DATA_URL = abs('data/numbers.json');
 
 /* ---------- 工具 ---------- */
 export const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
@@ -235,7 +244,7 @@ const ICON_CACHE = new Map();
 export async function icon(name, cls = '') {
   if (!ICON_CACHE.has(name)) {
     try {
-      const r = await fetch(`assets/icons/${name}.svg`);
+      const r = await fetch(abs(`assets/icons/${name}.svg`));
       ICON_CACHE.set(name, r.ok ? await r.text() : '');
     } catch { ICON_CACHE.set(name, ''); }
   }
@@ -264,23 +273,23 @@ export async function fillIcons(root = document) {
 
 export function renderChrome(active = '') {
   const nav = [
-    ['index.html', '首页', 'home'],
-    ['numbers.html', '号码', 'numbers'],
-    ['guide.html', '使用指南', 'guide'],
-    ['faq.html', '常见问题', 'faq'],
+    ['', '首页', 'home'],
+    ['numbers', '号码', 'numbers'],
+    ['guide', '使用指南', 'guide'],
+    ['faq', '常见问题', 'faq'],
   ];
   const hd = document.getElementById('hd');
   if (hd) {
     hd.innerHTML =
       `<div class="hd-in">
         <button class="burger" id="burger" aria-label="菜单" aria-expanded="false">☰</button>
-        <a class="brand" href="index.html"><img class="brand-logo" src="assets/brand/logo.svg" alt="SMS Hub 免费在线接码" width="280" height="64"></a>
+        <a class="brand" href="${abs('')}"><img class="brand-logo" src="${abs('assets/brand/logo.svg')}" alt="SMS Hub 免费在线接码" width="280" height="64"></a>
         <nav class="nav" id="nav" aria-label="主导航">
-          ${nav.map(([h, t, k]) => `<a href="${h}"${k === active ? ' aria-current="page"' : ''}>${t}</a>`).join('')}
+          ${nav.map(([h, t, k]) => `<a href="${abs(h)}"${k === active ? ' aria-current="page"' : ''}>${t}</a>`).join('')}
         </nav>
         <div class="hd-act">
-          <a class="hd-search" href="numbers.html" data-icon="search">搜索国家或区号</a>
-          <a class="btn btn-primary btn-sm" href="numbers.html">选号码</a>
+          <a class="hd-search" href="${abs('numbers')}" data-icon="search">搜索国家或区号</a>
+          <a class="btn btn-primary btn-sm" href="${abs('numbers')}">选号码</a>
           <button class="icon-btn" id="hdRefresh" title="刷新数据" aria-label="刷新数据" data-icon="refresh"></button>
         </div>
       </div>`;
@@ -312,8 +321,8 @@ export function renderChrome(active = '') {
   const bn = document.getElementById('bnav');
   if (bn) {
     bn.innerHTML = `<div class="bnav-in">
-      ${[['index.html', '首页', '⌂', 'home'], ['numbers.html', '号码', '▦', 'numbers'], ['guide.html', '指南', '◎', 'guide']]
-        .map(([h, t, i, k]) => `<a href="${h}"${k === active ? ' aria-current="page"' : ''}><span class="i">${i}</span>${t}</a>`).join('')}
+      ${[['', '首页', '⌂', 'home'], ['numbers', '号码', '▦', 'numbers'], ['guide', '指南', '◎', 'guide']]
+        .map(([h, t, i, k]) => `<a href="${abs(h)}"${k === active ? ' aria-current="page"' : ''}><span class="i">${i}</span>${t}</a>`).join('')}
     </div>`;
   }
 }
@@ -324,16 +333,16 @@ export function renderFooter() {
   if (!ft) return;
   ft.innerHTML = `<div class="ft-in">
     <div class="ft-brand">
-      <img src="assets/brand/logo.svg" alt="SMS Hub" width="264" height="60">
+      <img src="${abs('assets/brand/logo.svg')}" alt="SMS Hub" width="264" height="60">
       <p style="margin:10px 0 0;color:var(--text-muted);font-size:13px;line-height:1.6">
         公共号码收到的短信任何人都可能看到，请勿用于银行、支付、邮箱或其他敏感账户。
       </p>
     </div>
     <div class="ft-links">
-      <a href="index.html">首页</a>
-      <a href="numbers.html">全部号码</a>
-      <a href="guide.html">使用指南</a>
-      <a href="faq.html">常见问题</a>
+      <a href="${abs('')}">首页</a>
+      <a href="${abs('numbers')}">全部号码</a>
+      <a href="${abs('guide')}">使用指南</a>
+      <a href="${abs('faq')}">常见问题</a>
     </div>
   </div>`;
 }
