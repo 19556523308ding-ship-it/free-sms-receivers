@@ -68,5 +68,32 @@ done
 echo "--- 中文国家页 hreflang 双向配对抽查 ---"
 curl -sS -o /tmp/zh_us.html https://sms.jinzhai.icu/country/us
 grep -o '<link rel="alternate"[^>]*>' /tmp/zh_us.html | sed 's/^/  /'
+echo "--- 干净 URL / 尾斜杠（去尾斜杠 301，防重复内容）---"
+for u in /country /country/ /numbers /numbers/ /en /en/ /en/numbers /en/numbers/; do
+  R=$(curl -sS -o /dev/null -w "%{http_code}" "https://sms.jinzhai.icu$u")
+  T=$(curl -sS -o /dev/null -w "%{redirect_url}" "https://sms.jinzhai.icu$u" | sed "s|https://sms.jinzhai.icu||")
+  printf "  %-16s %-4s %s\n" "$u" "$R" "$T"
+done
+echo "--- Cloudflare 边缘缓存（内容页应 MISS/HIT，动态接口应 BYPASS/REVALIDATED）---"
+for u in / /numbers /country/us /en/ /en/country/us /sitemap.xml /assets/app.css /data/numbers.json; do
+  CS=$(curl -sS -I "https://sms.jinzhai.icu$u" | grep -i "^cf-cache-status:" | tr -d "\r" | awk "{print \$2}")
+  CT=$(curl -sS -I "https://sms.jinzhai.icu$u" | grep -i "^content-type:" | tr -d "\r" | awk "{print \$2}")
+  printf "  %-22s cf=%-12s %s\n" "$u" "${CS:-N/A}" "$CT"
+done
+echo "--- 收码接口（须返回 JSON，不得是 502/error code）---"
+US=$(curl -sS "https://sms.jinzhai.icu/data/numbers.json" | python3 -c "
+import sys,json
+d=json.load(sys.stdin)
+for n in d['numbers']:
+    if n.get('countryCode')=='US' and n.get('directInbox'):
+        print(n['phone']); break
+" 2>/dev/null)
+if [ -n "$US" ]; then
+  curl -sS "https://sms.jinzhai.icu/api/sms?slug=united-states&phone=$(printf '%s' "$US" | sed 's/+/%2B/')" \
+    | head -c 160 | sed 's/^/  /'
+  echo
+else
+  echo "  ! 未取到美国 directInbox 号码，跳过"
+fi
 '
 echo "部署完成"
